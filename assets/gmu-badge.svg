@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 70" width="260" height="70">
+  <rect width="260" height="70" rx="6" fill="#006633"/>
+  <text x="130" y="25"
+    font-family="Georgia,'Times New Roman',Times,serif"
+    font-size="10" font-weight="400"
+    fill="#FFCC33"
+    text-anchor="middle"
+    letter-spacing="3">GEORGE MASON</text>
+  <text x="130" y="47"
+    font-family="Georgia,'Times New Roman',Times,serif"
+    font-size="10" font-weight="400"
+    fill="white"
+    text-anchor="middle"
+    letter-spacing="3">UNIVERSITY</text>
+</svg>
