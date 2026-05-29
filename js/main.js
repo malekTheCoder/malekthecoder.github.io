@@ -2,7 +2,7 @@
    THEME SYSTEM — Dropdown with IDE themes
 ═══════════════════════════════════════════ */
 
-const DARK_THEMES = new Set(['dark','vscode','one-dark','darcula','tokyo','dracula','nord','monokai','github-dark']);
+const DARK_THEMES = new Set(['dark','vscode','darcula','tokyo','dracula','nord','github-dark']);
 
 const THEMES = [
   { id: 'light',       label: 'Light',             color: null,      type: 'mode' },
@@ -10,12 +10,10 @@ const THEMES = [
   { id: 'system',      label: 'System',            color: null,      type: 'mode' },
   { divider: true },
   { id: 'vscode',      label: 'VS Code Dark+',      color: '#569cd6', bg: '#1e1e1e', type: 'ide' },
-  { id: 'one-dark',    label: 'One Dark Pro',        color: '#61afef', bg: '#282c34', type: 'ide' },
   { id: 'darcula',     label: 'JetBrains Darcula',   color: '#ffc66d', bg: '#2b2b2b', type: 'ide' },
   { id: 'tokyo',       label: 'Tokyo Night',         color: '#7aa2f7', bg: '#1a1b26', type: 'ide' },
   { id: 'dracula',     label: 'Dracula',             color: '#bd93f9', bg: '#282a36', type: 'ide' },
   { id: 'nord',        label: 'Nord',                color: '#88c0d0', bg: '#2e3440', type: 'ide' },
-  { id: 'monokai',     label: 'Monokai',             color: '#a6e22e', bg: '#272822', type: 'ide' },
   { id: 'github-dark', label: 'GitHub Dark',         color: '#58a6ff', bg: '#0d1117', type: 'ide' },
 ];
 
@@ -51,6 +49,12 @@ function applyTheme(theme) {
   updateDropdownBtn(theme);
 }
 
+const THEME_SHORT = {
+  'light': 'Light', 'dark': 'Dark', 'system': 'System',
+  'vscode': 'VS Code', 'darcula': 'Darcula', 'tokyo': 'Tokyo',
+  'dracula': 'Dracula', 'nord': 'Nord', 'github-dark': 'GitHub',
+};
+
 function updateDropdownBtn(theme) {
   const iconEl = document.getElementById('themeDropdownIcon');
   const btn    = document.getElementById('themeDropdownBtn');
@@ -59,10 +63,12 @@ function updateDropdownBtn(theme) {
   const entry = THEMES.find(t => !t.divider && t.id === theme);
   if (!entry) return;
 
+  const short = THEME_SHORT[theme] || entry.label;
+
   if (entry.type === 'mode') {
-    iconEl.innerHTML = MODE_ICONS[theme] || '';
+    iconEl.innerHTML = `${MODE_ICONS[theme] || ''}<span class="theme-btn-label">${short}</span>`;
   } else {
-    iconEl.innerHTML = `<span class="theme-dot" style="background:${entry.color};box-shadow:0 0 0 1.5px ${entry.bg}"></span>`;
+    iconEl.innerHTML = `<span class="theme-dot" style="background:${entry.color};box-shadow:0 0 0 1.5px ${entry.bg}"></span><span class="theme-btn-label">${short}</span>`;
   }
   btn.title = entry.label;
   btn.setAttribute('aria-label', `Theme: ${entry.label}`);
