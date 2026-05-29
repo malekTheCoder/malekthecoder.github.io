@@ -9,8 +9,8 @@
   <!-- Prevent flash of wrong theme on load -->
   <script>
     (function(){
-      var DARK = new Set(['dark','vscode','one-dark','darcula','tokyo','dracula','nord','monokai','github-dark']);
-      var VALID = new Set(['light','dark','system','vscode','one-dark','darcula','tokyo','dracula','nord','monokai','github-dark']);
+      var DARK = new Set(['dark','vscode','darcula','tokyo','dracula','nord','github-dark']);
+      var VALID = new Set(['light','dark','system','vscode','darcula','tokyo','dracula','nord','github-dark']);
       var t = localStorage.getItem('theme') || 'system';
       if (!VALID.has(t)) { t = 'system'; localStorage.setItem('theme', t); }
       if (t !== 'system') document.documentElement.setAttribute('data-theme', t);
@@ -36,11 +36,6 @@
         <li><a href="#skills" class="nav-link">Skills</a></li>
         <li><a href="#education" class="nav-link">Education</a></li>
         <li><a href="#contact" class="nav-link">Contact</a></li>
-        <li>
-          <a href="assets/Malek_Swilam_Resume.pdf" class="btn btn-outline btn-sm" target="_blank" rel="noopener">
-            Resume
-          </a>
-        </li>
       </ul>
       <div class="theme-dropdown" id="themeDropdown">
         <button class="theme-dropdown-btn" id="themeDropdownBtn" aria-haspopup="listbox" aria-expanded="false">
@@ -72,8 +67,7 @@
           Incoming Computer Engineering student at <span class="accent">George Mason University's Honors College</span> with a passion for machine learning, robotics, and building software that makes an impact.
         </p>
         <div class="hero-actions">
-          <a href="#projects" class="btn btn-primary">View My Work</a>
-          <a href="#contact" class="btn btn-outline">Get In Touch</a>
+          <a href="#contact" class="btn btn-primary">Get In Touch</a>
         </div>
         <div class="hero-socials">
           <a href="https://github.com/malekTheCoder" target="_blank" rel="noopener" class="social-link" aria-label="GitHub">
@@ -95,16 +89,6 @@
         </div>
       </div>
 
-      <div class="hero-visual" data-animate="fade-in">
-        <div class="hero-mesh">
-          <div class="mesh-blob mesh-blob-1"></div>
-          <div class="mesh-blob mesh-blob-2"></div>
-          <div class="mesh-ring"></div>
-          <div class="mesh-ring-inner"></div>
-          <div class="mesh-core"></div>
-          <div class="mesh-dots"></div>
-        </div>
-      </div>
     </div>
 
     <a href="#about" class="scroll-indicator" aria-label="Scroll down">
@@ -115,14 +99,13 @@
   </section>
 
   <!-- ═══ ABOUT ═══ -->
-  <section class="section" id="about">
+  <section class="section section-alt" id="about">
     <div class="container">
       <div class="section-header" data-animate="fade-up">
-        <span class="section-label mono">01. about</span>
-        <h2 class="section-title">Who I Am</h2>
+        <h2 class="section-title">About</h2>
       </div>
-      <div class="about-grid">
-        <div class="about-text" data-animate="fade-up">
+      <div class="about-layout" data-animate="fade-up">
+        <div class="about-text">
           <p>
             I'm a driven engineer and problem-solver from Fairfax, Virginia. This fall I'll be joining
             <strong class="accent">George Mason University's Honors College</strong> as a Computer Engineering student,
@@ -138,22 +121,16 @@
             Outside of code I'm an <strong class="accent">Eagle Scout</strong> — a rank that taught me leadership,
             resilience, and that every hard project is worth finishing.
           </p>
-          <div class="about-links">
-            <a href="assets/Malek_Swilam_Resume.pdf" target="_blank" rel="noopener" class="btn btn-primary">
-              Download Resume
-            </a>
-          </div>
         </div>
       </div>
     </div>
   </section>
 
   <!-- ═══ EXPERIENCE ═══ -->
-  <section class="section section-alt" id="experience">
+  <section class="section" id="experience">
     <div class="container">
       <div class="section-header" data-animate="fade-up">
-        <span class="section-label mono">02. experience</span>
-        <h2 class="section-title">Where I've Worked</h2>
+        <h2 class="section-title">Experience</h2>
       </div>
       <div class="timeline">
 
@@ -257,7 +234,6 @@
   <section class="section" id="projects">
     <div class="container">
       <div class="section-header" data-animate="fade-up">
-        <span class="section-label mono">03. projects</span>
         <h2 class="section-title">Projects</h2>
       </div>
       <div class="projects-grid">
@@ -270,23 +246,25 @@
           </a>
           <div class="project-top">
             <div class="project-links">
-              <a href="https://github.com/OCRadar" target="_blank" rel="noopener" aria-label="View on GitHub" class="project-link-btn">
-                <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+              <a href="https://github.com/OCRadar" target="_blank" rel="noopener" class="project-link-btn">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
                   <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.6.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
                 </svg>
+                GitHub
               </a>
-              <a href="https://ocradar.com" target="_blank" rel="noopener" aria-label="Visit website" class="project-link-btn">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+              <a href="https://ocradar.com" target="_blank" rel="noopener" class="project-link-btn project-link-btn--primary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14">
                   <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/>
                   <polyline points="15 3 21 3 21 9"/>
                   <line x1="10" y1="14" x2="21" y2="3"/>
                 </svg>
+                Visit Site
               </a>
             </div>
           </div>
           <h3 class="project-name"><a href="https://ocradar.com" target="_blank" rel="noopener" class="project-name-link">OCRadar ↗</a></h3>
           <p class="project-desc">
-            AI-powered iOS &amp; Android app for early-stage oral cancer screening. Uses Azure AI Vision for real-time lesion classification from camera capture, achieving <strong class="accent">97% accuracy</strong>. Features an intuitive, polished UI for clinical and personal use.
+            AI-powered iOS &amp; Android app for early-stage oral cancer screening. Uses Azure AI Vision for real-time lesion classification from camera capture, achieving 97% accuracy. Features an intuitive, polished UI for clinical and personal use.
           </p>
           <div class="tag-group">
             <span class="tag">Flutter</span>
@@ -304,9 +282,6 @@
       <div class="projects-cta" data-animate="fade-up">
         <a href="https://github.com/malekTheCoder" target="_blank" rel="noopener" class="btn btn-outline">
           View All on GitHub
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" style="margin-left:6px">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/>
-          </svg>
         </a>
       </div>
     </div>
@@ -315,21 +290,23 @@
   <!-- ═══ SKILLS ═══ -->
   <section class="section section-alt" id="skills">
     <div class="floating-icons" aria-hidden="true">
-      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg"         class="float-icon" alt="" style="top:8%;    left:2%;    animation-delay:0s;   animation-duration:5.5s" />
-      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/flutter/flutter-original.svg"       class="float-icon" alt="" style="top:18%;   right:3%;   animation-delay:1.2s; animation-duration:6s"   />
-      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg"             class="float-icon" alt="" style="top:52%;   left:1.5%;  animation-delay:0.7s; animation-duration:7s"   />
-      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/pytorch/pytorch-original.svg"       class="float-icon" alt="" style="top:68%;   right:2%;   animation-delay:2s;   animation-duration:5s"   />
-      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/git/git-original.svg"               class="float-icon" alt="" style="bottom:8%; left:4%;    animation-delay:1.5s; animation-duration:6.5s" />
-      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/opencv/opencv-original.svg"         class="float-icon" alt="" style="top:35%;   right:1.5%; animation-delay:0.4s; animation-duration:8s"   />
-      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/dart/dart-original.svg"             class="float-icon" alt="" style="bottom:28%;right:3%;   animation-delay:1.8s; animation-duration:5.8s" />
-      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/azure/azure-original.svg"           class="float-icon" alt="" style="top:80%;   left:3%;    animation-delay:0.9s; animation-duration:6.2s" />
-      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg" class="float-icon" alt="" style="top:44%;   left:2%;    animation-delay:2.3s; animation-duration:5.2s" />
-      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linux/linux-original.svg"           class="float-icon" alt="" style="bottom:18%;right:1.5%; animation-delay:1.1s; animation-duration:6.8s" />
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg"             class="float-icon" alt="" style="top:8%;    left:2%;    animation-name:float-updown;    animation-delay:0s;   animation-duration:5.5s" />
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/flutter/flutter-original.svg"           class="float-icon" alt="" style="top:18%;   right:3%;   animation-name:float-sway;       animation-delay:1.2s; animation-duration:7s"   />
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg"                 class="float-icon" alt="" style="top:52%;   left:1.5%;  animation-name:float-spin;       animation-delay:0.7s; animation-duration:9s"   />
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/pytorch/pytorch-original.svg"           class="float-icon" alt="" style="top:68%;   right:2%;   animation-name:float-bounce;     animation-delay:2s;   animation-duration:5s"   />
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/git/git-original.svg"                   class="float-icon" alt="" style="bottom:8%; left:4%;    animation-name:float-sway;       animation-delay:1.5s; animation-duration:6.5s" />
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/opencv/opencv-original.svg"             class="float-icon" alt="" style="top:35%;   right:1.5%; animation-name:float-updown;    animation-delay:0.4s; animation-duration:8s"   />
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/dart/dart-original.svg"                 class="float-icon" alt="" style="bottom:28%;right:3%;   animation-name:float-bounce;     animation-delay:1.8s; animation-duration:5.8s" />
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/azure/azure-original.svg"               class="float-icon" alt="" style="top:80%;   left:3%;    animation-name:float-spin;       animation-delay:0.9s; animation-duration:10s"  />
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg"     class="float-icon" alt="" style="top:44%;   left:2%;    animation-name:float-sway;       animation-delay:2.3s; animation-duration:5.2s" />
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linux/linux-original.svg"               class="float-icon" alt="" style="bottom:18%;right:1.5%; animation-name:float-updown;    animation-delay:1.1s; animation-duration:6.8s" />
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/numpy/numpy-original.svg"               class="float-icon" alt="" style="top:62%;   left:5%;    animation-name:float-sway;       animation-delay:2.1s; animation-duration:7.4s" />
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/html5/html5-original.svg"               class="float-icon" alt="" style="bottom:38%;left:2.5%;  animation-name:float-spin;       animation-delay:1.4s; animation-duration:8.5s" />
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vscode/vscode-original.svg"             class="float-icon" alt="" style="top:27%;   left:4%;    animation-name:float-bounce;     animation-delay:0.6s; animation-duration:5.7s" />
     </div>
     <div class="container">
       <div class="section-header" data-animate="fade-up">
-        <span class="section-label mono">04. skills</span>
-        <h2 class="section-title">What I Work With</h2>
+        <h2 class="section-title">Skills</h2>
       </div>
       <div class="skills-cloud" data-animate="fade-up">
         <div class="skill-row">
@@ -407,16 +384,12 @@
   <section class="section" id="education">
     <div class="container">
       <div class="section-header" data-animate="fade-up">
-        <span class="section-label mono">05. education</span>
         <h2 class="section-title">Education</h2>
       </div>
       <div class="edu-grid">
 
         <div class="edu-card featured-edu" data-animate="fade-up">
           <div class="edu-header">
-            <div class="edu-icon edu-icon--logo">
-              <img src="https://www.gmu.edu/sites/default/files/Header_logo_George-Mason-University-2024_0.png" alt="George Mason University" class="edu-logo-img" onerror="this.onerror=null;this.src='assets/gmu-badge.svg'"/>
-            </div>
             <span class="edu-badge">Incoming Fall 2026</span>
           </div>
           <h3 class="edu-school"><a href="https://www.gmu.edu" target="_blank" rel="noopener" class="edu-school-link">George Mason University ↗</a></h3>
@@ -462,8 +435,7 @@
   <section class="section section-alt" id="contact">
     <div class="container">
       <div class="section-header" data-animate="fade-up">
-        <span class="section-label mono">06. contact</span>
-        <h2 class="section-title">Get In Touch</h2>
+        <h2 class="section-title">Contact</h2>
       </div>
       <div class="contact-inner" data-animate="fade-up">
         <p class="contact-text">
