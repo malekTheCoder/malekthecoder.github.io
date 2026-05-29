@@ -232,9 +232,14 @@ window.addEventListener('scroll', () => {
 
   /* Highlight the current section link */
   let current = '';
-  sections.forEach(sec => {
-    if (window.scrollY >= sec.offsetTop - 120) current = sec.getAttribute('id');
-  });
+  const atBottom = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 8;
+  if (atBottom) {
+    current = sections[sections.length - 1].getAttribute('id');
+  } else {
+    sections.forEach(sec => {
+      if (window.scrollY >= sec.offsetTop - 120) current = sec.getAttribute('id');
+    });
+  }
   navLinks.forEach(link => {
     link.classList.toggle('active', link.getAttribute('href') === `#${current}`);
   });
@@ -279,7 +284,7 @@ const observer = new IntersectionObserver(
       }
     });
   },
-  { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
+  { threshold: 0.08, rootMargin: '0px 0px 40px 0px' }
 );
 
 animatedEls.forEach(el => observer.observe(el));
@@ -297,3 +302,69 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     }
   });
 });
+
+
+/* ═══════════════════════════════════════════
+   FIRST-VISIT THEME HINT
+═══════════════════════════════════════════ */
+(function () {
+  if (localStorage.getItem('theme-hint-shown')) return;
+  localStorage.setItem('theme-hint-shown', '1');
+
+  const hint = document.getElementById('themeHint');
+  if (!hint) return;
+
+  /* Set up SVG path draw-in via stroke-dashoffset */
+  const paths = hint.querySelectorAll('svg path');
+  paths.forEach(p => {
+    const len = Math.ceil(p.getTotalLength());
+    p.style.strokeDasharray  = len;
+    p.style.strokeDashoffset = len;
+  });
+
+  /* Position hint centered under the dropdown button */
+  const dropBtn = document.getElementById('themeDropdownBtn');
+  if (dropBtn) {
+    const r = dropBtn.getBoundingClientRect();
+    hint.style.left      = Math.round(r.left + r.width / 2) + 'px';
+    hint.style.transform = 'translateX(-50%)';
+  }
+
+  let gone = false;
+  function dismiss() {
+    if (gone) return;
+    gone = true;
+    hint.classList.remove('is-visible');
+    window.removeEventListener('scroll', onScroll);
+    document.removeEventListener('click', dismiss, true);
+  }
+
+  /* Dismiss when the hero name rises close to the hint */
+  const heroName = document.querySelector('.hero-name');
+  function onScroll() {
+    if (!heroName) { if (window.scrollY > 80) dismiss(); return; }
+    const hintBottom = hint.getBoundingClientRect().bottom;
+    const nameTop    = heroName.getBoundingClientRect().top;
+    if (nameTop < hintBottom + 80) dismiss();
+  }
+
+  setTimeout(() => {
+    hint.classList.add('is-visible');
+
+    /* Draw in: wavy body first, then arrowhead */
+    if (paths[0]) {
+      paths[0].style.transition = 'stroke-dashoffset 1s cubic-bezier(0.4,0,0.2,1)';
+      paths[0].style.strokeDashoffset = '0';
+    }
+    if (paths[1]) {
+      paths[1].style.transition = 'stroke-dashoffset 0.3s ease 0.95s';
+      paths[1].style.strokeDashoffset = '0';
+    }
+
+    document.addEventListener('click', dismiss, true);
+    window.addEventListener('scroll', onScroll, { passive: true });
+  }, 900);
+
+  /* Auto-dismiss after 6s */
+  setTimeout(dismiss, 6000);
+})();
