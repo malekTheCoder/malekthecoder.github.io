@@ -177,7 +177,7 @@ applyTheme(activeTheme);
    TYPING ANIMATION
 ═══════════════════════════════════════════ */
 const phrases = [
-  'Computer Engineer @ GMU',
+  'Computer Engineering @ GMU',
   'Machine Learning Researcher',
   'Robotics Programmer',
   'Eagle Scout',

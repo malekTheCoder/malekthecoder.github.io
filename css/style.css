@@ -924,7 +924,7 @@ html.is-dark .scroll-indicator {
 ═══════════════════════════════════════════ */
 .projects-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: 1fr;
   gap: 1.5rem;
   margin-bottom: 2.5rem;
 }
@@ -977,6 +977,11 @@ html.is-dark .scroll-indicator {
   max-width: 240px;
   padding: 0;
   border-radius: 8px;
+}
+.project-banner-svg {
+  width: 290px;
+  height: 100px;
+  display: block;
 }
 
 .project-top {
