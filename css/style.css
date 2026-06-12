@@ -198,15 +198,26 @@ html {
 
 body {
   background-color: var(--bg);
-  background-image:
-    linear-gradient(color-mix(in srgb, var(--accent) 7%, transparent) 1px, transparent 1px),
-    linear-gradient(90deg, color-mix(in srgb, var(--accent) 7%, transparent) 1px, transparent 1px);
   background-size: 28px 28px;
   color: var(--text-0);
   font-family: 'Inter', system-ui, sans-serif;
   line-height: 1.7;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+}
+
+/* Graph paper background — IDE themes only; basic modes stay solid */
+:root[data-theme="one-dark"] body,
+:root[data-theme="vscode"] body,
+:root[data-theme="darcula"] body,
+:root[data-theme="tokyo"] body,
+:root[data-theme="dracula"] body,
+:root[data-theme="monokai"] body,
+:root[data-theme="nord"] body,
+:root[data-theme="github-dark"] body {
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--accent) 7%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--accent) 7%, transparent) 1px, transparent 1px);
 }
 
 a { color: inherit; text-decoration: none; }
@@ -779,7 +790,7 @@ html.is-dark .scroll-indicator {
    SECTIONS — SHARED
 ═══════════════════════════════════════════ */
 .section { padding: 5rem 0; }
-.section-alt { background: var(--bg-alt); }
+.section-alt { background: transparent; }
 .section-header { margin-bottom: 2.5rem; }
 
 .section-label { display: none; }
@@ -800,7 +811,7 @@ html.is-dark .scroll-indicator {
   display: block;
   max-width: 680px;
 }
-.about-text p { color: var(--text-1); margin-bottom: 1.1rem; line-height: 1.85; }
+.about-text p { color: var(--text-1); margin-bottom: 1.1rem; line-height: 1.85; font-size: 1.08rem; }
 .about-text strong { color: var(--text-0); }
 
 .about-facts {
@@ -854,7 +865,7 @@ html.is-dark .scroll-indicator {
   border: 2px solid var(--bg);
   box-shadow: 0 0 0 3px var(--accent-border);
 }
-.section-alt .timeline-dot { border-color: var(--bg-alt); }
+.section-alt .timeline-dot { border-color: var(--bg); }
 
 .timeline-card {
   background: var(--bg-card);
