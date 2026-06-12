@@ -1,4 +1,4 @@
 .DS_Store
 .env
-.claude/settings.local.json
+.claude/
 assets/Malek_Swilam_Resume.pdf
