@@ -3,9 +3,41 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Malek Swilam — Computer Engineering student at GMU, ML researcher, and robotics programmer." />
+
+  <!-- ═══ PRIMARY SEO ═══ -->
+  <title>Malek Swilam — Computer Engineering Student, ML &amp; Robotics</title>
+  <meta name="description" content="Malek Swilam is an incoming Computer Engineering student at George Mason University's Honors College specializing in machine learning, computer vision, and robotics. Eagle Scout, ML researcher, and FTC programming lead." />
+  <meta name="author" content="Malek Swilam" />
+  <meta name="keywords" content="Malek Swilam, Malek Swilam GMU, Malek Swilam George Mason, computer engineering, machine learning, computer vision, robotics, FTC, Eagle Scout, ML researcher" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+  <link rel="canonical" href="https://malekthecoder.github.io/" />
   <meta name="color-scheme" content="light dark" />
-  <title>Malek Swilam</title>
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#0d1117" media="(prefers-color-scheme: dark)" />
+
+  <!-- ═══ OPEN GRAPH (LinkedIn, iMessage, Facebook) ═══ -->
+  <meta property="og:type" content="profile" />
+  <meta property="og:title" content="Malek Swilam — Computer Engineering Student, ML &amp; Robotics" />
+  <meta property="og:description" content="Incoming Computer Engineering student at George Mason University's Honors College. Machine learning, computer vision, and robotics." />
+  <meta property="og:url" content="https://malekthecoder.github.io/" />
+  <meta property="og:site_name" content="Malek Swilam" />
+  <meta property="og:image" content="https://malekthecoder.github.io/assets/my_picture.jpeg" />
+  <meta property="og:image:alt" content="Malek Swilam" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="profile:first_name" content="Malek" />
+  <meta property="profile:last_name" content="Swilam" />
+
+  <!-- ═══ TWITTER / X CARD ═══ -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Malek Swilam — Computer Engineering Student, ML &amp; Robotics" />
+  <meta name="twitter:description" content="Incoming Computer Engineering student at George Mason University's Honors College. Machine learning, computer vision, and robotics." />
+  <meta name="twitter:image" content="https://malekthecoder.github.io/assets/my_picture.jpeg" />
+
+  <!-- ═══ FAVICON / ICONS ═══ -->
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png?v=2" />
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png?v=2" />
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png?v=2" />
+  <link rel="manifest" href="site.webmanifest" />
   <!-- Prevent flash of wrong theme on load -->
   <script>
     (function(){
@@ -21,14 +53,65 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css?v=38" />
+  <link rel="stylesheet" href="css/style.css?v=40" />
+
+  <!-- ═══ STRUCTURED DATA (Person schema — helps Google build a knowledge panel) ═══ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Malek Swilam",
+    "givenName": "Malek",
+    "familyName": "Swilam",
+    "url": "https://malekthecoder.github.io/",
+    "image": "https://malekthecoder.github.io/assets/my_picture.jpeg",
+    "jobTitle": "Computer Engineering Student & Machine Learning Researcher",
+    "email": "mailto:malekgswilam@gmail.com",
+    "nationality": "American",
+    "alumniOf": {
+      "@type": "CollegeOrUniversity",
+      "name": "George Mason University",
+      "url": "https://www.gmu.edu"
+    },
+    "knowsAbout": [
+      "Machine Learning",
+      "Computer Vision",
+      "Robotics",
+      "Embedded Systems",
+      "Control Systems",
+      "Deep Learning",
+      "Software Engineering"
+    ],
+    "sameAs": [
+      "https://github.com/malekTheCoder",
+      "https://linkedin.com/in/malek-swilam"
+    ]
+  }
+  </script>
+
+  <!-- WebSite schema for sitelinks search box eligibility -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Malek Swilam",
+    "url": "https://malekthecoder.github.io/",
+    "author": {
+      "@type": "Person",
+      "name": "Malek Swilam"
+    }
+  }
+  </script>
 </head>
 <body>
 
   <!-- ═══ NAVIGATION ═══ -->
   <nav class="nav" id="navbar">
     <div class="nav-container">
-      <a href="#home" class="nav-logo" id="navLogo">Malek Swilam</a>
+      <a href="#home" class="nav-logo" id="navLogo">
+        <img src="assets/my_picture.jpeg" alt="Malek Swilam" class="nav-logo-img" width="28" height="28" />
+        <span>Malek Swilam</span>
+      </a>
       <ul class="nav-links" id="navLinks">
         <li><a href="#about" class="nav-link">About</a></li>
         <li><a href="#experience" class="nav-link">Experience</a></li>
@@ -146,15 +229,19 @@
               </div>
             </div>
             <ul class="timeline-bullets">
-              <li>Supported quality engineering and software teams through device testing and lab operations for smart home IoT systems</li>
-              <li>Configured and integrated IoT devices (locks, thermostats, cameras, contact/tilt sensors, doorbells, Flex I/O) for automated testing workflows; soldered components for sensor hardware</li>
-              <li>Contributed to an AI project to assist lab technicians with diagnostics and workflow automation</li>
+              <li>Performed hands-on hardware lab work including <strong>soldering buck converters and embedded boards</strong>, bringing up low-level power circuits and embedded components in a professional lab environment</li>
+              <li>Assembled <strong>RJ45 Ethernet cables</strong> and provisioned <strong>Raspberry Pi</strong> units, building out the physical test automation infrastructure used across the hardware QA team</li>
+              <li>Configured and integrated home security devices — locks, contact/tilt sensors, lighting, cameras, thermostats, doorbells, and Flex I/O — into <strong>automated testing workflows</strong> across hardware QA cycles</li>
+              <li>Built an <strong>internal software tool</strong> for lab device management, streamlining device tracking and provisioning for the hardware QA team</li>
             </ul>
             <div class="tag-group">
+              <span class="tag">Hardware QA</span>
+              <span class="tag">Embedded Systems</span>
               <span class="tag">IoT</span>
+              <span class="tag">Soldering</span>
+              <span class="tag">Raspberry Pi</span>
               <span class="tag">AI Tooling</span>
-              <span class="tag">Hardware Integration</span>
-              <span class="tag">Testing</span>
+              <span class="tag">Python</span>
             </div>
           </div>
         </div>
@@ -173,8 +260,8 @@
               </div>
             </div>
             <ul class="timeline-bullets">
-              <li>Built a full ML pipeline (data preprocessing, training, evaluation) for short-term rainfall forecasting — implemented and compared LSTM, XGBoost, and ensemble models evaluated via MAE, RMSE, and R²</li>
-              <li>Improved rainfall prediction accuracy by 12–15% over individual models by combining LSTM and XGBoost into an ensemble, achieving 96%+ of predictions within ±1 mm of actual</li>
+              <li>Built a full <strong>ML pipeline</strong> (data preprocessing, training, evaluation) for short-term rainfall forecasting — implemented and compared <strong>LSTM, XGBoost, and ensemble models</strong> evaluated via MAE, RMSE, and R²</li>
+              <li>Improved rainfall prediction accuracy by <strong>12–15%</strong> over individual models by combining LSTM and XGBoost into an ensemble, achieving <strong>96%+</strong> of predictions within ±1 mm of actual</li>
             </ul>
             <div class="tag-group">
               <span class="tag">Python</span>
@@ -205,20 +292,24 @@
               </div>
             </div>
             <ul class="timeline-bullets">
-              <li>Led all robot software development in Java across two varsity seasons; mentored junior programmers in Java, Git, and FTC SDK over summer offseason</li>
-              <li>Implemented motion profiling and trajectory planning via Road Runner; sensor fusion of wheel odometry, IMU, and AprilTag vision with position and velocity PIDF controllers</li>
-              <li>Led team to State Championship both seasons and <strong class="accent">World Championship qualification</strong> (ranked 8th in division)</li>
+              <li>Led all <strong>robot software development</strong> in Java across two varsity seasons; mentored junior programmers in Java, Git, and FTC SDK over summer offseason</li>
+              <li>Built autonomous <strong>localization pipeline</strong> fusing <strong>wheel odometry</strong> with <strong>IMU</strong> for pose estimation; integrated <strong>AprilTag</strong> detection for field-relative pose correction; implemented motion profiling and trajectory planning via Road Runner</li>
+              <li>Developed a multi-mode <strong>vision targeting system</strong> using a Limelight camera backed by a <strong>finite state machine</strong>; implemented a PD controller on angular error for closed-loop real-time turret aiming</li>
+              <li>Designed multi-subsystem <strong>PIDF control</strong>: turret with adaptive static friction and velocity feedforward; flywheel velocity controller with <strong>piecewise-linear distance-regression model</strong> for range compensation</li>
+              <li>Implemented a <strong>3-DOF PD controller</strong> with field-to-body-frame error projection for pose stabilization during shooting; tuned all PID coefficients</li>
+              <li>Led team to State Championship both seasons and <strong class="accent">World Championship qualification</strong> (ranked <a href="https://ftc-events.firstinspires.org/2024/team/369" target="_blank" rel="noopener" class="accent" style="font-weight:700;text-decoration:underline;">8th seed captain</a> in division)</li>
             </ul>
             <div class="tag-group">
               <span class="tag">Java</span>
-              <span class="tag">Road Runner</span>
               <span class="tag">Computer Vision</span>
               <span class="tag">PIDF Control</span>
+              <span class="tag">Sensor Fusion</span>
               <span class="tag">Git</span>
+              <span class="tag">Road Runner</span>
             </div>
             <div class="timeline-ext-links">
               <a href="https://github.com/malekTheCoder/FTC-369-DECODE" target="_blank" rel="noopener" class="timeline-ext-link">
-                Season Code ↗
+                DECODE Season Code ↗
               </a>
             </div>
           </div>
@@ -273,7 +364,7 @@
       </div>
 
       <div class="projects-cta" data-animate="fade-up">
-        <a href="https://github.com/malekTheCoder" target="_blank" rel="noopener" class="btn btn-outline">
+        <a href="https://github.com/malekTheCoder" target="_blank" rel="noopener" class="btn btn-primary">
           View All on GitHub
         </a>
       </div>
