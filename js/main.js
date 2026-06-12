@@ -1,6 +1,4 @@
-/* ═══════════════════════════════════════════
-   THEME SYSTEM — Dropdown with IDE themes
-═══════════════════════════════════════════ */
+// Theme system
 
 const DARK_THEMES = new Set(['dark','vscode','darcula','tokyo','dracula','nord','github-dark']);
 
@@ -23,7 +21,7 @@ const MODE_ICONS = {
   system: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>`,
 };
 
-/* Migrate old theme values from the previous toggle system */
+// Migrate old stored theme values
 const VALID_THEMES = new Set(THEMES.filter(t => !t.divider).map(t => t.id));
 let _stored = localStorage.getItem('theme') || 'system';
 if (!VALID_THEMES.has(_stored)) _stored = 'system'; // e.g. old "dark" value
@@ -74,7 +72,7 @@ function updateDropdownBtn(theme) {
   btn.setAttribute('aria-label', `Theme: ${entry.label}`);
 }
 
-/* Build dropdown menu items */
+// Build dropdown menu items
 function buildThemeMenu() {
   const menu = document.getElementById('themeMenu');
   if (!menu) return;
@@ -130,7 +128,7 @@ function updateMenuActive() {
   });
 }
 
-/* Dropdown open / close */
+// Dropdown open / close
 const themeDropdownEl  = document.getElementById('themeDropdown');
 const themeDropdownBtn = document.getElementById('themeDropdownBtn');
 
@@ -153,7 +151,7 @@ if (themeDropdownBtn) {
   });
 }
 
-/* Close on outside click or Escape */
+// Close on outside click or Escape
 document.addEventListener('click', e => {
   if (themeDropdownEl && !themeDropdownEl.contains(e.target)) closeDropdown();
 });
@@ -161,21 +159,19 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape') closeDropdown();
 });
 
-/* Re-apply is-dark when OS dark mode changes (only matters in System mode) */
+// Re-apply is-dark when OS dark mode changes (System mode only)
 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
   if (activeTheme === 'system') {
     document.documentElement.classList.toggle('is-dark', isDark('system'));
   }
 });
 
-/* Init */
+// Init
 buildThemeMenu();
 applyTheme(activeTheme);
 
 
-/* ═══════════════════════════════════════════
-   TYPING ANIMATION
-═══════════════════════════════════════════ */
+// Typing animation
 const phrases = [
   'Computer Engineering @ GMU',
   'Machine Learning Researcher',
@@ -213,9 +209,7 @@ function typeLoop() {
 typeLoop();
 
 
-/* ═══════════════════════════════════════════
-   NAVBAR — SCROLL + ACTIVE LINK + NAME REVEAL
-═══════════════════════════════════════════ */
+// Navbar — scroll state, active link, name reveal
 const navbar   = document.getElementById('navbar');
 const navLinks = document.querySelectorAll('.nav-link');
 const sections = document.querySelectorAll('section[id]');
@@ -225,12 +219,12 @@ const heroName = document.querySelector('.hero-name');
 window.addEventListener('scroll', () => {
   navbar.classList.toggle('scrolled', window.scrollY > 20);
 
-  /* Reveal "Malek Swilam" in nav as the hero heading rises behind the navbar */
+  // Reveal name in nav as hero heading scrolls behind the navbar
   if (navLogo && heroName) {
     navLogo.classList.toggle('visible', heroName.getBoundingClientRect().bottom < 72);
   }
 
-  /* Highlight the current section link */
+  // Highlight the current section link
   let current = '';
   const atBottom = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 8;
   if (atBottom) {
@@ -246,9 +240,7 @@ window.addEventListener('scroll', () => {
 }, { passive: true });
 
 
-/* ═══════════════════════════════════════════
-   HAMBURGER MENU
-═══════════════════════════════════════════ */
+// Hamburger menu
 const hamburger  = document.getElementById('hamburger');
 const navLinksEl = document.getElementById('navLinks');
 
@@ -267,9 +259,7 @@ navLinksEl.querySelectorAll('a').forEach(link => {
 });
 
 
-/* ═══════════════════════════════════════════
-   SCROLL ANIMATIONS — INTERSECTION OBSERVER
-═══════════════════════════════════════════ */
+// Scroll animations (IntersectionObserver)
 const animatedEls = document.querySelectorAll('[data-animate]');
 
 const observer = new IntersectionObserver(
@@ -290,9 +280,7 @@ const observer = new IntersectionObserver(
 animatedEls.forEach(el => observer.observe(el));
 
 
-/* ═══════════════════════════════════════════
-   SMOOTH SCROLL FOR ANCHOR LINKS
-═══════════════════════════════════════════ */
+// Smooth scroll for anchor links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   anchor.addEventListener('click', e => {
     const target = document.querySelector(anchor.getAttribute('href'));
@@ -304,9 +292,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 });
 
 
-/* ═══════════════════════════════════════════
-   FIRST-VISIT THEME HINT
-═══════════════════════════════════════════ */
+// First-visit theme hint
 (function () {
   if (localStorage.getItem('theme-hint-shown')) return;
   localStorage.setItem('theme-hint-shown', '1');
@@ -314,7 +300,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   const hint = document.getElementById('themeHint');
   if (!hint) return;
 
-  /* Set up SVG path draw-in via stroke-dashoffset */
+  // Set up SVG path draw-in via stroke-dashoffset
   const paths = hint.querySelectorAll('svg path');
   paths.forEach(p => {
     const len = Math.ceil(p.getTotalLength());
@@ -322,7 +308,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     p.style.strokeDashoffset = len;
   });
 
-  /* Position hint centered under the dropdown button */
+  // Position hint centered under the dropdown button
   const dropBtn = document.getElementById('themeDropdownBtn');
   if (dropBtn) {
     const r = dropBtn.getBoundingClientRect();
@@ -339,7 +325,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     document.removeEventListener('click', dismiss, true);
   }
 
-  /* Dismiss when the hero name rises close to the hint */
+  // Dismiss when the hero name scrolls close to the hint
   const heroName = document.querySelector('.hero-name');
   function onScroll() {
     if (!heroName) { if (window.scrollY > 80) dismiss(); return; }
@@ -351,7 +337,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   setTimeout(() => {
     hint.classList.add('is-visible');
 
-    /* Draw in: wavy body first, then arrowhead */
+    // Draw in: wavy body first, then arrowhead
     if (paths[0]) {
       paths[0].style.transition = 'stroke-dashoffset 1s cubic-bezier(0.4,0,0.2,1)';
       paths[0].style.strokeDashoffset = '0';
@@ -365,6 +351,6 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     window.addEventListener('scroll', onScroll, { passive: true });
   }, 900);
 
-  /* Auto-dismiss after 6s */
+  // Auto-dismiss after 6s
   setTimeout(dismiss, 6000);
 })();
