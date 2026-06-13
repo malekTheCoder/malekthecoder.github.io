@@ -51,25 +51,36 @@
       if (dark) document.documentElement.classList.add('is-dark');
     })();
   </script>
+  <!-- Profile associations — helps Google link this page to social identities -->
+  <link rel="me" href="https://github.com/malekTheCoder" />
+  <link rel="me" href="https://www.linkedin.com/in/malek-swilam" />
+  <link rel="me" href="mailto:malekgswilam@gmail.com" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css?v=45" />
 
-  <!-- ═══ STRUCTURED DATA (Person schema — helps Google build a knowledge panel) ═══ -->
+  <!-- ═══ STRUCTURED DATA ═══ -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "Person",
+    "@id": "https://malekswilam.dev/#malek-swilam",
     "name": "Malek Swilam",
     "givenName": "Malek",
     "familyName": "Swilam",
     "url": "https://malekswilam.dev/",
-    "image": "https://malekswilam.dev/assets/my_picture.jpeg",
+    "image": {
+      "@type": "ImageObject",
+      "url": "https://malekswilam.dev/assets/my_picture.jpeg",
+      "description": "Malek Swilam"
+    },
+    "description": "Malek Swilam is an incoming Computer Engineering student at George Mason University's Honors College specializing in machine learning, computer vision, and robotics. Eagle Scout, ML researcher, and FTC programming lead.",
     "jobTitle": "Computer Engineering Student & Machine Learning Researcher",
-    "email": "mailto:malekgswilam@gmail.com",
+    "email": "malekgswilam@gmail.com",
     "nationality": "American",
-    "alumniOf": {
+    "affiliation": {
       "@type": "CollegeOrUniversity",
       "name": "George Mason University",
       "url": "https://www.gmu.edu"
@@ -85,21 +96,22 @@
     ],
     "sameAs": [
       "https://github.com/malekTheCoder",
-      "https://linkedin.com/in/malek-swilam"
+      "https://www.linkedin.com/in/malek-swilam",
+      "https://malekswilam.dev/"
     ]
   }
   </script>
 
-  <!-- WebSite schema for sitelinks search box eligibility -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "WebSite",
+    "@id": "https://malekswilam.dev/#website",
     "name": "Malek Swilam",
     "url": "https://malekswilam.dev/",
+    "description": "Personal portfolio and professional profile of Malek Swilam — Computer Engineering student, ML researcher, and robotics engineer.",
     "author": {
-      "@type": "Person",
-      "name": "Malek Swilam"
+      "@id": "https://malekswilam.dev/#malek-swilam"
     }
   }
   </script>
@@ -191,16 +203,16 @@
       <div class="about-layout" data-animate="fade-up">
         <div class="about-text">
           <p>
-            I'm from Fairfax, Virginia, starting at
+            Malek Swilam is from Fairfax, Virginia, starting at
             George Mason University's Honors College for Computer Engineering this fall.
           </p>
           <p>
-            I did ML research at GMU,
+            He did ML research at GMU,
             co-built OCRadar, an AI app that screens for oral cancer with 98% accuracy,
             and led software development for an FTC robotics team.
           </p>
           <p>
-            Outside of code, I'm an Eagle Scout, a rank that takes years of leadership, community service, and sustained effort to earn.
+            Outside of code, he's an Eagle Scout — a rank that takes years of leadership, community service, and sustained effort to earn.
           </p>
         </div>
       </div>
