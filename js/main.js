@@ -308,11 +308,15 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     p.style.strokeDashoffset = len;
   });
 
-  // Position hint centered under the dropdown button
+  // Position hint centered under the dropdown button, clamped to the viewport
   const dropBtn = document.getElementById('themeDropdownBtn');
   if (dropBtn) {
-    const r = dropBtn.getBoundingClientRect();
-    hint.style.left      = Math.round(r.left + r.width / 2) + 'px';
+    const r      = dropBtn.getBoundingClientRect();
+    const pad    = 12;
+    const halfW  = hint.offsetWidth / 2;
+    let   center = r.left + r.width / 2;
+    center = Math.min(Math.max(center, halfW + pad), window.innerWidth - halfW - pad);
+    hint.style.left      = Math.round(center) + 'px';
     hint.style.transform = 'translateX(-50%)';
   }
 
