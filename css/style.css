@@ -1034,6 +1034,19 @@ html.is-dark .scroll-indicator {
   background: var(--accent);
   border-color: var(--accent);
 }
+.project-coming-soon {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.45rem 1rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  font-family: var(--font-mono);
+  color: var(--text-2);
+  background: var(--bg-alt);
+  border: 1px dashed var(--border);
+  white-space: nowrap;
+  opacity: 0.75;
+}
 
 .project-name {
   font-size: 1.1rem; font-weight: 600; color: var(--text-0); margin-bottom: 0.6rem;
