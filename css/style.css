@@ -1041,11 +1041,11 @@ html.is-dark .scroll-indicator {
   border-radius: var(--radius-sm);
   font-size: 0.82rem;
   font-family: var(--font-mono);
-  color: var(--text-2);
+  font-style: italic;
+  color: var(--text-1);
   background: var(--bg-alt);
   border: 1px dashed var(--border);
   white-space: nowrap;
-  opacity: 0.75;
 }
 
 .project-name {
