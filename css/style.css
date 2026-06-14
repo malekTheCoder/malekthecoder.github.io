@@ -1232,7 +1232,7 @@ html.is-dark .float-icon {
 .edu-school { font-size: 1rem; font-weight: 600; color: var(--text-0); margin-bottom: 0.25rem; }
 .edu-school-link { color: inherit; text-decoration: none; transition: color var(--transition); }
 .edu-school-link:hover { color: var(--accent); }
-.edu-honors { font-size: 0.8rem; color: var(--accent); font-weight: 500; margin-bottom: 0.25rem; }
+.edu-honors { font-size: 0.8rem; color: var(--text-muted); font-weight: 500; margin-bottom: 0.25rem; }
 .edu-degree { font-size: 0.875rem; color: var(--text-1); margin-bottom: 0.2rem; }
 .edu-detail { font-size: 0.8rem; color: var(--text-1); margin-bottom: 0.2rem; font-family: 'JetBrains Mono', monospace; }
 .edu-date { font-size: 0.78rem; color: var(--text-1); font-family: 'JetBrains Mono', monospace; margin-bottom: 0.75rem; }
