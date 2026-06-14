@@ -433,7 +433,7 @@
           </div>
           <h3 class="project-name">Voice-Controlled Robotics Agent</h3>
           <p class="project-desc">
-            A fully voice-controlled robotic manipulation agent running in MuJoCo physics simulation. Speak a <strong>natural-language</strong> command (like <em>"stack the red cube on the blue cylinder"</em>) and a Franka Panda arm plans and executes it in real time. An LLM performs <strong>task decomposition</strong> into ordered sub-goals via <strong>chain-of-thought reasoning</strong>, detects mid-task failures, and triggers <strong>agentic replanning</strong> to recover. Voice commands are transcribed via a <strong>speech-to-text API</strong> and responses spoken back via a <strong>text-to-speech API</strong>. A second independent LLM call verifies the live scene against the goal state before reporting success. Robot motion is solved via <strong>inverse kinematics</strong> using the <strong>mink</strong> library. Live simulation streams through a <strong>FastAPI</strong> WebSocket portal.
+            A voice-controlled robotic manipulation agent built in MuJoCo physics simulation. Natural-language commands are interpreted and executed by a Franka Panda arm in real time. An LLM breaks down commands into ordered sub-goals using chain-of-thought reasoning, detects mid-task failures, and replans autonomously to recover. Audio is handled end-to-end with speech-to-text and text-to-speech APIs. A separate LLM call verifies the live scene against the goal state before reporting success. Robot motion is solved with inverse kinematics via the mink library, and the simulation streams live through a FastAPI WebSocket portal.
           </p>
           <div class="tag-group">
             <span class="tag">Python</span>
