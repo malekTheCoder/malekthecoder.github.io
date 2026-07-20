@@ -191,6 +191,23 @@
 }
 
 
+/* Atom One Dark */
+:root[data-theme="atom-one-dark"] {
+  --bg:            #282c34;
+  --bg-alt:        #21252b;
+  --bg-card:       #21252b;
+  --text-0:        #abb2bf;
+  --text-1:        #636d83;
+  --text-2:        #4b5263;
+  --accent:        #c678dd;
+  --accent-dim:    rgba(198, 120, 221, 0.1);
+  --accent-border: rgba(198, 120, 221, 0.25);
+  --border:        #3e4451;
+  --border-hover:  rgba(198, 120, 221, 0.4);
+  --shadow:        0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+
 /* Xcode Default */
 :root[data-theme="xcode"] {
   --bg:            #ffffff;
@@ -237,6 +254,7 @@ body {
 :root[data-theme="monokai"] body,
 :root[data-theme="nord"] body,
 :root[data-theme="github-dark"] body,
+:root[data-theme="atom-one-dark"] body,
 :root[data-theme="xcode"] body {
   background-image:
     linear-gradient(color-mix(in srgb, var(--accent) 7%, transparent) 1px, transparent 1px),
@@ -597,8 +615,9 @@ html.is-dark .theme-menu {
 :root[data-theme="dracula"]     .hero-name,
 :root[data-theme="nord"]        .hero-name,
 :root[data-theme="monokai"]     .hero-name,
-:root[data-theme="github-dark"] .hero-name,
-:root[data-theme="xcode"]       .hero-name {
+:root[data-theme="github-dark"]   .hero-name,
+:root[data-theme="atom-one-dark"] .hero-name,
+:root[data-theme="xcode"]         .hero-name {
   font-family: 'JetBrains Mono', 'Fira Code', monospace;
   font-weight: 600;
   letter-spacing: -0.02em;
@@ -612,8 +631,9 @@ html.is-dark .theme-menu {
 :root[data-theme="dracula"]     .hero-subtitle,
 :root[data-theme="nord"]        .hero-subtitle,
 :root[data-theme="monokai"]     .hero-subtitle,
-:root[data-theme="github-dark"] .hero-subtitle,
-:root[data-theme="xcode"]       .hero-subtitle {
+:root[data-theme="github-dark"]   .hero-subtitle,
+:root[data-theme="atom-one-dark"] .hero-subtitle,
+:root[data-theme="xcode"]         .hero-subtitle {
   font-family: 'JetBrains Mono', 'Fira Code', monospace;
   font-size: clamp(0.85rem, 2vw, 1.1rem);
   font-weight: 400;
