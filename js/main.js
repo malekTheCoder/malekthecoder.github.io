@@ -13,6 +13,7 @@ const THEMES = [
   { id: 'dracula',     label: 'Dracula',             color: '#bd93f9', bg: '#282a36', type: 'ide' },
   { id: 'nord',        label: 'Nord',                color: '#88c0d0', bg: '#2e3440', type: 'ide' },
   { id: 'github-dark', label: 'GitHub Dark',         color: '#58a6ff', bg: '#0d1117', type: 'ide' },
+  { id: 'xcode',       label: 'Xcode',               color: '#9b2393', bg: '#ffffff', type: 'ide' },
 ];
 
 const MODE_ICONS = {
@@ -50,7 +51,7 @@ function applyTheme(theme) {
 const THEME_SHORT = {
   'light': 'Light', 'dark': 'Dark', 'system': 'System',
   'vscode': 'VS Code', 'darcula': 'Darcula', 'tokyo': 'Tokyo',
-  'dracula': 'Dracula', 'nord': 'Nord', 'github-dark': 'GitHub',
+  'dracula': 'Dracula', 'nord': 'Nord', 'github-dark': 'GitHub', 'xcode': 'Xcode',
 };
 
 function updateDropdownBtn(theme) {

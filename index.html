@@ -43,7 +43,7 @@
   <script>
     (function(){
       var DARK = new Set(['dark','vscode','darcula','tokyo','dracula','nord','github-dark']);
-      var VALID = new Set(['light','dark','system','vscode','darcula','tokyo','dracula','nord','github-dark']);
+      var VALID = new Set(['light','dark','system','vscode','darcula','tokyo','dracula','nord','github-dark','xcode']);
       var t = localStorage.getItem('theme') || 'system';
       if (!VALID.has(t)) { t = 'system'; localStorage.setItem('theme', t); }
       if (t !== 'system') document.documentElement.setAttribute('data-theme', t);

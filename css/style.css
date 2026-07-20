@@ -191,6 +191,23 @@
 }
 
 
+/* Xcode Default */
+:root[data-theme="xcode"] {
+  --bg:            #ffffff;
+  --bg-alt:        #f2f2f7;
+  --bg-card:       #ffffff;
+  --text-0:        #000000;
+  --text-1:        #5d6c79;
+  --text-2:        #8e8e93;
+  --accent:        #9b2393;
+  --accent-dim:    rgba(155, 35, 147, 0.07);
+  --accent-border: rgba(155, 35, 147, 0.2);
+  --border:        #d1d1d6;
+  --border-hover:  rgba(155, 35, 147, 0.35);
+  --shadow:        0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+
 /* Reset */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -219,7 +236,8 @@ body {
 :root[data-theme="dracula"] body,
 :root[data-theme="monokai"] body,
 :root[data-theme="nord"] body,
-:root[data-theme="github-dark"] body {
+:root[data-theme="github-dark"] body,
+:root[data-theme="xcode"] body {
   background-image:
     linear-gradient(color-mix(in srgb, var(--accent) 7%, transparent) 1px, transparent 1px),
     linear-gradient(90deg, color-mix(in srgb, var(--accent) 7%, transparent) 1px, transparent 1px);
@@ -579,7 +597,8 @@ html.is-dark .theme-menu {
 :root[data-theme="dracula"]     .hero-name,
 :root[data-theme="nord"]        .hero-name,
 :root[data-theme="monokai"]     .hero-name,
-:root[data-theme="github-dark"] .hero-name {
+:root[data-theme="github-dark"] .hero-name,
+:root[data-theme="xcode"]       .hero-name {
   font-family: 'JetBrains Mono', 'Fira Code', monospace;
   font-weight: 600;
   letter-spacing: -0.02em;
@@ -593,7 +612,8 @@ html.is-dark .theme-menu {
 :root[data-theme="dracula"]     .hero-subtitle,
 :root[data-theme="nord"]        .hero-subtitle,
 :root[data-theme="monokai"]     .hero-subtitle,
-:root[data-theme="github-dark"] .hero-subtitle {
+:root[data-theme="github-dark"] .hero-subtitle,
+:root[data-theme="xcode"]       .hero-subtitle {
   font-family: 'JetBrains Mono', 'Fira Code', monospace;
   font-size: clamp(0.85rem, 2vw, 1.1rem);
   font-weight: 400;
