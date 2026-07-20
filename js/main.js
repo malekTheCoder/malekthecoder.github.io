@@ -1,6 +1,6 @@
 // Theme system
 
-const DARK_THEMES = new Set(['dark','vscode','darcula','tokyo','dracula','nord','github-dark']);
+const DARK_THEMES = new Set(['dark','vscode','darcula','tokyo','dracula','nord','github-dark','atom-one-dark']);
 
 const THEMES = [
   { id: 'light',       label: 'Light',             color: null,      type: 'mode' },
@@ -12,8 +12,9 @@ const THEMES = [
   { id: 'tokyo',       label: 'Tokyo Night',         color: '#7aa2f7', bg: '#1a1b26', type: 'ide' },
   { id: 'dracula',     label: 'Dracula',             color: '#bd93f9', bg: '#282a36', type: 'ide' },
   { id: 'nord',        label: 'Nord',                color: '#88c0d0', bg: '#2e3440', type: 'ide' },
-  { id: 'github-dark', label: 'GitHub Dark',         color: '#58a6ff', bg: '#0d1117', type: 'ide' },
-  { id: 'xcode',       label: 'Xcode',               color: '#9b2393', bg: '#ffffff', type: 'ide' },
+  { id: 'github-dark',   label: 'GitHub Dark',        color: '#58a6ff', bg: '#0d1117', type: 'ide' },
+  { id: 'atom-one-dark', label: 'Atom One Dark',      color: '#c678dd', bg: '#282c34', type: 'ide' },
+  { id: 'xcode',         label: 'Xcode',              color: '#9b2393', bg: '#ffffff', type: 'ide' },
 ];
 
 const MODE_ICONS = {
@@ -51,7 +52,7 @@ function applyTheme(theme) {
 const THEME_SHORT = {
   'light': 'Light', 'dark': 'Dark', 'system': 'System',
   'vscode': 'VS Code', 'darcula': 'Darcula', 'tokyo': 'Tokyo',
-  'dracula': 'Dracula', 'nord': 'Nord', 'github-dark': 'GitHub', 'xcode': 'Xcode',
+  'dracula': 'Dracula', 'nord': 'Nord', 'github-dark': 'GitHub', 'atom-one-dark': 'Atom', 'xcode': 'Xcode',
 };
 
 function updateDropdownBtn(theme) {
