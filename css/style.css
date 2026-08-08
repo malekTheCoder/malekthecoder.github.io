@@ -1084,18 +1084,14 @@ html.is-dark .scroll-indicator {
   background: var(--accent);
   border-color: var(--accent);
 }
-/* Status pill with a pulsing dot — marks a project as actively worked on */
+/* Pulsing dot + label — marks a project as actively worked on */
 .project-status {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 0.4rem 0.85rem 0.4rem 0.7rem;
-  border-radius: 999px;
   font-size: 0.76rem;
   font-weight: 500;
   color: var(--status-live);
-  background: color-mix(in srgb, var(--status-live) 10%, transparent);
-  border: 1px solid color-mix(in srgb, var(--status-live) 28%, transparent);
   white-space: nowrap;
 }
 
