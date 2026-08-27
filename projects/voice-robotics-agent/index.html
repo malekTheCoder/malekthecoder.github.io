@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Voice-Controlled Robotics Agent, Malek Swilam</title>
+  <meta name="description" content="A voice-controlled robotic manipulation agent in MuJoCo. An LLM decomposes natural-language commands into sub-goals, detects mid-task failures, and replans autonomously while a Franka Panda arm executes in real time." />
+  <meta name="author" content="Malek Swilam" />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <link rel="canonical" href="https://malekswilam.dev/projects/voice-robotics-agent/" />
+  <meta name="color-scheme" content="light dark" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Voice-Controlled Robotics Agent" />
+  <meta property="og:description" content="Natural-language commands interpreted and executed by a Franka Panda arm in MuJoCo, with LLM task decomposition, failure detection, and autonomous replanning." />
+  <meta property="og:url" content="https://malekswilam.dev/projects/voice-robotics-agent/" />
+  <meta property="og:image" content="https://malekswilam.dev/assets/projects/robotics/demo-thumb.jpg" />
+  <meta property="og:site_name" content="Malek Swilam" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Voice-Controlled Robotics Agent" />
+  <meta name="twitter:description" content="Natural-language commands interpreted and executed by a Franka Panda arm in MuJoCo." />
+  <meta name="twitter:image" content="https://malekswilam.dev/assets/projects/robotics/demo-thumb.jpg" />
+
+  <link rel="icon" href="/favicon.ico?v=3" sizes="any" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png?v=3" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png?v=3" />
+
+  <!-- Prevent flash of wrong theme on load -->
+  <script>
+    (function(){
+      var DARK = new Set(['dark','vscode','darcula','tokyo','dracula','nord','github-dark','atom-one-dark']);
+      var VALID = new Set(['light','dark','system','vscode','darcula','tokyo','dracula','nord','github-dark','atom-one-dark','xcode']);
+      var t = localStorage.getItem('theme') || 'system';
+      if (!VALID.has(t)) { t = 'system'; localStorage.setItem('theme', t); }
+      if (t !== 'system') document.documentElement.setAttribute('data-theme', t);
+      var dark = DARK.has(t) || (t === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      if (dark) document.documentElement.classList.add('is-dark');
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css?v=60" />
+  <link rel="stylesheet" href="/css/project.css?v=36" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareSourceCode",
+    "name": "Voice-Controlled Robotics Agent",
+    "description": "A voice-controlled robotic manipulation agent in MuJoCo physics simulation. An LLM decomposes natural-language commands into ordered sub-goals, detects mid-task failures, and replans autonomously while a Franka Panda arm executes in real time.",
+    "url": "https://malekswilam.dev/projects/voice-robotics-agent/",
+    "codeRepository": "https://github.com/malekTheCoder/Voice-Controlled-Robotic-Agent",
+    "programmingLanguage": "Python",
+    "license": "https://opensource.org/licenses/MIT",
+    "author": { "@type": "Person", "name": "Malek Swilam", "url": "https://malekswilam.dev/" }
+  }
+  </script>
+</head>
+<body>
+
+  <!-- ═══ NAVIGATION ═══ -->
+  <nav class="nav" id="navbar">
+    <div class="nav-container">
+      <div class="nav-left">
+        <a href="/" class="nav-logo visible" id="navLogo">
+          <img src="/assets/my_picture.jpeg" alt="Malek Swilam" class="nav-logo-img" width="28" height="28" />
+          <span>Malek Swilam</span>
+        </a>
+        <span class="nav-context" id="navContext" aria-hidden="true">
+          <span class="nav-context-sep">/</span>
+          <a href="#" class="nav-context-project" id="navProject" title="Back to top"></a>
+          <span class="nav-context-section" id="navSection"></span>
+        </span>
+      </div>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="/#about" class="nav-link">About</a></li>
+        <li><a href="/#experience" class="nav-link">Experience</a></li>
+        <li><a href="/#project-voice-robotics-agent" class="nav-link active">Projects</a></li>
+        <li><a href="/#skills" class="nav-link">Skills</a></li>
+        <li><a href="/#education" class="nav-link">Education</a></li>
+        <li><a href="/#contact" class="nav-link">Contact</a></li>
+      </ul>
+      <div class="theme-dropdown" id="themeDropdown">
+        <button class="theme-dropdown-btn" id="themeDropdownBtn" aria-haspopup="listbox" aria-expanded="false">
+          <span id="themeDropdownIcon"></span>
+          <svg class="theme-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="11" height="11"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="theme-menu" id="themeMenu" role="listbox" aria-label="Select theme"></div>
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Toggle navigation menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <main class="proj-page">
+    <div class="proj-wrap">
+
+      <a href="/#project-voice-robotics-agent" class="proj-crumb">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        All Projects
+      </a>
+
+      <!-- ═══ HERO ═══ -->
+      <header class="proj-hero">
+        <h1 class="proj-title">Voice-Controlled Robotics Agent</h1>
+        <p class="proj-tagline">
+          Speak a command in plain English and a Franka Panda arm plans and carries it out in a live physics
+          simulation, decomposing the request into steps, noticing when a step goes wrong, and replanning on its own.
+        </p>
+        <div class="proj-actions">
+          <a href="https://youtu.be/Gv5HVdmMMBE" target="_blank" rel="noopener" class="btn btn-primary">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            Watch Demo
+          </a>
+          <a href="https://github.com/malekTheCoder/Voice-Controlled-Robotic-Agent" target="_blank" rel="noopener" class="btn btn-outline">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.6.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+            Source
+          </a>
+        </div>
+        <div class="tag-group">
+          <span class="tag">Python</span>
+          <span class="tag">MuJoCo</span>
+          <span class="tag">Voice Control</span>
+          <span class="tag">Agentic AI</span>
+          <span class="tag">Embodied AI</span>
+          <span class="tag">Claude API</span>
+          <span class="tag">LLM Planning</span>
+          <span class="tag">FastAPI</span>
+        </div>
+      </header>
+
+      <div class="proj-body">
+
+        <!-- ═══ TOC ═══ -->
+        <aside class="proj-toc-col">
+          <nav class="proj-toc">
+            <div class="proj-toc-title">On this page</div>
+            <ul>
+              <li><a href="#overview">Overview</a></li>
+              <li><a href="#demo">Demo</a></li>
+              <li><a href="#how">How it works</a></li>
+              <li><a href="#planning">Planning and decomposition</a></li>
+              <li><a href="#recovery">When a plan fails</a></li>
+              <li><a href="#motion">Motion and collisions</a></li>
+              <li><a href="#portal">The web portal</a></li>
+              <li><a href="#stack">Tech stack</a></li>
+            </ul>
+          </nav>
+        </aside>
+
+        <div class="proj-content">
+
+          <!-- ═══ OVERVIEW ═══ -->
+          <section class="proj-section" id="overview" data-animate="fade-up">
+            <h2 class="proj-h2">Overview</h2>
+            <p>
+            You speak a natural language command like <em>"stack the red cube on top of the blue cylinder"</em> or
+            <em>"arrange all objects in a line"</em>, and a Franka Panda arm carries it out in real time in the MuJoCo
+            physics simulation.
+          </p>
+            <p>
+            The system transcribes what I said, the model breaks the request into an ordered list of sub-goals,
+            and the arm executes them one at a time. Gravity, collisions and contact forces are live, so things
+            genuinely go wrong: a grip slips, a stack topples, an object ends up somewhere unintended. When that
+            happens the agent notices, works out why, and plans a new route to the same goal.
+          </p>
+            <p>
+            Before it reports success, a second independent model call compares the live scene against the intended
+            arrangement and rejects false completions.
+          </p>
+            <p>Commands it handles:</p>
+            <ul class="proj-list">
+              <li><strong>Pick and place</strong> to a named location or exact coordinates</li>
+              <li><strong>Stacking</strong>, including order-specific requests like <em>"reverse the stack"</em></li>
+              <li><strong>Spatial arrangements</strong>, lines, rows, corners, grids</li>
+              <li><strong>Relative instructions</strong> like <em>"move it to the other side"</em> or <em>"put it next to the cylinder"</em></li>
+              <li><strong>Multi-object tasks</strong> like <em>"move all cylinders to the left"</em></li>
+            </ul>
+          </section>
+
+          <!-- ═══ DEMO ═══ -->
+          <section class="proj-section" id="demo" data-animate="fade-up">
+            <h2 class="proj-h2">Demo</h2>
+            <p>Two minutes of the agent taking spoken commands and working through them end to end.</p>
+            <figure class="proj-figure">
+              <div class="proj-video" data-video-id="Gv5HVdmMMBE" data-video-title="Voice-Controlled Robotics Agent demo" role="button" tabindex="0" aria-label="Play demo video">
+                <img src="/assets/projects/robotics/demo-thumb.jpg" alt="Voice-Controlled Robotics Agent demo video" width="1280" height="720" loading="lazy" />
+                <div class="proj-video-play">
+                  <span><svg viewBox="0 0 24 24" width="26" height="26"><path d="M8 5v14l11-7z"/></svg></span>
+                </div>
+              </div>
+            </figure>
+          </section>
+
+          <!-- ═══ HOW IT WORKS ═══ -->
+          <section class="proj-section" id="how" data-animate="fade-up">
+            <h2 class="proj-h2">How it works</h2>
+            <p>
+            Five stages with a loop in the middle: the agent cycles between acting and checking until the scene
+            matches the request, or it decides the task can't be done.
+          </p>
+
+            <figure class="proj-figure">
+              <div class="proj-diagram">
+                <svg viewBox="0 0 900 212" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Pipeline: Listen, Plan, Act, Check, Speak. After each action the scene is checked; a passed sub-goal advances to the next, a failure loops back to Act with a new plan.">
+                  <defs>
+                    <marker id="r-arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                      <path d="M0 0 L10 5 L0 10 z" fill="var(--accent)"/>
+                    </marker>
+                    <filter id="r-shadow" x="-30%" y="-30%" width="160%" height="160%">
+                      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000000" flood-opacity="0.16"/>
+                    </filter>
+                    <filter id="r-glow" x="-80%" y="-80%" width="260%" height="260%">
+                      <feGaussianBlur stdDeviation="8"/>
+                    </filter>
+                    <pattern id="r-dots" width="16" height="16" patternUnits="userSpaceOnUse">
+                      <circle cx="1" cy="1" r="1" fill="var(--border)"/>
+                    </pattern>
+                  </defs>
+                  <rect x="0" y="0" width="100%" height="100%" fill="url(#r-dots)" opacity="0.6"/>
+
+                  <!-- annotations -->
+                  <text x="89" y="50" font-family="'JetBrains Mono', monospace" font-size="10" fill="var(--text-2)" text-anchor="middle">your voice</text>
+                  <text x="809" y="50" font-family="'JetBrains Mono', monospace" font-size="10" fill="var(--text-2)" text-anchor="middle">spoken reply</text>
+
+                  <!-- Listen -->
+                  <rect x="14" y="64" width="150" height="76" rx="12" filter="url(#r-shadow)" fill="var(--bg-alt)" stroke="var(--accent)" stroke-width="1.4" stroke-opacity="0.45"/>
+                  <rect x="39" y="88" width="10" height="16" rx="5" fill="var(--accent)" fill-opacity="0.12" stroke="var(--accent)" stroke-width="1.6"/>
+                  <path d="M35 100 a9 9 0 0 0 18 0" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round"/>
+                  <path d="M44 109 V114 M39 114 H49" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round"/>
+                  <text x="70" y="98" font-family="'IBM Plex Sans', sans-serif" font-size="14.5" font-weight="600" fill="var(--text-0)">Listen</text>
+                  <text x="70" y="117" font-family="'JetBrains Mono', monospace" font-size="10" fill="var(--text-1)">speech → text</text>
+
+                  <!-- Plan -->
+                  <rect x="194" y="64" width="150" height="76" rx="12" filter="url(#r-shadow)" fill="var(--bg-alt)" stroke="var(--accent)" stroke-width="1.4" stroke-opacity="0.45"/>
+                  <circle cx="217" cy="93" r="1.8" fill="var(--accent)"/>
+                  <path d="M223 93 H233" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round"/>
+                  <circle cx="217" cy="102" r="1.8" fill="var(--accent)"/>
+                  <path d="M223 102 H233" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round"/>
+                  <circle cx="217" cy="111" r="1.8" fill="var(--accent)"/>
+                  <path d="M223 111 H233" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round"/>
+                  <text x="250" y="98" font-family="'IBM Plex Sans', sans-serif" font-size="14.5" font-weight="600" fill="var(--text-0)">Plan</text>
+                  <text x="250" y="117" font-family="'JetBrains Mono', monospace" font-size="10" fill="var(--text-1)">LLM decompose</text>
+
+                  <!-- Act (hub) -->
+                  <rect x="368" y="58" width="162" height="88" rx="18" fill="var(--accent)" fill-opacity="0.32" filter="url(#r-glow)"/>
+                  <rect x="374" y="64" width="150" height="76" rx="12" filter="url(#r-shadow)" fill="var(--accent)" fill-opacity="0.13" stroke="var(--accent)" stroke-width="2"/>
+                  <path d="M395 112 H413" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round"/>
+                  <path d="M404 112 V99 L413 92 L420 95" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                  <circle cx="404" cy="99" r="2.2" fill="var(--accent)"/>
+                  <circle cx="413" cy="92" r="2.2" fill="var(--accent)"/>
+                  <text x="430" y="98" font-family="'IBM Plex Sans', sans-serif" font-size="14.5" font-weight="600" fill="var(--text-0)">Act</text>
+                  <text x="430" y="117" font-family="'JetBrains Mono', monospace" font-size="10" fill="var(--text-1)">IK → physics</text>
+
+                  <!-- Check (hub) -->
+                  <rect x="548" y="58" width="162" height="88" rx="18" fill="var(--accent)" fill-opacity="0.32" filter="url(#r-glow)"/>
+                  <rect x="554" y="64" width="150" height="76" rx="12" filter="url(#r-shadow)" fill="var(--accent)" fill-opacity="0.13" stroke="var(--accent)" stroke-width="2"/>
+                  <circle cx="581" cy="99" r="8.5" fill="var(--accent)" fill-opacity="0.12" stroke="var(--accent)" stroke-width="1.6"/>
+                  <path d="M587 105 L593 111" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round"/>
+                  <path d="M577 99 l3 3 l5.5 -5.5" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                  <text x="610" y="98" font-family="'IBM Plex Sans', sans-serif" font-size="14.5" font-weight="600" fill="var(--text-0)">Check</text>
+                  <text x="610" y="117" font-family="'JetBrains Mono', monospace" font-size="10" fill="var(--text-1)">verify vs goal</text>
+
+                  <!-- Speak -->
+                  <rect x="734" y="64" width="150" height="76" rx="12" filter="url(#r-shadow)" fill="var(--bg-alt)" stroke="var(--accent)" stroke-width="1.4" stroke-opacity="0.45"/>
+                  <path d="M755 98 L759 98 L765 92 L765 112 L759 106 L755 106 Z" fill="var(--accent)" fill-opacity="0.12" stroke="var(--accent)" stroke-width="1.6" stroke-linejoin="round"/>
+                  <path d="M770 96 Q773.5 102 770 108" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round"/>
+                  <path d="M775 93 Q779.5 102 775 111" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" opacity="0.5"/>
+                  <text x="790" y="98" font-family="'IBM Plex Sans', sans-serif" font-size="14.5" font-weight="600" fill="var(--text-0)">Speak</text>
+                  <text x="790" y="117" font-family="'JetBrains Mono', monospace" font-size="10" fill="var(--text-1)">text → speech</text>
+
+                  <!-- forward edges -->
+                  <g stroke="var(--accent)" stroke-width="1.6" fill="none" stroke-opacity="0.55" marker-end="url(#r-arw)">
+                    <path d="M164 102 H186"/>
+                    <path d="M344 102 H366"/>
+                    <path d="M524 102 H546"/>
+                    <path d="M704 102 H726"/>
+                  </g>
+
+                  <!-- next sub-goal loop (top) -->
+                  <path d="M629 56 C629 22 449 22 449 56" fill="none" stroke="var(--accent)" stroke-width="1.4" stroke-opacity="0.5" marker-end="url(#r-arw)"/>
+                  <rect x="465" y="34" width="148" height="20" rx="10" fill="var(--bg-card)" stroke="var(--border)" stroke-width="1"/>
+                  <text x="539" y="47.5" font-family="'JetBrains Mono', monospace" font-size="9.5" fill="var(--text-2)" text-anchor="middle">passed → next sub-goal</text>
+
+                  <!-- replan loop (bottom) -->
+                  <path d="M629 148 C629 186 449 186 449 148" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-opacity="0.75" stroke-dasharray="5 4" marker-end="url(#r-arw)"/>
+                  <rect x="486" y="188" width="106" height="21" rx="10.5" fill="var(--bg-card)" stroke="var(--accent)" stroke-opacity="0.4" stroke-width="1"/>
+                  <text x="539" y="202.5" font-family="'JetBrains Mono', monospace" font-size="10.5" fill="var(--accent)" text-anchor="middle" opacity="0.9">failed → replan</text>
+                </svg>
+              </div>
+              <figcaption class="proj-caption">The agent loops between Act and Check until the scene matches the goal</figcaption>
+            </figure>
+
+            <p>
+            Two model roles do the thinking. One handles task decomposition and goal verification; the other decides
+            the next action at every step.
+          </p>
+            <p>
+            Voice runs through Deepgram (Nova-3 for speech-to-text, Aura-2 for text-to-speech) when a key is present,
+            and falls back to faster-whisper and pyttsx3 locally when it isn't.
+          </p>
+          </section>
+
+          <!-- ═══ PLANNING ═══ -->
+          <section class="proj-section" id="planning" data-animate="fade-up">
+            <h2 class="proj-h2">Planning and decomposition</h2>
+            <p>
+            The agent's behaviour at every step comes down to one system prompt: the actions it can call, the
+            coordinate system and reachable workspace, pre-computed coordinates for lines, rows and grids so it
+            never guesses, and a strict JSON output format so every step is parseable.
+          </p>
+            <ul class="proj-list">
+              <li><strong>Available actions</strong>, pick, place, move, open/close gripper, wait, report success/partial/failure, and ask the user a clarifying question</li>
+              <li><strong>Coordinate system</strong>, axes and reachable workspace bounds, so the agent never targets a position the arm physically cannot reach</li>
+              <li><strong>Table placement rules</strong>, how to interpret <em>"left side"</em>, <em>"the other side"</em>, <em>"across the table"</em></li>
+              <li><strong>Pre-computed arrangements</strong>, exact safe coordinates for lines, rows, corners, and grids, so the agent looks them up instead of guessing</li>
+              <li><strong>Anti-oscillation</strong>, stops the agent picking up an object it just placed and putting it back</li>
+              <li><strong>Strict output format</strong>, every response must be <code>{"reasoning", "action", "parameters"}</code> so each step is machine-parseable</li>
+            </ul>
+
+<p>
+            Anti-oscillation is in there too. The agent would place a cube correctly, look at the scene again, decide
+            the cube was in the wrong spot, and move it back. This used to be one of the most common failures.
+          </p>
+          </section>
+
+          <!-- ═══ RECOVERY ═══ -->
+          <section class="proj-section" id="recovery" data-animate="fade-up">
+            <h2 class="proj-h2">When a plan fails</h2>
+            <p>
+            In a real physics simulation, plans fail. The gripper closes a fraction too early, a stack tips, an object
+            slides out of reach.
+          </p>
+            <ul class="proj-list">
+              <li><strong>Classifier</strong>, decides <em>what kind</em> of failure just happened. A dropped object and an unreachable target need different responses.</li>
+              <li><strong>Handler</strong>, produces a new plan given that classification, or concludes the task genuinely cannot be completed.</li>
+              <li><strong>Verifier</strong>, the independent check that runs before any success is reported.</li>
+            </ul>
+            <p>
+            The verifier is the piece I'd defend hardest. It's a separate LLM call that gets the serialized scene and
+            the original request, and it rejects completions that don't match.
+          </p>
+            <p>
+            When it fails, the agent replans from the current scene rather than retrying the same action.
+          </p>
+            <p>
+            It can also report a task as impossible instead of looping until something times out.
+          </p>
+          </section>
+
+          <!-- ═══ MOTION ═══ -->
+          <section class="proj-section" id="motion" data-animate="fade-up">
+            <h2 class="proj-h2">Motion and collisions</h2>
+            <p>
+            Arm motion uses inverse kinematics via mink, backed by the daqp solver: given a target pose for the
+            gripper, IK works out the joint angles that put it there.
+          </p>
+            <p>
+            <strong>Problem:</strong> the solver is position only and not collision aware. It will happily drive
+            the arm straight through a stack of cubes to reach a target.
+          </p>
+
+            <p>
+            <strong>Solution:</strong> every motion routes through a transit arc instead of driving straight at
+            the target.
+          </p>
+            <div class="proj-code">
+<pre>lift straight up  &rarr;  travel at a safe height  &rarr;  descend onto target</pre>
+            </div>
+            <p>
+            A <code>TRANSIT_Z_MAX</code> ceiling and an <code>APPROACH_CAP_Z</code> floor stop the wrist tilting
+            on tall stacks, and a descent orientation lock stops cylinders spinning as they are placed. It is a
+            constraint rather than a real fix: the arc is conservative and sometimes takes a longer path than it
+            needs to.
+          </p>
+          </section>
+
+          <!-- ═══ PORTAL ═══ -->
+          <section class="proj-section" id="portal" data-animate="fade-up">
+            <h2 class="proj-h2">The web portal</h2>
+            <p>
+            A FastAPI portal streams the simulation as MJPEG at about 30 fps, with a WebSocket carrying state.
+          </p>
+            <p>
+            You can add and remove objects mid-session, pick a layout, watch the reasoning trace, and export session
+            logs.
+          </p>
+          </section>
+
+          <!-- ═══ TECH STACK ═══ -->
+          <section class="proj-section" id="stack" data-animate="fade-up">
+            <h2 class="proj-h2">Tech stack</h2>
+            <div class="proj-stack">
+              <div class="stack-row">
+                <span class="stack-label">Language</span>
+                <div class="stack-items"><span class="stack-item">Python</span></div>
+              </div>
+              <div class="stack-row">
+                <span class="stack-label">Reasoning</span>
+                <div class="stack-items"><span class="stack-item">Claude Sonnet (Anthropic API)</span></div>
+              </div>
+              <div class="stack-row">
+                <span class="stack-label">Simulation</span>
+                <div class="stack-items"><span class="stack-item">MuJoCo</span><span class="stack-item">Franka Panda</span><span class="stack-item">MuJoCo Menagerie</span></div>
+              </div>
+              <div class="stack-row">
+                <span class="stack-label">Motion</span>
+                <div class="stack-items"><span class="stack-item">mink</span><span class="stack-item">qpsolvers / daqp</span><span class="stack-item">NumPy</span></div>
+              </div>
+              <div class="stack-row">
+                <span class="stack-label">Voice</span>
+                <div class="stack-items"><span class="stack-item">Deepgram Nova-3</span><span class="stack-item">Deepgram Aura-2</span><span class="stack-item">faster-whisper</span><span class="stack-item">pyttsx3</span><span class="stack-item">PyAudio</span></div>
+              </div>
+              <div class="stack-row">
+                <span class="stack-label">Web</span>
+                <div class="stack-items"><span class="stack-item">FastAPI</span><span class="stack-item">Uvicorn</span><span class="stack-item">WebSocket</span><span class="stack-item">MJPEG</span></div>
+              </div>
+            </div>
+          </section>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ PAGE NAV ═══ -->
+    <div class="proj-wrap">
+      <nav class="proj-nav">
+        <a href="/#project-voice-robotics-agent" class="btn btn-outline">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14" style="margin-right:6px"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          All Projects
+        </a>
+        <a href="/projects/ocradar/" class="proj-nav-next">
+          <span class="proj-nav-next-label">Also built</span>
+          <span class="proj-nav-next-name">OCRadar →</span>
+        </a>
+      </nav>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p class="footer-sub mono">&copy; 2026 Malek Swilam &nbsp;·&nbsp; malekgswilam@gmail.com</p>
+    </div>
+  </footer>
+
+  <div class="lightbox" id="lightbox"><img alt="" /></div>
+
+  <script src="/js/theme.js?v=1"></script>
+  <script src="/js/project.js?v=16"></script>
+</body>
+</html>

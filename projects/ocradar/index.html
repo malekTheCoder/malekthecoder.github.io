@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>OCRadar, Malek Swilam</title>
+  <meta name="description" content="A cross-platform app for early oral cancer screening. CNN-based computer vision classifies mouth images against thousands of labeled samples, achieving 98% accuracy." />
+  <meta name="author" content="Malek Swilam" />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <link rel="canonical" href="https://malekswilam.dev/projects/ocradar/" />
+  <meta name="color-scheme" content="light dark" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="OCRadar, Oral Cancer Screening App" />
+  <meta property="og:description" content="Cross-platform iOS and Android app for early oral cancer screening using CNN-based computer vision." />
+  <meta property="og:url" content="https://malekswilam.dev/projects/ocradar/" />
+  <meta property="og:image" content="https://malekswilam.dev/assets/my_picture.jpeg" />
+  <meta property="og:site_name" content="Malek Swilam" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="OCRadar, Oral Cancer Screening App" />
+  <meta name="twitter:description" content="Cross-platform app for early oral cancer screening using CNN-based computer vision." />
+
+  <link rel="icon" href="/favicon.ico?v=3" sizes="any" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png?v=3" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png?v=3" />
+
+  <!-- Prevent flash of wrong theme on load -->
+  <script>
+    (function(){
+      var DARK = new Set(['dark','vscode','darcula','tokyo','dracula','nord','github-dark','atom-one-dark']);
+      var VALID = new Set(['light','dark','system','vscode','darcula','tokyo','dracula','nord','github-dark','atom-one-dark','xcode']);
+      var t = localStorage.getItem('theme') || 'system';
+      if (!VALID.has(t)) { t = 'system'; localStorage.setItem('theme', t); }
+      if (t !== 'system') document.documentElement.setAttribute('data-theme', t);
+      var dark = DARK.has(t) || (t === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      if (dark) document.documentElement.classList.add('is-dark');
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css?v=60" />
+  <link rel="stylesheet" href="/css/project.css?v=36" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "OCRadar",
+    "description": "A cross-platform iOS and Android application for early oral cancer screening using CNN-based computer vision.",
+    "url": "https://malekswilam.dev/projects/ocradar/",
+    "applicationCategory": "HealthApplication",
+    "operatingSystem": "iOS, Android",
+    "author": { "@type": "Person", "name": "Malek Swilam", "url": "https://malekswilam.dev/" }
+  }
+  </script>
+</head>
+<body>
+
+  <!-- ═══ NAVIGATION ═══ -->
+  <nav class="nav" id="navbar">
+    <div class="nav-container">
+      <div class="nav-left">
+        <a href="/" class="nav-logo visible" id="navLogo">
+          <img src="/assets/my_picture.jpeg" alt="Malek Swilam" class="nav-logo-img" width="28" height="28" />
+          <span>Malek Swilam</span>
+        </a>
+        <span class="nav-context" id="navContext" aria-hidden="true">
+          <span class="nav-context-sep">/</span>
+          <a href="#" class="nav-context-project" id="navProject" title="Back to top"></a>
+          <span class="nav-context-section" id="navSection"></span>
+        </span>
+      </div>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="/#about" class="nav-link">About</a></li>
+        <li><a href="/#experience" class="nav-link">Experience</a></li>
+        <li><a href="/#project-ocradar" class="nav-link active">Projects</a></li>
+        <li><a href="/#skills" class="nav-link">Skills</a></li>
+        <li><a href="/#education" class="nav-link">Education</a></li>
+        <li><a href="/#contact" class="nav-link">Contact</a></li>
+      </ul>
+      <div class="theme-dropdown" id="themeDropdown">
+        <button class="theme-dropdown-btn" id="themeDropdownBtn" aria-haspopup="listbox" aria-expanded="false">
+          <span id="themeDropdownIcon"></span>
+          <svg class="theme-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="11" height="11"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="theme-menu" id="themeMenu" role="listbox" aria-label="Select theme"></div>
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Toggle navigation menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <main class="proj-page">
+    <div class="proj-wrap">
+
+      <a href="/#project-ocradar" class="proj-crumb">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        All Projects
+      </a>
+
+      <!-- ═══ HERO ═══ -->
+      <header class="proj-hero">
+        <div class="proj-hero-top">
+          <img src="https://github.com/OCRadar.png?size=160" alt="OCRadar logo" class="proj-icon" width="68" height="68" onerror="this.style.display='none'" />
+          <div>
+            <h1 class="proj-title">OCRadar</h1>
+            <p class="proj-byline">
+              <span class="proj-byline-tag">Team project</span>
+              <span class="proj-byline-role">Android &amp; Windows lead &middot; ML &amp; computer vision</span>
+            </p>
+          </div>
+        </div>
+        <p class="proj-tagline">
+          A cross-platform app that screens for early signs of oral cancer from a phone camera. Point it at the
+          inside of your mouth and a computer vision model classifies what it sees against thousands of labeled
+          clinical samples.
+        </p>
+        <div class="proj-actions">
+          <a href="https://ocradar.com" target="_blank" rel="noopener" class="btn btn-primary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            Visit Site
+          </a>
+          <a href="https://github.com/OCRadar" target="_blank" rel="noopener" class="btn btn-outline">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.6.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+            Source
+          </a>
+        </div>
+        <div class="tag-group">
+          <span class="tag">Python</span>
+          <span class="tag">Computer Vision</span>
+          <span class="tag">Azure AI Vision</span>
+          <span class="tag">Swift</span>
+          <span class="tag">SwiftUI</span>
+          <span class="tag">Flutter</span>
+          <span class="tag">Dart</span>
+        </div>
+      </header>
+
+      <div class="proj-body">
+
+        <!-- ═══ TOC ═══ -->
+        <aside class="proj-toc-col">
+          <nav class="proj-toc">
+            <div class="proj-toc-title">On this page</div>
+            <ul>
+              <li><a href="#overview">Overview</a></li>
+              <li><a href="#demo">Demo</a></li>
+              <li><a href="#how">How it works</a></li>
+              <li><a href="#limits">Limits</a></li>
+              <li><a href="#press">Recognition</a></li>
+              <li><a href="#stack">Tech stack</a></li>
+            </ul>
+          </nav>
+        </aside>
+
+        <div class="proj-content">
+
+          <!-- ═══ OVERVIEW ═══ -->
+          <section class="proj-section" id="overview" data-animate="fade-up">
+            <h2 class="proj-h2">Overview</h2>
+            <p>
+            Oral cancer is highly treatable when caught early, but the early signs are easy to miss if you
+            aren't a clinician, and most people aren't screened between dental visits.
+          </p>
+            <p>
+            OCRadar is a cross-platform app that classifies photos of the mouth with a CNN and turns the result
+            into plain-language guidance, reaching 98% accuracy. The models run through Azure AI Vision.
+          </p>
+            <p>
+            iOS is native Swift and SwiftUI; Android is Flutter.
+          </p>
+          </section>
+
+          <!-- ═══ DEMO ═══ -->
+          <section class="proj-section" id="demo" data-animate="fade-up">
+            <h2 class="proj-h2">Demo</h2>
+            <p>The capture-to-result flow on a phone, start to finish.</p>
+            <figure class="proj-figure">
+              <div class="device device--phone">
+                <div class="device-screen">
+                <video
+                  src="/assets/projects/ocradar/demo.mp4"
+                  poster="/assets/projects/ocradar/demo-poster.jpg"
+                  muted loop playsinline controls preload="metadata"
+                  aria-label="OCRadar demo: capturing an image and receiving a classification result"></video>
+                </div>
+              </div>
+            </figure>
+          </section>
+
+          <!-- ═══ HOW IT WORKS ═══ -->
+          <section class="proj-section" id="how" data-animate="fade-up">
+            <h2 class="proj-h2">How it works</h2>
+            <p>
+            You photograph the inside of your mouth, a CNN classifies the image, and the app tells you in plain
+            language whether to see a professional.
+          </p>
+          </section>
+
+          <!-- ═══ LIMITS ═══ -->
+          <section class="proj-section" id="limits" data-animate="fade-up">
+            <h2 class="proj-h2">Limits</h2>
+            <p>
+            OCRadar is a screening aid, not a diagnostic tool. A concerning result means one thing: get it looked
+            at by a professional.
+          </p>
+            <p>
+            An accuracy figure says nothing about which errors a model makes or on whom. Holding up across every
+            phone camera, lighting condition and skin tone is a separate question from a test-set score.
+          </p>
+          </section>
+
+          <!-- ═══ PRESS ═══ -->
+          <section class="proj-section" id="press" data-animate="fade-up">
+            <h2 class="proj-h2">Recognition</h2>
+            <p>OCRadar was covered by:</p>
+
+            <div class="press-list">
+              <a href="https://wtop.com/fairfax-county/2025/04/fairfax-co-students-crafting-app-to-find-signs-of-oral-cancer/" target="_blank" rel="noopener">WTOP News</a>
+              <span class="sep">·</span>
+              <a href="https://www.fcps.edu/news/sixteen-years-old-and-solving-world-problems-oakton-high-school-juniors-tackle-oral-cancer" target="_blank" rel="noopener">FCPS News</a>
+              <span class="sep">·</span>
+              <a href="http://dc.koreatimes.com/article/20250409/1559471" target="_blank" rel="noopener">Korea Times</a>
+              <span class="sep">·</span>
+              <a href="https://www.secretchina.com/news/gb/2025/04/10/1080410.html" target="_blank" rel="noopener">Vision Times China</a>
+              <span class="sep">·</span>
+              <a href="https://www.instagram.com/techroastshow/reel/DJh3DyTxumJ/" target="_blank" rel="noopener">Tech Roast Show</a>
+            </div>
+
+            <!-- Track is duplicated so the marquee can loop seamlessly; the copy
+                 is hidden from screen readers and the animation pauses on hover -->
+            <div class="press-marquee" aria-label="Press coverage">
+              <div class="press-scroller">
+                <div class="press-track">
+                  <a href="https://wtop.com/fairfax-county/2025/04/fairfax-co-students-crafting-app-to-find-signs-of-oral-cancer/" target="_blank" rel="noopener" class="press-logo" title="WTOP News, Fairfax Co. students crafting app to find signs of oral cancer">
+                    <span class="press-mark" role="img" aria-label="WTOP News"><img src="/assets/projects/ocradar/press/wtop.png" alt="" width="560" height="200" loading="lazy" /></span>
+                  </a>
+                  <a href="https://www.fcps.edu/news/sixteen-years-old-and-solving-world-problems-oakton-high-school-juniors-tackle-oral-cancer" target="_blank" rel="noopener" class="press-logo" title="FCPS News, Sixteen years old and solving world problems">
+                    <span class="press-mark" role="img" aria-label="Fairfax County Public Schools News"><img src="/assets/projects/ocradar/press/fcps.png" alt="" width="217" height="200" loading="lazy" /></span>
+                  </a>
+                  <a href="http://dc.koreatimes.com/article/20250409/1559471" target="_blank" rel="noopener" class="press-logo" title="Korea Times">
+                    <span class="press-mark" role="img" aria-label="Korea Times"><img src="/assets/projects/ocradar/press/koreatimes.png" alt="" width="1964" height="200" loading="lazy" /></span>
+                  </a>
+                  <a href="https://www.secretchina.com/news/gb/2025/04/10/1080410.html" target="_blank" rel="noopener" class="press-logo" title="Vision Times China">
+                    <span class="press-mark" role="img" aria-label="Vision Times China"><img src="/assets/projects/ocradar/press/visiontimeschina.svg" alt="" width="377" height="38" loading="lazy" /></span>
+                  </a>
+                  <a href="https://www.instagram.com/techroastshow/reel/DJh3DyTxumJ/" target="_blank" rel="noopener" class="press-logo" title="Tech Roast Show">
+                    <span class="press-mark" role="img" aria-label="Tech Roast Show"><img src="/assets/projects/ocradar/press/techroastshow.png" alt="" width="173" height="200" loading="lazy" /></span>
+                  </a>
+                </div>
+                <div class="press-track" aria-hidden="true">
+                  <a href="https://wtop.com/fairfax-county/2025/04/fairfax-co-students-crafting-app-to-find-signs-of-oral-cancer/" target="_blank" rel="noopener" tabindex="-1" class="press-logo">
+                    <span class="press-mark" aria-hidden="true"><img src="/assets/projects/ocradar/press/wtop.png" alt="" width="560" height="200" loading="lazy" /></span>
+                  </a>
+                  <a href="https://www.fcps.edu/news/sixteen-years-old-and-solving-world-problems-oakton-high-school-juniors-tackle-oral-cancer" target="_blank" rel="noopener" tabindex="-1" class="press-logo">
+                    <span class="press-mark" aria-hidden="true"><img src="/assets/projects/ocradar/press/fcps.png" alt="" width="217" height="200" loading="lazy" /></span>
+                  </a>
+                  <a href="http://dc.koreatimes.com/article/20250409/1559471" target="_blank" rel="noopener" tabindex="-1" class="press-logo">
+                    <span class="press-mark" aria-hidden="true"><img src="/assets/projects/ocradar/press/koreatimes.png" alt="" width="1964" height="200" loading="lazy" /></span>
+                  </a>
+                  <a href="https://www.secretchina.com/news/gb/2025/04/10/1080410.html" target="_blank" rel="noopener" tabindex="-1" class="press-logo">
+                    <span class="press-mark" aria-hidden="true"><img src="/assets/projects/ocradar/press/visiontimeschina.svg" alt="" width="377" height="38" loading="lazy" /></span>
+                  </a>
+                  <a href="https://www.instagram.com/techroastshow/reel/DJh3DyTxumJ/" target="_blank" rel="noopener" tabindex="-1" class="press-logo">
+                    <span class="press-mark" aria-hidden="true"><img src="/assets/projects/ocradar/press/techroastshow.png" alt="" width="173" height="200" loading="lazy" /></span>
+                  </a>
+              </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ═══ TECH STACK ═══ -->
+          <section class="proj-section" id="stack" data-animate="fade-up">
+            <h2 class="proj-h2">Tech stack</h2>
+            <div class="proj-stack">
+              <div class="stack-row">
+                <span class="stack-label">Vision</span>
+                <div class="stack-items"><span class="stack-item">Azure AI Vision</span><span class="stack-item">Python</span></div>
+              </div>
+              <div class="stack-row">
+                <span class="stack-label">iOS</span>
+                <div class="stack-items"><span class="stack-item">Swift</span><span class="stack-item">SwiftUI</span></div>
+              </div>
+              <div class="stack-row">
+                <span class="stack-label">Android</span>
+                <div class="stack-items"><span class="stack-item">Flutter</span><span class="stack-item">Dart</span></div>
+              </div>
+            </div>
+          </section>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ PAGE NAV ═══ -->
+    <div class="proj-wrap">
+      <nav class="proj-nav">
+        <a href="/#project-ocradar" class="btn btn-outline">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14" style="margin-right:6px"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          All Projects
+        </a>
+        <a href="/projects/calendar-agent/" class="proj-nav-next">
+          <span class="proj-nav-next-label">Also built</span>
+          <span class="proj-nav-next-name">Desk Calendar Agent →</span>
+        </a>
+      </nav>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p class="footer-sub mono">&copy; 2026 Malek Swilam &nbsp;·&nbsp; malekgswilam@gmail.com</p>
+    </div>
+  </footer>
+
+  <div class="lightbox" id="lightbox"><img alt="" /></div>
+
+  <script src="/js/theme.js?v=1"></script>
+  <script src="/js/project.js?v=16"></script>
+</body>
+</html>

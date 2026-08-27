@@ -1,0 +1,1216 @@
+/* Project page styles — loaded only under /projects/, on top of style.css */
+
+/* Reading progress lives on the nav's bottom edge rather than as its own bar —
+   one less floating element, and it reads as part of the chrome */
+.nav { --read: 0%; }
+
+.nav::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  height: 2px;
+  width: var(--read);
+  background: var(--accent);
+  transition: width 0.12s linear;
+  pointer-events: none;
+}
+
+
+/* Nav breadcrumb — project name and current section, revealed on scroll */
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
+}
+
+/* Hidden entirely rather than transparent — the breadcrumb and the site links
+   are mutually exclusive, so each must actually free its space for the other. */
+.nav-context {
+  display: none;
+  align-items: baseline;
+  gap: 0.5rem;
+  min-width: 0;
+  pointer-events: none;
+}
+.nav-context.visible {
+  display: inline-flex;
+  animation: nav-context-in 0.28s ease both;
+}
+
+@keyframes nav-context-in {
+  from { opacity: 0; transform: translateX(-6px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.nav-context-sep { color: var(--text-2); font-size: 0.95rem; }
+
+/* Project logo in the breadcrumb, when the project has one */
+.nav-context-icon {
+  width: 17px;
+  height: 17px;
+  border-radius: 4px;
+  object-fit: cover;
+  flex-shrink: 0;
+  align-self: center;
+}
+
+/* Clickable: takes you back to the top of the project you're reading */
+.nav-context-project {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-0);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 42vw;
+  pointer-events: auto;
+  transition: color var(--transition);
+}
+.nav-context-project:hover { color: var(--accent); }
+
+.nav-context-section {
+  font-size: 0.78rem;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--accent);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.nav-context-section:not(:empty)::before { content: '· '; color: var(--text-2); }
+
+/* Too tight to show both — the project name is the one that matters */
+@media (max-width: 900px) {
+  .nav-context-section { display: none; }
+}
+
+/* Once you're reading a project, the homepage section links step aside and the
+   breadcrumb takes the space. They're one scroll-to-top away again. The `reading`
+   class is only applied above 769px (see project.js) — below that the links are
+   the hamburger's slide-out menu and must stay under its own control. */
+/* display:none, not visibility:hidden — visibility left a ~500px hole in the
+   middle of the navbar, since the links kept their layout space */
+.nav.reading .nav-links { display: none; }
+
+
+/* Page shell */
+.proj-page { padding-top: var(--nav-h); }
+
+.proj-wrap {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* Narrower measure for prose — long lines are the fastest way to lose a reader */
+.proj-prose { max-width: 720px; }
+
+
+/* Breadcrumb */
+.proj-crumb {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 2rem 0 1.5rem;
+  font-size: 0.8rem;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text-1);
+  transition: color var(--transition);
+}
+.proj-crumb:hover { color: var(--accent); }
+.proj-crumb svg { transition: transform var(--transition); }
+.proj-crumb:hover svg { transform: translateX(-3px); }
+
+
+/* Hero */
+.proj-hero { padding-bottom: 2.5rem; border-bottom: 1px solid var(--border); }
+
+.proj-hero-top {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.proj-icon {
+  width: 68px;
+  height: 68px;
+  border-radius: 14px;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+}
+
+.proj-title {
+  font-size: clamp(1.9rem, 4.5vw, 2.9rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  color: var(--text-0);
+  margin-bottom: 0.35rem;
+}
+
+.proj-tagline {
+  font-size: 1.05rem;
+  color: var(--text-1);
+  line-height: 1.6;
+  max-width: 660px;
+  margin-bottom: 1.5rem;
+}
+
+/* Byline under the project title. OCRadar is a team product, and a project page
+   on a personal site reads as sole authorship unless it says otherwise — but
+   that only needs one line next to the name, not a boxed callout. */
+.proj-byline {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.35rem 0 0;
+  font-size: 0.82rem;
+  color: var(--text-2);
+  line-height: 1.5;
+}
+
+.proj-byline-tag {
+  flex-shrink: 0;
+  padding: 0.13rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid var(--accent-border);
+  background: var(--accent-dim);
+  color: var(--accent);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.proj-byline-role { color: var(--text-1); }
+
+.proj-actions { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 1.25rem; }
+.proj-actions .btn { gap: 8px; }
+
+
+
+
+/* Body layout — floating TOC beside the content on wide screens */
+.proj-body {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+  padding: 3rem 0 4rem;
+}
+
+@media (min-width: 1024px) {
+  .proj-body { grid-template-columns: minmax(0, 1fr) 200px; }
+  .proj-toc-col { order: 2; }
+  .proj-content { order: 1; }
+}
+
+.proj-toc-col { display: none; }
+@media (min-width: 1024px) { .proj-toc-col { display: block; } }
+
+.proj-toc {
+  position: sticky;
+  top: calc(var(--nav-h) + 2rem);
+}
+
+/* Carries the project name (filled in by project.js). Not uppercased — at this
+   width the full name needs every pixel, and uppercase + letter-spacing would
+   force it onto three lines. */
+.proj-toc-title {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text-1);
+  line-height: 1.35;
+  padding-left: 1.1rem;
+  border-bottom: 1px solid transparent;
+
+  /* Collapsed until the hero title scrolls out of sight — otherwise it is just
+     restating a name the reader can already see. Height, spacing and rule all
+     collapse together so the section list sits flush at the top of the page
+     rather than under an empty gap. */
+  opacity: 0;
+  max-height: 0;
+  margin-bottom: 0;
+  padding-bottom: 0;
+  overflow: hidden;
+  transform: translateY(-4px);
+  transition: opacity 0.28s ease, max-height 0.28s ease, transform 0.28s ease,
+              margin-bottom 0.28s ease, padding-bottom 0.28s ease,
+              border-bottom-color 0.28s ease;
+}
+
+.proj-toc-title.visible {
+  opacity: 1;
+  max-height: 4rem;
+  margin-bottom: 0.9rem;
+  padding-bottom: 0.75rem;
+  border-bottom-color: var(--border);
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .proj-toc-title { transition: none; transform: none; }
+}
+
+/* Project logo beside the sidebar heading, when the project has one */
+.proj-toc-icon {
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+/* Constellation rail. Each entry is a dot on a hairline; the active dot grows
+   with an accent halo. Dots for sections already scrolled past stay lit at low
+   opacity, so the rail encodes read-state, not just current position. Labels
+   are always readable — an unlabelled TOC can't be navigated. */
+.proj-toc ul {
+  list-style: none;
+  position: relative;
+  padding-left: 1.1rem;
+}
+
+/* the hairline the dots sit on, inset so it starts and ends at the first/last dot */
+.proj-toc ul::before {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 0.9rem;
+  bottom: 0.9rem;
+  width: 1px;
+  background: var(--border);
+}
+
+.proj-toc a {
+  position: relative;
+  display: block;
+  padding: 0.4rem 0;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: var(--text-2);
+  transition: color var(--transition), transform var(--transition);
+}
+
+.proj-toc a::before {
+  content: '';
+  position: absolute;
+  left: -1.1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--border);
+  transition: background var(--transition),
+              width 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+              height 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+              left 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.25s ease,
+              opacity var(--transition);
+}
+
+/* already read */
+.proj-toc a.seen { color: var(--text-1); }
+.proj-toc a.seen::before { background: var(--accent); opacity: 0.4; }
+
+.proj-toc a:hover { color: var(--text-0); transform: translateX(2px); }
+.proj-toc a:hover::before { background: var(--text-2); opacity: 1; }
+
+.proj-toc a.active { color: var(--accent); font-weight: 500; }
+.proj-toc a.active::before {
+  background: var(--accent);
+  opacity: 1;
+  width: 11px;
+  height: 11px;
+  left: calc(-1.1rem - 2px);
+  box-shadow: 0 0 0 4px var(--accent-dim);
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  .proj-toc a,
+  .proj-toc a::before { transition: color 0.2s ease, background 0.2s ease; }
+}
+
+
+/* Content sections */
+.proj-section { margin-bottom: 3.5rem; scroll-margin-top: calc(var(--nav-h) + 1.5rem); }
+.proj-section:last-child { margin-bottom: 0; }
+
+.proj-h2 {
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text-0);
+  margin-bottom: 1rem;
+}
+
+.proj-h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-0);
+  margin: 1.75rem 0 0.6rem;
+}
+
+.proj-content p {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: var(--text-1);
+  margin-bottom: 1rem;
+  max-width: 720px;
+}
+
+.proj-content p strong { color: var(--text-0); font-weight: 600; }
+.proj-content a:not(.btn):not(.proj-crumb) { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+
+.proj-list { list-style: none; margin: 0 0 1.25rem; max-width: 720px; }
+
+.proj-list li {
+  position: relative;
+  padding-left: 1.25rem;
+  font-size: 0.95rem;
+  line-height: 1.75;
+  color: var(--text-1);
+  margin-bottom: 0.6rem;
+}
+
+.proj-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.72em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0.55;
+}
+
+.proj-list li strong { color: var(--text-0); font-weight: 600; }
+
+
+
+
+
+
+/* Diagram frame */
+.proj-figure { margin: 1.75rem 0 2rem; }
+
+.proj-diagram {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.75rem 1.25rem;
+  overflow-x: auto;
+}
+
+.proj-diagram svg { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+
+/* On narrow screens the diagram keeps a legible size and the frame scrolls,
+   instead of shrinking its labels below readability */
+@media (max-width: 700px) {
+  .proj-diagram svg { max-width: none; width: 640px; }
+}
+
+.proj-caption {
+  font-size: 0.78rem;
+  color: var(--text-2);
+  text-align: center;
+  margin-top: 0.75rem;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+
+/* Video facade */
+.proj-video {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--bg-alt);
+  cursor: pointer;
+}
+
+.proj-video img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.proj-video-play {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.28);
+  transition: background var(--transition);
+}
+.proj-video:hover .proj-video-play { background: rgba(0, 0, 0, 0.42); }
+
+.proj-video-play span {
+  width: 66px;
+  height: 66px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+  transition: transform var(--transition);
+}
+.proj-video:hover .proj-video-play span { transform: scale(1.08); }
+.proj-video-play svg { fill: var(--bg); margin-left: 4px; }
+
+.proj-video-frame { width: 100%; height: 100%; border: 0; display: block; }
+.proj-video.is-playing { cursor: default; }
+
+/* Reserved slot for a demo that hasn't been filmed yet. Better than hiding the
+   section outright: the page keeps its shape, the reader learns a demo is
+   coming, and it can't be mistaken for a play button that simply doesn't work. */
+.proj-video.is-placeholder {
+  cursor: default;
+  border-style: dashed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    repeating-linear-gradient(
+      -45deg,
+      transparent, transparent 11px,
+      var(--accent-dim) 11px, var(--accent-dim) 22px
+    ),
+    var(--bg-alt);
+}
+
+.proj-video-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 1rem 1.4rem;
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  text-align: center;
+}
+
+.proj-video-placeholder svg { color: var(--text-2); opacity: 0.75; }
+
+.proj-video-placeholder-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-1);
+}
+
+.proj-video-placeholder-note {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+}
+
+
+/* Portrait phone-capture video */
+.proj-phone {
+  max-width: 300px;
+  margin: 0 auto;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  overflow: hidden;
+  background: var(--bg-alt);
+  box-shadow: var(--shadow);
+}
+
+.proj-phone video { display: block; width: 100%; height: auto; }
+
+
+/* Device frames — screenshots sit inside a drawn bezel so a watch capture reads
+   as a watch and not as a small phone. All CSS, no frame images. */
+.device { margin: 0 auto; position: relative; }
+.device img { display: block; width: 100%; height: auto; cursor: zoom-in; }
+.device--phone img { aspect-ratio: 1170 / 2532; object-fit: cover; }
+.device--watch img { aspect-ratio: 416 / 496; object-fit: cover; }
+.device video { display: block; width: 100%; height: auto; }
+
+/* Mac — a window with a title bar */
+.device--mac {
+  width: 100%;
+  max-width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--bg-card);
+  box-shadow: var(--shadow);
+}
+
+.device--mac .device-bar {
+  height: 26px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 10px;
+  background: var(--bg-alt);
+  border-bottom: 1px solid var(--border);
+}
+
+.device--mac .device-bar span {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--text-2);
+  opacity: 0.45;
+}
+
+/* iPhone 14 — aluminium rail, notch, and real side buttons. The frame is
+   drawn in a fixed colour rather than a theme token so it reads as a physical
+   device on every theme instead of inverting to white on dark. */
+.device--phone {
+  --phone-frame: #1c1c1e;
+  --phone-rail: #4a4a4f;
+  position: relative;
+  width: 248px;
+  max-width: 100%;
+  padding: 11px;
+  background:
+    linear-gradient(150deg, #3a3a3f 0%, var(--phone-frame) 22%, var(--phone-frame) 78%, #3a3a3f 100%);
+  border-radius: 44px;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.12) inset,
+    0 14px 38px rgba(0, 0, 0, 0.32);
+}
+
+.device--phone .device-screen {
+  border-radius: 34px;
+  overflow: hidden;
+  position: relative;
+  background: #000;
+  /* keeps the screenshot's own corners from poking past the bezel radius */
+  isolation: isolate;
+}
+
+/* Notch. It hangs off the top edge rather than floating below it, so only the
+   bottom corners are rounded. Proportions are the 14's: 162pt of a 390pt screen. */
+.device--phone .device-screen::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 41.5%;
+  height: 19px;
+  border-radius: 0 0 13px 13px;
+  background: #000;
+  z-index: 2;
+}
+
+/* Side buttons — volume pair + silent switch on the left, power on the right */
+.device--phone::before,
+.device--phone::after {
+  content: '';
+  position: absolute;
+  background: var(--phone-rail);
+  border-radius: 2px;
+}
+
+/* left: silent switch and the two volume buttons, drawn as one gradient run */
+.device--phone::before {
+  left: -2px;
+  top: 88px;
+  width: 3px;
+  height: 132px;
+  background: linear-gradient(
+    to bottom,
+    var(--phone-rail) 0 20px,
+    transparent 20px 36px,
+    var(--phone-rail) 36px 78px,
+    transparent 78px 94px,
+    var(--phone-rail) 94px 132px
+  );
+}
+
+/* right: power button */
+.device--phone::after {
+  right: -2px;
+  top: 132px;
+  width: 3px;
+  height: 62px;
+}
+
+/* Apple Watch — squircle bezel with a digital crown */
+.device--watch {
+  width: 178px;
+  max-width: 100%;
+  padding: 11px;
+  background: var(--text-0);
+  border-radius: 42px;
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.25);
+}
+
+.device--watch .device-screen {
+  border-radius: 32px;
+  overflow: hidden;
+  background: #000;
+}
+
+/* crown + side button on the right edge */
+.device--watch::before,
+.device--watch::after {
+  content: '';
+  position: absolute;
+  right: -3px;
+  width: 4px;
+  border-radius: 2px;
+  background: var(--text-0);
+  opacity: 0.85;
+}
+.device--watch::before { top: 32%; height: 26px; }
+.device--watch::after  { top: 55%; height: 16px; opacity: 0.55; }
+
+/* watch strap stubs */
+.device--watch .device-screen::before,
+.device--watch .device-screen::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 62%;
+  height: 14px;
+  background: var(--text-0);
+  z-index: -1;
+}
+
+.device-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.75rem;
+  align-items: flex-start;
+  justify-content: center;
+  margin: 1.5rem 0 2rem;
+}
+
+.device-item { display: flex; flex-direction: column; align-items: center; gap: 0.6rem; }
+
+.device-caption {
+  font-size: 0.72rem;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text-2);
+}
+
+
+/* Screenshot gallery */
+.proj-shots {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0 2rem;
+}
+
+.proj-shot {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--bg-card);
+  cursor: zoom-in;
+  transition: border-color var(--transition), transform var(--transition);
+}
+.proj-shot:hover { border-color: var(--accent-border); transform: translateY(-2px); }
+.proj-shot img { width: 100%; height: auto; display: block; }
+
+.proj-shots--tall { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
+
+
+/* Lightbox */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: rgba(0, 0, 0, 0.85);
+  cursor: zoom-out;
+}
+.lightbox.is-open { display: flex; }
+.lightbox img { max-width: 100%; max-height: 100%; border-radius: var(--radius-sm); }
+
+
+/* Code block */
+.proj-code {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  overflow-x: auto;
+  margin: 1.25rem 0;
+  max-width: 720px;
+}
+
+.proj-code pre { margin: 0; }
+
+.proj-code code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  line-height: 1.7;
+  color: var(--text-1);
+  white-space: pre;
+}
+
+
+/* Page footer nav */
+.proj-nav {
+  border-top: 1px solid var(--border);
+  padding: 2.5rem 0 4rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.proj-nav-next {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  text-align: right;
+  transition: color var(--transition);
+}
+
+.proj-nav-next-label {
+  font-size: 0.68rem;
+  font-family: 'JetBrains Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-2);
+}
+
+.proj-nav-next-name { font-size: 0.95rem; font-weight: 500; color: var(--text-0); transition: color var(--transition); }
+.proj-nav-next:hover .proj-nav-next-name { color: var(--accent); }
+
+
+/* Mobile */
+@media (max-width: 768px) {
+  .proj-wrap { padding: 0 1.25rem; }
+  .proj-hero-top { gap: 1rem; }
+  .proj-icon { width: 54px; height: 54px; border-radius: 12px; }
+  .proj-body { padding: 2rem 0 3rem; gap: 2rem; }
+  .proj-section { margin-bottom: 2.5rem; }
+  .proj-nav { padding: 2rem 0 3rem; }
+}
+
+/* Data tables — used for eval results and model comparisons */
+.proj-table-wrap { overflow-x: auto; margin: 1.25rem 0 1.75rem; max-width: 720px; }
+
+.proj-table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.85rem;
+}
+
+.proj-table th {
+  text-align: left;
+  padding: 0.6rem 0.9rem;
+  font-size: 0.68rem;
+  font-family: 'JetBrains Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-2);
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.proj-table td {
+  padding: 0.65rem 0.9rem;
+  color: var(--text-1);
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.proj-table td:first-child { white-space: normal; }
+.proj-table tr:last-child td { border-bottom: none; }
+.proj-table td strong { color: var(--accent); font-weight: 600; }
+.proj-table tbody tr:hover td { background: var(--accent-dim); }
+
+/* Device photo carousel — photos crossfade on a timer; dots pick one directly.
+   Phone shots of a desk object are almost always portrait, so the frame is
+   sized portrait-first (4:5) rather than a landscape box that leaves the
+   photo small with wide empty bars on both sides. Still letterboxes rather
+   than crops, since a mismatched photo (e.g. a landscape shot) shouldn't lose
+   content either way. */
+.proj-carousel {
+  position: relative;
+  max-width: 560px;
+  aspect-ratio: 4 / 5;
+  margin: 0 auto;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--bg-alt);
+  box-shadow: var(--shadow);
+}
+
+.proj-carousel img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0;
+  /* slight zoom-out on entry so the change reads as a move, not just a fade */
+  transform: scale(1.035);
+  transition: opacity 0.55s ease, transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: zoom-in;
+  pointer-events: none;
+}
+.proj-carousel img.active {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
+}
+
+/* Prev / next controls — always visible, not hover-only: a control you can't
+   see is a control most readers never find. Styled as the site's own card so
+   they read as chrome rather than sitting on top of the photo. */
+.proj-carousel-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0.9;
+  box-shadow: var(--shadow);
+  transition: opacity var(--transition), color var(--transition),
+              border-color var(--transition), transform var(--transition);
+  z-index: 3;
+}
+.proj-carousel-nav.prev { left: 12px; }
+.proj-carousel-nav.next { right: 12px; }
+
+.proj-carousel:hover .proj-carousel-nav,
+.proj-carousel-nav:focus-visible { opacity: 1; }
+
+.proj-carousel-nav:hover {
+  color: var(--accent);
+  border-color: var(--accent-border);
+  transform: translateY(-50%) scale(1.08);
+}
+.proj-carousel-nav:active { transform: translateY(-50%) scale(0.96); }
+
+/* Position counter — states the set size outright, so the reader knows how
+   many photos there are without counting thumbnails. */
+.proj-carousel-count {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 3;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-2);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.03em;
+  font-variant-numeric: tabular-nums;
+}
+.proj-carousel-count b { color: var(--text-0); font-weight: 600; }
+
+/* Auto-advance progress — drains across the bottom of the frame on the same
+   clock as the timer. A faint track sits under the fill so the bar is legible
+   against whatever photo is behind it, and so the remaining time is readable
+   rather than just the elapsed part. Present only while auto-play is running,
+   so its absence is itself the signal that the reader has taken over. */
+.proj-carousel-progress {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 4px;
+  background: var(--accent-dim);
+  box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.06);
+  opacity: 0;
+  z-index: 3;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.proj-carousel-progress.visible { opacity: 1; }
+
+.proj-carousel-progress-fill {
+  width: 100%;
+  height: 100%;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+/* Filmstrip — real thumbnails rather than abstract dots. The whole set is
+   visible at a glance, every frame is reachable in one click, and the strip
+   makes the frame above unmistakably a carousel. */
+.proj-carousel-thumbs {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 0.85rem;
+}
+
+.proj-carousel-thumb {
+  position: relative;
+  width: 74px;
+  height: 56px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--bg-alt);
+  cursor: pointer;
+  opacity: 0.55;
+  filter: saturate(0.75);
+  transition: opacity var(--transition), filter var(--transition),
+              border-color var(--transition), transform var(--transition);
+}
+.proj-carousel-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.proj-carousel-thumb:hover {
+  opacity: 0.85;
+  filter: none;
+  transform: translateY(-2px);
+}
+.proj-carousel-thumb.active {
+  opacity: 1;
+  filter: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-dim);
+}
+
+@media (max-width: 520px) {
+  .proj-carousel-thumb { width: 58px; height: 44px; }
+  .proj-carousel-nav { width: 32px; height: 32px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .proj-carousel img { transition: opacity 0.2s ease; transform: none; }
+  .proj-carousel img.active { transform: none; }
+  .proj-carousel-progress { display: none; }
+  .proj-carousel-thumb:hover { transform: none; }
+}
+
+/* Press logo marquee — two identical tracks scroll left in tandem so the loop
+   is seamless; logos are grayscale until hovered, matching ocradar.com */
+.press-marquee {
+  position: relative;
+  display: flex;
+  gap: 3rem;
+  overflow: hidden;
+  padding: 1.25rem 0;
+  margin: 1.5rem 0 0.5rem;
+  max-width: 720px;
+  /* fade the edges so logos don't hard-clip at the boundary */
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+
+/* Both copies live inside ONE animated element. Animating the two tracks
+   separately made each translate by -100% of its *own* width, so any moment
+   where the two measured differently — lazy images landing at different times —
+   slid them out of step and the strip appeared to jump backwards. */
+.press-scroller {
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+  flex-shrink: 0;
+  animation: press-scroll 26s linear infinite;
+  will-change: transform;
+}
+
+.press-track {
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+  flex-shrink: 0;
+}
+
+.press-marquee:hover .press-scroller { animation-play-state: paused; }
+
+/* Scroller width is 2 tracks + one 3rem gap, so -50% is one track + 1.5rem.
+   Another 1.5rem lands it exactly one track-plus-gap along: a seamless loop
+   that no longer depends on either track's measured width. */
+@keyframes press-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(calc(-50% - 1.5rem)); }
+}
+
+.press-logo { display: flex; align-items: center; flex-shrink: 0; }
+
+/* Press logos sit on a white plate. The outlets' real marks are dark navy,
+   black and multi-colour — on a white card they keep their brand colour and
+   stay legible on all eleven themes, which no single recolour could do.
+   Sizes are set by max-width/max-height rather than a fixed height: the
+   wordmarks run from 1:1 to nearly 10:1, so a shared height would make the
+   wide ones enormous and the square ones tiny. */
+.press-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 62px;
+  padding: 0 18px;
+  border-radius: 10px;
+  background: #fff;
+  border: 1px solid var(--border);
+  transition: border-color var(--transition), transform var(--transition);
+}
+
+.press-mark img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-height: 38px;
+  max-width: 176px;
+}
+
+.press-logo:hover .press-mark {
+  border-color: var(--accent-border);
+  transform: translateY(-2px);
+}
+
+/* On dark themes the plate is the only bright element in the row, so soften
+   its edge rather than letting a hard white rectangle punch out of the page */
+html.is-dark .press-mark {
+  border-color: rgba(255, 255, 255, 0.14);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .press-scroller { animation: none; }
+  .press-marquee { flex-wrap: wrap; overflow: visible; -webkit-mask-image: none; mask-image: none; }
+  .press-track[aria-hidden="true"] { display: none; }
+}
+
+
+/* Compact outlet list above the marquee — the marquee is decorative, this is
+   the part that's actually clickable and scannable */
+.press-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.9rem;
+  margin: 1rem 0 0.25rem;
+  max-width: 720px;
+  font-size: 0.86rem;
+}
+
+.press-list a {
+  color: var(--text-1);
+  text-decoration: none;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1px;
+  transition: color var(--transition), border-color var(--transition);
+}
+.press-list a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+.press-list .sep { color: var(--text-2); opacity: 0.5; }
+
+
+/* Tech stack, grouped by role. A flat dot-separated run of twelve names tells
+   you nothing about which layer each one belongs to. */
+.proj-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 1.5rem 0 0;
+  border-top: 1px solid var(--border);
+}
+
+.stack-row {
+  display: grid;
+  grid-template-columns: 90px 1fr;
+  gap: 1rem;
+  align-items: baseline;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.stack-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-2);
+}
+
+.stack-items { display: flex; flex-wrap: wrap; gap: 0.4rem 1rem; }
+
+.stack-item {
+  font-size: 0.85rem;
+  color: var(--text-1);
+}
+
+@media (max-width: 560px) {
+  .stack-row { grid-template-columns: 1fr; gap: 0.3rem; }
+}
+
+
+/* Inline bars in the result tables. A column of percentages is hard to compare
+   at a glance; a bar under each number makes the gaps visible without turning
+   the table into a chart. */
+.metric { display: block; }
+
+.metric-val {
+  display: block;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.3;
+}
+
+.metric-bar {
+  display: block;
+  position: relative;
+  height: 3px;
+  margin-top: 5px;
+  max-width: 120px;
+  background: var(--accent-dim);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.metric-bar::after {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: calc(var(--pct) * 1%);
+  background: var(--accent);
+  opacity: 0.55;
+  border-radius: 2px;
+}
+.proj-table tbody tr:has(strong) .metric-bar::after { opacity: 1; }
+
+/* Destructive false positives: zero is the whole point, so make it read as a
+   result rather than just another number. */
+.fp {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+.fp-none { color: var(--text-2); }
+.fp-some { color: var(--accent); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .metric-bar::after { transition: width 0.4s ease; }
+}

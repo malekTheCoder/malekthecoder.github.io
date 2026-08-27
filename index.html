@@ -18,7 +18,7 @@
   <!-- ═══ OPEN GRAPH (LinkedIn, iMessage, Facebook) ═══ -->
   <meta property="og:type" content="profile" />
   <meta property="og:title" content="Malek Swilam · Computer Engineering @ GMU" />
-  <meta property="og:description" content="Computer Engineering student at George Mason University's Honors College. Machine learning, computer vision, and robotics." />
+  <meta property="og:description" content="Malek Swilam is a Computer Engineering student at George Mason University's Honors College specializing in machine learning, computer vision, and robotics. Eagle Scout, ML researcher, and FTC programming lead." />
   <meta property="og:url" content="https://malekswilam.dev/" />
   <meta property="og:site_name" content="Malek Swilam" />
   <meta property="og:image" content="https://malekswilam.dev/assets/my_picture.jpeg" />
@@ -38,7 +38,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png?v=3" />
   <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16.png?v=3" />
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png?v=3" />
-  <link rel="manifest" href="site.webmanifest" />
+  <link rel="manifest" href="/site.webmanifest" />
   <!-- Prevent flash of wrong theme on load -->
   <script>
     (function(){
@@ -51,15 +51,15 @@
       if (dark) document.documentElement.classList.add('is-dark');
     })();
   </script>
-  <!-- Profile associations — helps Google link this page to social identities -->
+  <!-- Profile associations, helps Google link this page to social identities -->
   <link rel="me" href="https://github.com/malekTheCoder" />
   <link rel="me" href="https://www.linkedin.com/in/malek-swilam" />
   <link rel="me" href="mailto:malekgswilam@gmail.com" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css?v=47" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css?v=60" />
 
   <!-- ═══ STRUCTURED DATA ═══ -->
   <script type="application/ld+json">
@@ -90,7 +90,6 @@
       "Computer Vision",
       "Robotics",
       "Embedded Systems",
-      "Control Systems",
       "Deep Learning",
       "Software Engineering"
     ],
@@ -109,22 +108,37 @@
     "@id": "https://malekswilam.dev/#website",
     "name": "Malek Swilam",
     "url": "https://malekswilam.dev/",
-    "description": "Personal portfolio and professional profile of Malek Swilam — Computer Engineering student, ML researcher, and robotics engineer.",
+    "description": "Personal portfolio and professional profile of Malek Swilam, Computer Engineering student, ML researcher, and robotics engineer.",
     "author": {
       "@id": "https://malekswilam.dev/#malek-swilam"
     }
   }
   </script>
+  <noscript>
+    <style>
+      /* Scroll-reveal starts at opacity:0 and is switched on by an
+         IntersectionObserver. With no JS that observer never runs, which would
+         leave the hero and every section header permanently invisible. */
+      [data-animate] { opacity: 1 !important; transform: none !important; }
+    </style>
+  </noscript>
 </head>
 <body>
 
   <!-- ═══ NAVIGATION ═══ -->
   <nav class="nav" id="navbar">
     <div class="nav-container">
-      <a href="#home" class="nav-logo" id="navLogo">
-        <img src="assets/my_picture.jpeg" alt="Malek Swilam" class="nav-logo-img" width="28" height="28" />
-        <span>Malek Swilam</span>
-      </a>
+      <div class="nav-left">
+        <a href="/" class="nav-logo" id="navLogo">
+          <img src="/assets/my_picture.jpeg" alt="Malek Swilam" class="nav-logo-img" width="28" height="28" />
+          <span>Malek Swilam</span>
+        </a>
+        <span class="nav-context" id="navContext" aria-hidden="true">
+          <span class="nav-context-sep">/</span>
+          <a href="#" class="nav-context-page" id="navPage" title="Back to top"></a>
+          <span class="nav-context-section" id="navSection"></span>
+        </span>
+      </div>
       <ul class="nav-links" id="navLinks">
         <li><a href="#about" class="nav-link">About</a></li>
         <li><a href="#experience" class="nav-link">Experience</a></li>
@@ -148,11 +162,6 @@
 
   <!-- ═══ HERO ═══ -->
   <section class="hero" id="home">
-    <div class="hero-bg">
-      <div class="grid-overlay"></div>
-      <div class="glow glow-1"></div>
-      <div class="glow glow-2"></div>
-    </div>
     <div class="hero-inner">
       <div class="hero-content" data-animate="fade-up">
         <h1 class="hero-name">Malek Swilam</h1>
@@ -195,12 +204,14 @@
   </section>
 
   <!-- ═══ ABOUT ═══ -->
+
+
   <section class="section section-alt" id="about">
     <div class="container">
       <div class="section-header" data-animate="fade-up">
         <h2 class="section-title">About</h2>
       </div>
-      <div class="about-layout" data-animate="fade-up">
+      <div class="about-layout">
         <div class="about-text">
           <p>
             Hey, I'm Malek Swilam, and I'm studying Computer Engineering at
@@ -220,6 +231,8 @@
   </section>
 
   <!-- ═══ EXPERIENCE ═══ -->
+
+
   <section class="section" id="experience">
     <div class="container">
       <div class="section-header" data-animate="fade-up">
@@ -227,7 +240,7 @@
       </div>
       <div class="timeline">
 
-        <div class="timeline-item" data-animate="fade-up">
+        <div class="timeline-item">
           <div class="timeline-dot"></div>
           <div class="timeline-card">
             <div class="timeline-meta">
@@ -240,10 +253,28 @@
                 <span class="timeline-location">Remote</span>
               </div>
             </div>
-            <ul class="timeline-bullets">
-              <li>Built and evaluated computer vision models for biometric liveness detection and anti-spoofing</li>
-              <li>Developed tooling to generate adversarial identity data at scale, used to stress-test identity verification systems</li>
-            </ul>
+
+            <div class="timeline-project">
+              <h4 class="timeline-project-name">Face Passive Liveness &amp; Anti-Spoofing</h4>
+              <ul class="timeline-bullets">
+                <li>Built a face anti-spoofing ensemble combining a gradient-boosted model on 50+ engineered image cues with a CNN-based depth-predicting model, cutting error 75% versus the deployed rule-based system on unseen data</li>
+                <li>Designed a rank-based score fusion for models with incomparable output scales, adding 3.4 AUC points over the stronger component and catching 100% of real attacks that had bypassed the production system</li>
+                <li>Ran an ablation study that isolated a single feature family as the cause of a cross-dataset failure, correcting it in 8 of 8 model configurations</li>
+                <li>Developed a CNN-based depth model for face liveness detection, then distilled it into a smaller network that held the same accuracy</li>
+                <li>Built the evaluation harness reporting standard biometric metrics (APCER, BPCER, ACER, AUC) across in-domain and cross-domain test sets</li>
+              </ul>
+            </div>
+
+            <div class="timeline-project">
+              <h4 class="timeline-project-name">Adversarial Document Tampering Pipeline</h4>
+              <ul class="timeline-bullets">
+                <li>Automated document tampering to generate adversarial data at scale, stress-testing document and identity verification systems against forgery attacks</li>
+                <li>Increased pipeline throughput 500%+ through multi-threading and a load-aware scheduler routing workers to idle models, backed by a FIFO job queue for batch runs</li>
+                <li>Replaced general-purpose generative models with a dedicated image-to-image face-swap model that produced higher-fidelity, more consistent output at 85–93% lower cost per image</li>
+                <li>Eliminated 100% of API cost for non-Latin text tampering by replacing model-based generation with a fully local deterministic renderer, expanding writing-system coverage 5&times;</li>
+              </ul>
+            </div>
+
             <div class="tag-group">
               <span class="tag">Computer Vision</span>
               <span class="tag">Deep Learning</span>
@@ -252,12 +283,14 @@
               <span class="tag">Anti-Spoofing</span>
               <span class="tag">Model Evaluation</span>
               <span class="tag">Dataset Engineering</span>
+              <span class="tag">Gradient Boosting</span>
+              <span class="tag">Distributed Processing</span>
               <span class="tag">Python</span>
             </div>
           </div>
         </div>
 
-        <div class="timeline-item" data-animate="fade-up">
+        <div class="timeline-item">
           <div class="timeline-dot"></div>
           <div class="timeline-card">
             <div class="timeline-meta">
@@ -266,7 +299,7 @@
                 <a href="https://www.alarm.com" target="_blank" rel="noopener" class="timeline-company timeline-company-link">Alarm.com ↗</a>
               </div>
               <div class="timeline-right">
-                <span class="timeline-date">May 2026 · 1 mo</span>
+                <span class="timeline-date">May 2026</span>
                 <span class="timeline-location">Tysons Corner, VA · On-site</span>
               </div>
             </div>
@@ -274,7 +307,7 @@
               <li>Performed hands-on hardware lab work including soldering buck converters and embedded boards, bringing up low-level power circuits and embedded components</li>
               <li>Assembled RJ45 Ethernet cables and provisioned Raspberry Pi units, building out the physical test automation infrastructure used across the hardware QA team</li>
               <li>Configured and integrated home security devices (locks, contact/tilt sensors, lighting, cameras, thermostats, doorbells, and Flex I/O) into automated testing workflows across hardware QA cycles</li>
-              <li>Built an internal software tool for lab device management, streamlining device tracking and provisioning for the hardware QA team</li>
+              <li>Built an internal tool for lab device management so the hardware QA team could track and provision devices in one place</li>
             </ul>
             <div class="tag-group">
               <span class="tag">Hardware QA</span>
@@ -288,16 +321,16 @@
           </div>
         </div>
 
-        <div class="timeline-item" data-animate="fade-up">
+        <div class="timeline-item">
           <div class="timeline-dot"></div>
           <div class="timeline-card">
             <div class="timeline-meta">
               <div>
                 <h3 class="timeline-role">Machine Learning Research Intern</h3>
-                <a href="https://science.gmu.edu" target="_blank" rel="noopener" class="timeline-company timeline-company-link">George Mason University — ASSIP ↗</a>
+                <a href="https://science.gmu.edu" target="_blank" rel="noopener" class="timeline-company timeline-company-link">George Mason University, ASSIP ↗</a>
               </div>
               <div class="timeline-right">
-                <span class="timeline-date">Jun – Sep 2025 · 4 mos</span>
+                <span class="timeline-date">Jun – Sep 2025</span>
                 <span class="timeline-location">Fairfax, VA · Hybrid</span>
               </div>
             </div>
@@ -320,13 +353,13 @@
           </div>
         </div>
 
-        <div class="timeline-item" data-animate="fade-up">
+        <div class="timeline-item">
           <div class="timeline-dot"></div>
           <div class="timeline-card">
             <div class="timeline-meta">
               <div>
                 <h3 class="timeline-role">Programming Lead</h3>
-                <a href="https://cougarrobotics.org/index.html" target="_blank" rel="noopener" class="timeline-company timeline-company-link">FTC Robotics — Team 369 (Oakton) ↗</a>
+                <a href="https://cougarrobotics.org/index.html" target="_blank" rel="noopener" class="timeline-company timeline-company-link">FTC Robotics, Team 369 (Oakton) ↗</a>
               </div>
               <div class="timeline-right">
                 <span class="timeline-date">2023 – 2026 · 2 Seasons</span>
@@ -363,6 +396,8 @@
   </section>
 
   <!-- ═══ PROJECTS ═══ -->
+
+
   <section class="section" id="projects">
     <div class="container">
       <div class="section-header" data-animate="fade-up">
@@ -370,30 +405,140 @@
       </div>
       <div class="projects-grid">
 
+        <!-- Desk Calendar Agent -->
+        <a href="/projects/calendar-agent/" id="project-calendar-agent" class="project-card featured">
+          <div class="project-banner">
+            <svg viewBox="0 0 400 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="project-banner-svg is-diagram" aria-hidden="true">
+              <rect x="14" y="36" width="62" height="26" rx="6" fill="var(--accent)" fill-opacity="0.12" stroke="var(--accent)" stroke-width="1.6"/>
+              <path d="M23 62 L23 68 L31 62 Z" fill="var(--accent)" fill-opacity="0.12" stroke="var(--accent)" stroke-width="1.6" stroke-linejoin="round"/>
+              <text x="45" y="47" font-family="'JetBrains Mono', monospace" font-size="6.5" fill="var(--accent)" text-anchor="middle" opacity="0.85">dentist 3pm</text>
+              <text x="45" y="56" font-family="'JetBrains Mono', monospace" font-size="6.5" fill="var(--accent)" text-anchor="middle" opacity="0.5">tomorrow</text>
+              <text x="45" y="94" font-family="'JetBrains Mono', monospace" font-size="8" fill="var(--accent)" text-anchor="middle" opacity="0.75">you text it</text>
+              <text x="97" y="43" font-family="'JetBrains Mono', monospace" font-size="6.5" fill="var(--accent)" text-anchor="middle" opacity="0.6">network</text>
+              <line x1="82" y1="49" x2="108" y2="49" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="3.5 3" stroke-linecap="round" opacity="0.5"/>
+              <path d="M108 45.5 L112 49 L108 52.5" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.5"/>
+
+              <rect x="128" y="8" width="96" height="16" rx="5" fill="var(--accent)" fill-opacity="0.05" stroke="var(--accent)" stroke-width="0.9" stroke-dasharray="3.5 2.5" opacity="0.85"/>
+              <text x="134" y="19" font-family="'JetBrains Mono', monospace" font-size="6.5" fill="var(--accent)" opacity="0.8">3B local agent</text>
+              <path d="M196 13.5 L206 12 M196 13.5 L206 16 M196 13.5 L206 20 M196 18.5 L206 12 M196 18.5 L206 16 M196 18.5 L206 20 M206 12 L216 16 M206 16 L216 16 M206 20 L216 16" stroke="var(--accent)" stroke-width="0.8" opacity="0.4"/>
+              <circle cx="196" cy="13.5" r="1.6" fill="none" stroke="var(--accent)" stroke-width="1" opacity="0.75"/>
+              <circle cx="196" cy="18.5" r="1.6" fill="none" stroke="var(--accent)" stroke-width="1" opacity="0.75"/>
+              <circle cx="206" cy="12" r="1.6" fill="none" stroke="var(--accent)" stroke-width="1" opacity="0.75"/>
+              <circle cx="206" cy="16" r="1.6" fill="none" stroke="var(--accent)" stroke-width="1" opacity="0.75"/>
+              <circle cx="206" cy="20" r="1.6" fill="none" stroke="var(--accent)" stroke-width="1" opacity="0.75"/>
+              <circle cx="216" cy="16" r="1.6" fill="none" stroke="var(--accent)" stroke-width="1" opacity="0.75"/>
+              <line x1="145" y1="24" x2="145" y2="43" stroke="var(--accent)" stroke-width="0.9" stroke-dasharray="2.5 2.5" opacity="0.5"/>
+              <circle cx="145" cy="43.5" r="1.2" fill="var(--accent)" fill-opacity="0.5"/>
+
+              <!-- 96 x 38 = 2.53:1. GPIO now runs 67% of the top edge, as on a real board. -->
+              <rect x="128" y="30" width="96" height="38" rx="3" fill="var(--accent)" fill-opacity="0.1" stroke="var(--accent)" stroke-width="1.6"/>
+              <line x1="152" y1="35.5" x2="216" y2="35.5" stroke="var(--accent)" stroke-width="1.9" stroke-dasharray="1.5 1" opacity="0.5"/>
+              <line x1="152" y1="38.5" x2="216" y2="38.5" stroke="var(--accent)" stroke-width="1.9" stroke-dasharray="1.5 1" opacity="0.5"/>
+              <circle cx="140" cy="36.5" r="1.5" fill="var(--accent)" fill-opacity="0.4"/>
+              <rect x="136" y="44" width="22" height="16" rx="1.5" fill="var(--accent)" fill-opacity="0.45" stroke="var(--accent)" stroke-width="1.1" stroke-opacity="0.8"/>
+              <rect x="132.5" y="47" width="3.5" height="1.8" fill="var(--accent)" fill-opacity="0.5"/>
+              <rect x="132.5" y="55" width="3.5" height="1.8" fill="var(--accent)" fill-opacity="0.5"/>
+              <rect x="158" y="47" width="3.5" height="1.8" fill="var(--accent)" fill-opacity="0.5"/>
+              <rect x="158" y="55" width="3.5" height="1.8" fill="var(--accent)" fill-opacity="0.5"/>
+              <rect x="164" y="46" width="12" height="10" rx="1" fill="var(--accent)" fill-opacity="0.34" stroke="var(--accent)" stroke-width="0.9" stroke-opacity="0.55"/>
+              <rect x="185" y="42" width="5" height="3" rx="0.6" fill="var(--accent)" fill-opacity="0.32"/>
+              <circle cx="192" cy="52" r="7" stroke="var(--accent)" stroke-width="1.15" opacity="0.6"/>
+              <path d="M192 52 Q193.8 46.5 198.2 48.2" stroke="var(--accent)" stroke-width="1.1" stroke-linecap="round" opacity="0.5"/>
+              <path d="M192 52 Q198.2 53.6 196.1 57.4" stroke="var(--accent)" stroke-width="1.1" stroke-linecap="round" opacity="0.5"/>
+              <path d="M192 52 Q190.2 57.5 185.8 55.8" stroke="var(--accent)" stroke-width="1.1" stroke-linecap="round" opacity="0.5"/>
+              <path d="M192 52 Q185.8 50.4 187.9 46.6" stroke="var(--accent)" stroke-width="1.1" stroke-linecap="round" opacity="0.5"/>
+              <circle cx="192" cy="52" r="1.6" fill="var(--accent)" fill-opacity="0.55"/>
+              <rect x="164" y="58" width="12" height="6" rx="1" fill="var(--accent)" fill-opacity="0.3"/>
+              <rect x="206" y="35" width="11" height="8" rx="1" fill="var(--accent)" fill-opacity="0.32"/>
+              <rect x="206" y="45" width="11" height="6" rx="1" fill="var(--accent)" fill-opacity="0.3"/>
+              <rect x="206" y="53" width="11" height="5" rx="1" fill="var(--accent)" fill-opacity="0.3"/>
+              <rect x="136" y="61" width="7" height="2.6" rx="0.8" fill="var(--accent)" fill-opacity="0.3"/>
+              <rect x="147" y="61" width="6" height="2.6" rx="0.6" fill="var(--accent)" fill-opacity="0.26"/>
+              <rect x="157" y="61" width="6" height="2.6" rx="0.6" fill="var(--accent)" fill-opacity="0.26"/>
+              <rect x="180" y="61" width="10" height="2.6" rx="0.6" fill="var(--accent)" fill-opacity="0.26"/>
+              <rect x="194" y="61" width="14" height="2.6" rx="0.6" fill="var(--accent)" fill-opacity="0.28"/>
+              <circle cx="132" cy="34" r="1.2" fill="var(--accent)" fill-opacity="0.28"/>
+              <circle cx="132" cy="64" r="1.2" fill="var(--accent)" fill-opacity="0.28"/>
+              <circle cx="220" cy="34" r="1.2" fill="var(--accent)" fill-opacity="0.28"/>
+              <circle cx="220" cy="64" r="1.2" fill="var(--accent)" fill-opacity="0.28"/>
+              <text x="176" y="94" font-family="'JetBrains Mono', monospace" font-size="8" fill="var(--accent)" text-anchor="middle" opacity="0.75">Raspberry Pi 5</text>
+
+              <circle cx="234" cy="49" r="2.2" fill="var(--accent)" fill-opacity="0.65"/>
+              <text x="263" y="21" font-family="'JetBrains Mono', monospace" font-size="6.5" fill="var(--accent)" text-anchor="middle" opacity="0.6">edits</text>
+              <path d="M234 49 C 250 49, 254 28, 269 28" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="3.5 3" stroke-linecap="round" fill="none" opacity="0.5"/>
+              <path d="M269 24.5 L273.5 28 L269 31.5" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.5"/>
+              <text x="259" y="80" font-family="'JetBrains Mono', monospace" font-size="6.5" fill="var(--accent)" text-anchor="middle" opacity="0.6">drives</text>
+              <path d="M234 49 C 250 49, 254 70, 268 70" stroke="var(--accent)" stroke-width="1.9" stroke-linecap="round" fill="none" opacity="0.6"/>
+              <path d="M267 66.5 L274 70 L267 73.5 Z" fill="var(--accent)" fill-opacity="0.6"/>
+
+              <line x1="308" y1="14" x2="308" y2="21" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+              <line x1="348" y1="14" x2="348" y2="21" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+              <rect x="296" y="18" width="64" height="20" rx="3" fill="var(--accent)" fill-opacity="0.1" stroke="var(--accent)" stroke-width="1.6"/>
+              <path d="M296 25 H360" stroke="var(--accent)" stroke-width="1.2" opacity="0.55"/>
+              <rect x="304" y="28" width="9" height="3" rx="1" fill="var(--accent)" fill-opacity="0.5"/>
+              <rect x="318" y="28" width="9" height="3" rx="1" fill="var(--accent)" fill-opacity="0.3"/>
+              <rect x="332" y="28" width="9" height="3" rx="1" fill="var(--accent)" fill-opacity="0.3"/>
+              <rect x="304" y="32.5" width="9" height="3" rx="1" fill="var(--accent)" fill-opacity="0.3"/>
+              <rect x="318" y="32.5" width="9" height="3" rx="1" fill="var(--accent)" fill-opacity="0.5"/>
+              <rect x="332" y="32.5" width="9" height="3" rx="1" fill="var(--accent)" fill-opacity="0.3"/>
+              <text x="328" y="47" font-family="'JetBrains Mono', monospace" font-size="7" fill="var(--accent)" text-anchor="middle" opacity="0.75">Google Calendar</text>
+
+              <rect x="296" y="56" width="47" height="28" rx="4" fill="var(--accent)" fill-opacity="0.1" stroke="var(--accent)" stroke-width="1.6"/>
+              <rect x="300" y="59" width="18" height="2" rx="1" fill="var(--accent)" fill-opacity="0.8"/>
+              <path d="M300 63.5 H339" stroke="var(--accent)" stroke-width="0.8" opacity="0.3"/>
+              <rect x="300" y="66" width="4.5" height="1.8" rx="0.9" fill="var(--accent)" fill-opacity="0.5"/>
+              <rect x="307" y="66" width="19" height="1.8" rx="0.9" fill="var(--accent)" fill-opacity="0.32"/>
+              <rect x="300" y="69.5" width="4.5" height="1.8" rx="0.9" fill="var(--accent)" fill-opacity="0.5"/>
+              <rect x="307" y="69.5" width="14" height="1.8" rx="0.9" fill="var(--accent)" fill-opacity="0.32"/>
+              <rect x="300" y="73" width="4.5" height="1.8" rx="0.9" fill="var(--accent)" fill-opacity="0.5"/>
+              <rect x="307" y="73" width="24" height="1.8" rx="0.9" fill="var(--accent)" fill-opacity="0.32"/>
+              <rect x="307" y="76.5" width="3.6" height="1.8" rx="0.9" fill="var(--accent)" fill-opacity="0.22"/>
+              <rect x="317.7" y="76.5" width="3.6" height="1.8" rx="0.9" fill="var(--accent)" fill-opacity="0.75"/>
+              <rect x="328.4" y="76.5" width="3.6" height="1.8" rx="0.9" fill="var(--accent)" fill-opacity="0.22"/>
+              <text x="319.5" y="94" font-family="'JetBrains Mono', monospace" font-size="8" fill="var(--accent)" text-anchor="middle" opacity="0.75">e-paper</text>
+            </svg>
+          </div>
+          <div class="project-card-head">
+            <h3 class="project-name">Desk Calendar Agent</h3>
+          </div>
+          <p class="project-desc">
+            A calendar assistant on a Raspberry Pi running its language model on-device. An 80%-accurate model
+            with zero destructive actions ever reaching the calendar.
+          </p>
+          <div class="tag-group">
+            <span class="tag">Local LLM</span>
+            <span class="tag">Prompt Engineering</span>
+            <span class="tag">Quantization</span>
+            <span class="tag">Edge Inference</span>
+            <span class="tag">Agent Safety</span>
+            <span class="tag">Tool Calling</span>
+            <span class="tag">Prompt Caching</span>
+            <span class="tag">Model Evaluation</span>
+            <span class="tag">Speech Recognition</span>
+            <span class="tag">Embedded Linux</span>
+            <span class="tag">Python</span>
+          </div>
+          <span class="project-cta">
+            View project
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </span>
+        </a>
+
         <!-- Sentry -->
-        <div class="project-card featured" data-animate="fade-up">
-          <a href="https://github.com/malekTheCoder/Sentry" target="_blank" rel="noopener" class="project-banner-link" aria-label="View Sentry on GitHub">
-            <div class="project-banner">
-              <img src="assets/sentry-icon.png" alt="Sentry app icon" class="project-banner-img" />
-            </div>
-          </a>
-          <div class="project-top project-top--split">
+        <a href="https://malekswilam.dev/SentryWebsite/" target="_blank" rel="noopener" id="project-sentry" class="project-card featured">
+          <div class="project-banner">
+            <img src="/assets/sentry-icon.png" alt="Sentry app icon" class="project-banner-img" />
+          </div>
+          <div class="project-card-head">
+            <h3 class="project-name">Sentry</h3>
             <span class="project-status">
               <span class="project-status-dot" aria-hidden="true"></span>
               In active development
             </span>
-            <div class="project-links">
-              <a href="https://github.com/malekTheCoder/Sentry" target="_blank" rel="noopener" class="project-link-btn">
-                <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
-                  <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.6.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
-                </svg>
-                GitHub
-              </a>
-            </div>
           </div>
-          <h3 class="project-name"><a href="https://github.com/malekTheCoder/Sentry" target="_blank" rel="noopener" class="project-name-link">Sentry ↗</a></h3>
           <p class="project-desc">
-            A macOS menu bar system monitor with iPhone and Apple Watch companions. Tracks CPU, memory, GPU, battery health, and thermals through live charts backed by a local history store, alongside alert rules, conditional keep-awake, and real fan control on Apple Silicon via a privileged helper daemon. A built-in MCP server lets coding agents check the Mac's capacity before starting heavy work, with per-session resource attribution, guardrails, and a kill switch. Everything stays on-device, with no cloud, accounts, or telemetry.
+            A macOS menu bar system monitor with iPhone and Apple Watch companions, plus an MCP layer that lets
+            coding agents check the Mac's capacity before starting heavy work.
           </p>
           <div class="tag-group">
             <span class="tag">Systems Programming</span>
@@ -406,13 +551,16 @@
             <span class="tag">MCP</span>
             <span class="tag">Swift</span>
           </div>
-        </div>
+          <span class="project-cta">
+            Visit site
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M7 17L17 7M7 7h10v10"/></svg>
+          </span>
+        </a>
 
         <!-- Voice-Controlled Robotics Agent -->
-        <div class="project-card featured" data-animate="fade-up">
-          <a href="https://github.com/malekTheCoder/Voice-Controlled-Robotic-Agent" target="_blank" rel="noopener" class="project-banner-link" aria-label="View Voice-Controlled Robotics Agent on GitHub">
-            <div class="project-banner">
-              <svg viewBox="0 0 290 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="project-banner-svg" aria-hidden="true">
+        <a href="/projects/voice-robotics-agent/" id="project-voice-robotics-agent" class="project-card featured">
+          <div class="project-banner">
+            <svg viewBox="0 0 290 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="project-banner-svg is-diagram" aria-hidden="true">
                 <!-- mic (STT) -->
                 <rect x="22" y="26" width="12" height="22" rx="6" fill="var(--accent)" fill-opacity="0.15" stroke="var(--accent)" stroke-width="1.75"/>
                 <path d="M18 42 a10 10 0 0 0 20 0" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round"/>
@@ -469,27 +617,13 @@
                 <path d="M111.9 64.9 L106 64 L109.1 69.1" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>
                 <text x="160" y="97" font-family="'JetBrains Mono', monospace" font-size="8.5" fill="var(--accent)" text-anchor="middle" opacity="0.6">verify</text>
               </svg>
-            </div>
-          </a>
-          <div class="project-top">
-            <div class="project-links">
-              <a href="https://github.com/malekTheCoder/Voice-Controlled-Robotic-Agent" target="_blank" rel="noopener" class="project-link-btn">
-                <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
-                  <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.6.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
-                </svg>
-                GitHub
-              </a>
-              <a href="https://youtu.be/Gv5HVdmMMBE" target="_blank" rel="noopener" class="project-link-btn project-link-btn--primary">
-                <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
-                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                </svg>
-                Demo
-              </a>
-            </div>
           </div>
-          <h3 class="project-name"><a href="https://github.com/malekTheCoder/Voice-Controlled-Robotic-Agent" target="_blank" rel="noopener" class="project-name-link">Voice-Controlled Robotics Agent ↗</a></h3>
+          <div class="project-card-head">
+            <h3 class="project-name">Voice-Controlled Robotics Agent</h3>
+          </div>
           <p class="project-desc">
-            A voice-controlled robotic manipulation agent built in MuJoCo physics simulation. Natural-language commands are interpreted and executed by a Franka Panda arm in real time. An LLM breaks down commands into ordered sub-goals using chain-of-thought reasoning, detects mid-task failures, and replans autonomously to recover. Audio is handled end-to-end with speech-to-text and text-to-speech APIs. A separate LLM call verifies the live scene against the goal state before reporting success. Robot motion is solved with inverse kinematics via the mink library, and the simulation streams live through a FastAPI WebSocket portal.
+            Speak a command in plain English and a Franka Panda arm plans and carries it out in a live physics
+            simulation, replanning on its own when a step goes wrong.
           </p>
           <div class="tag-group">
             <span class="tag">Python</span>
@@ -501,45 +635,45 @@
             <span class="tag">LLM Planning</span>
             <span class="tag">FastAPI</span>
           </div>
-        </div>
+          <span class="project-cta">
+            View project
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </span>
+        </a>
 
-        <div class="project-card featured" data-animate="fade-up">
-          <a href="https://ocradar.com" target="_blank" rel="noopener" class="project-banner-link" aria-label="Visit OCRadar website">
-            <div class="project-banner">
-              <img src="https://github.com/OCRadar.png?size=120" alt="OCRadar logo" class="project-banner-img" />
-            </div>
-          </a>
-          <div class="project-top">
-            <div class="project-links">
-              <a href="https://github.com/OCRadar" target="_blank" rel="noopener" class="project-link-btn">
-                <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
-                  <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.6.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
-                </svg>
-                GitHub
-              </a>
-              <a href="https://ocradar.com" target="_blank" rel="noopener" class="project-link-btn project-link-btn--primary">
-                Visit Site
-              </a>
-            </div>
+        <!-- OCRadar -->
+        <a href="/projects/ocradar/" id="project-ocradar" class="project-card featured">
+          <div class="project-banner">
+            <img src="https://github.com/OCRadar.png?size=120" alt="OCRadar logo" class="project-banner-img" />
           </div>
-          <h3 class="project-name"><a href="https://ocradar.com" target="_blank" rel="noopener" class="project-name-link">OCRadar ↗</a></h3>
+          <div class="project-card-head">
+            <h3 class="project-name">OCRadar</h3>
+          </div>
           <p class="project-desc">
-            Cross-platform iOS, Android, and web app for early oral cancer screening. Uses CNN-based computer vision to classify mouth images against thousands of labeled healthy, benign, and malignant samples, achieving 98% accuracy with Azure AI Vision. Featured by WTOP News, Korea Times, and FCPS News.
+            A cross-platform app that screens for early signs of oral cancer from a phone camera, using computer
+            vision trained on thousands of labeled clinical samples. Built by a team, I lead Android and
+            Windows development.
           </p>
           <div class="tag-group">
             <span class="tag">Python</span>
             <span class="tag">Computer Vision</span>
             <span class="tag">Azure AI Vision</span>
+            <span class="tag">Swift</span>
+            <span class="tag">SwiftUI</span>
             <span class="tag">Flutter</span>
             <span class="tag">Dart</span>
           </div>
-        </div>
+          <span class="project-cta">
+            View project
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </span>
+        </a>
 
 
 
       </div>
 
-      <div class="projects-cta" data-animate="fade-up">
+      <div class="projects-cta">
         <a href="https://github.com/malekTheCoder" target="_blank" rel="noopener" class="btn btn-primary">
           View All on GitHub
         </a>
@@ -548,42 +682,57 @@
   </section>
 
   <!-- ═══ SKILLS ═══ -->
+
+
   <section class="section section-alt" id="skills">
     <div class="container">
       <div class="section-header" data-animate="fade-up">
         <h2 class="section-title">Skills</h2>
       </div>
-      <div class="skills-cloud" data-animate="fade-up">
+      <div class="skills-cloud">
         <div class="skill-row">
           <span class="skill-row-label">Languages</span>
           <div class="skill-pills">
             <span class="skill-pill">Java</span>
             <span class="skill-pill">Python</span>
+            <span class="skill-pill">Swift</span>
             <span class="skill-pill">Dart</span>
             <span class="skill-pill">JavaScript</span>
             <span class="skill-pill">HTML / CSS</span>
           </div>
         </div>
         <div class="skill-row">
-          <span class="skill-row-label">Frameworks</span>
+          <span class="skill-row-label">Libraries &amp; Frameworks</span>
           <div class="skill-pills">
             <span class="skill-pill">PyTorch</span>
-            <span class="skill-pill">OpenCV</span>
             <span class="skill-pill">XGBoost</span>
+            <span class="skill-pill">OpenCV</span>
             <span class="skill-pill">NumPy</span>
-            <span class="skill-pill">Flutter</span>
-            <span class="skill-pill">MuJoCo</span>
+            <span class="skill-pill">FastAPI</span>
+          </div>
+        </div>
+        <div class="skill-row">
+          <span class="skill-row-label">AI &amp; Agents</span>
+          <div class="skill-pills">
+            <span class="skill-pill">Local LLM</span>
+            <span class="skill-pill">MCP</span>
+            <span class="skill-pill">Tool Calling</span>
+            <span class="skill-pill">Agent Safety</span>
+            <span class="skill-pill">LLM Planning</span>
+            <span class="skill-pill">Claude API</span>
+            <span class="skill-pill">Edge Inference</span>
           </div>
         </div>
         <div class="skill-row">
           <span class="skill-row-label">Tools</span>
           <div class="skill-pills">
             <span class="skill-pill">Git / GitHub</span>
-            <span class="skill-pill">JetBrains IDEs</span>
+            <span class="skill-pill">Ollama</span>
             <span class="skill-pill">Azure AI</span>
+            <span class="skill-pill">MuJoCo</span>
+            <span class="skill-pill">Xcode</span>
             <span class="skill-pill">VS Code</span>
             <span class="skill-pill">FTC SDK</span>
-            <span class="skill-pill">Anthropic API</span>
           </div>
         </div>
         <div class="skill-row">
@@ -592,42 +741,16 @@
             <span class="skill-pill">Machine Learning</span>
             <span class="skill-pill">Computer Vision</span>
             <span class="skill-pill">Robotics</span>
-            <span class="skill-pill">IoT Systems</span>
-            <span class="skill-pill">Control Systems</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="honors-block" data-animate="fade-up">
-        <h3 class="honors-title">Honors &amp; Awards</h3>
-        <div class="honors-list">
-          <div class="honor-item">
-            <span class="honor-icon">⚜️</span>
-            <div>
-              <strong>Eagle Scout</strong>
-              <span class="honor-sub">Boy Scouts of America · highest rank attainable</span>
-            </div>
-          </div>
-          <div class="honor-item">
-            <img src="https://cougarrobotics.org/assets/img/logo-icons/favicon.png" alt="Oakton Cougar Robotics" class="honor-icon-img" onerror="this.outerHTML='<span class=&quot;honor-icon&quot;>🏆</span>'"/>
-            <div>
-              <strong>FTC World Championships</strong>
-              <span class="honor-sub"><a href="https://ftc-events.firstinspires.org/2024/team/369" target="_blank" rel="noopener" style="text-decoration:underline;">8th seed captain</a> in Division · 2025</span>
-            </div>
-          </div>
-          <div class="honor-item">
-            <span class="honor-icon">🎖️</span>
-            <div>
-              <strong>T.R. Cook Award of Excellence in Technology</strong>
-              <span class="honor-sub">Optimist Club of Greater Vienna · 2025</span>
-            </div>
+            <span class="skill-pill">Biometrics</span>
+            <span class="skill-pill">Model Evaluation</span>
+            <span class="skill-pill">Dataset Engineering</span>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ═══ EDUCATION ═══ -->
+
   <section class="section" id="education">
     <div class="container">
       <div class="section-header" data-animate="fade-up">
@@ -635,7 +758,7 @@
       </div>
       <div class="edu-grid">
 
-        <div class="edu-card featured-edu" data-animate="fade-up">
+        <div class="edu-card featured-edu">
           <div class="edu-header">
             <span class="edu-badge">Current · Fall 2026</span>
           </div>
@@ -645,7 +768,7 @@
           <p class="edu-date">Expected May 2030 · Fairfax, VA</p>
         </div>
 
-        <div class="edu-card" data-animate="fade-up">
+        <div class="edu-card">
           <div class="edu-header">
             <div class="edu-icon edu-icon--logo">
               <img src="https://logo.clearbit.com/fcps.edu" alt="Fairfax County Public Schools" class="edu-logo-img" onerror="this.parentElement.style.display='none'"/>
@@ -659,7 +782,7 @@
           </p>
         </div>
 
-        <div class="edu-card" data-animate="fade-up">
+        <div class="edu-card">
           <div class="edu-header">
             <div class="edu-icon edu-icon--logo">
               <img src="https://logo.clearbit.com/nvcc.edu" alt="Northern Virginia Community College" class="edu-logo-img" onerror="this.parentElement.style.display='none'"/>
@@ -679,12 +802,14 @@
   </section>
 
   <!-- ═══ CONTACT ═══ -->
+
+
   <section class="section section-alt" id="contact">
     <div class="container">
       <div class="section-header" data-animate="fade-up">
         <h2 class="section-title">Contact</h2>
       </div>
-      <div class="contact-inner" data-animate="fade-up">
+      <div class="contact-inner">
         <p class="contact-text">
           Open to opportunities, projects, or just reaching out.
         </p>
@@ -713,6 +838,7 @@
     </div>
   </section>
 
+
   <!-- ═══ FOOTER ═══ -->
   <footer class="footer">
     <div class="container">
@@ -729,6 +855,7 @@
     <p class="theme-hint-text">customize your experience</p>
   </div>
 
-  <script src="js/main.js?v=39"></script>
+  <script src="/js/theme.js?v=1"></script>
+  <script src="/js/main.js?v=45"></script>
 </body>
 </html>

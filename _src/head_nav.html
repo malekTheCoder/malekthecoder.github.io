@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ═══ PRIMARY SEO ═══ -->
+  <title>{{TITLE}}</title>
+  <meta name="description" content="{{DESCRIPTION}}" />
+  <meta name="author" content="Malek Swilam" />
+  <meta name="keywords" content="Malek Swilam, Malek Swilam GMU, Malek Swilam George Mason, computer engineering, machine learning, computer vision, robotics, FTC, Eagle Scout, ML researcher" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+  <link rel="canonical" href="{{CANONICAL}}" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#0d1117" media="(prefers-color-scheme: dark)" />
+
+  <!-- ═══ OPEN GRAPH (LinkedIn, iMessage, Facebook) ═══ -->
+  <meta property="og:type" content="profile" />
+  <meta property="og:title" content="{{OG_TITLE}}" />
+  <meta property="og:description" content="{{DESCRIPTION}}" />
+  <meta property="og:url" content="{{CANONICAL}}" />
+  <meta property="og:site_name" content="Malek Swilam" />
+  <meta property="og:image" content="https://malekswilam.dev/assets/my_picture.jpeg" />
+  <meta property="og:image:alt" content="Malek Swilam" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="profile:first_name" content="Malek" />
+  <meta property="profile:last_name" content="Swilam" />
+
+  <!-- ═══ TWITTER / X CARD ═══ -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Malek Swilam · Computer Engineering @ GMU" />
+  <meta name="twitter:description" content="Computer Engineering student at George Mason University's Honors College. Machine learning, computer vision, and robotics." />
+  <meta name="twitter:image" content="https://malekswilam.dev/assets/my_picture.jpeg" />
+
+  <!-- Favicon / icons -->
+  <link rel="icon" href="/favicon.ico?v=3" sizes="any" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png?v=3" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16.png?v=3" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png?v=3" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <!-- Prevent flash of wrong theme on load -->
+  <script>
+    (function(){
+      var DARK = new Set(['dark','vscode','darcula','tokyo','dracula','nord','github-dark','atom-one-dark']);
+      var VALID = new Set(['light','dark','system','vscode','darcula','tokyo','dracula','nord','github-dark','atom-one-dark','xcode']);
+      var t = localStorage.getItem('theme') || 'system';
+      if (!VALID.has(t)) { t = 'system'; localStorage.setItem('theme', t); }
+      if (t !== 'system') document.documentElement.setAttribute('data-theme', t);
+      var dark = DARK.has(t) || (t === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      if (dark) document.documentElement.classList.add('is-dark');
+    })();
+  </script>
+  <!-- Profile associations, helps Google link this page to social identities -->
+  <link rel="me" href="https://github.com/malekTheCoder" />
+  <link rel="me" href="https://www.linkedin.com/in/malek-swilam" />
+  <link rel="me" href="mailto:malekgswilam@gmail.com" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css?v=60" />
+
+  <!-- ═══ STRUCTURED DATA ═══ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "@id": "https://malekswilam.dev/#malek-swilam",
+    "name": "Malek Swilam",
+    "givenName": "Malek",
+    "familyName": "Swilam",
+    "url": "https://malekswilam.dev/",
+    "image": {
+      "@type": "ImageObject",
+      "url": "https://malekswilam.dev/assets/my_picture.jpeg",
+      "description": "Malek Swilam"
+    },
+    "description": "Malek Swilam is a Computer Engineering student at George Mason University's Honors College specializing in machine learning, computer vision, and robotics. Eagle Scout, ML researcher, and FTC programming lead.",
+    "jobTitle": "Computer Engineering Student & Machine Learning Researcher",
+    "email": "malekgswilam@gmail.com",
+    "nationality": "American",
+    "affiliation": {
+      "@type": "CollegeOrUniversity",
+      "name": "George Mason University",
+      "url": "https://www.gmu.edu"
+    },
+    "knowsAbout": [
+      "Machine Learning",
+      "Computer Vision",
+      "Robotics",
+      "Embedded Systems",
+      "Deep Learning",
+      "Software Engineering"
+    ],
+    "sameAs": [
+      "https://github.com/malekTheCoder",
+      "https://www.linkedin.com/in/malek-swilam",
+      "https://malekswilam.dev/"
+    ]
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": "https://malekswilam.dev/#website",
+    "name": "Malek Swilam",
+    "url": "https://malekswilam.dev/",
+    "description": "Personal portfolio and professional profile of Malek Swilam, Computer Engineering student, ML researcher, and robotics engineer.",
+    "author": {
+      "@id": "https://malekswilam.dev/#malek-swilam"
+    }
+  }
+  </script>
+  <noscript>
+    <style>
+      /* Scroll-reveal starts at opacity:0 and is switched on by an
+         IntersectionObserver. With no JS that observer never runs, which would
+         leave the hero and every section header permanently invisible. */
+      [data-animate] { opacity: 1 !important; transform: none !important; }
+    </style>
+  </noscript>
+</head>
+<body>
+
+  <!-- ═══ NAVIGATION ═══ -->
+  <nav class="nav" id="navbar">
+    <div class="nav-container">
+      <div class="nav-left">
+        <a href="/" class="nav-logo" id="navLogo">
+          <img src="/assets/my_picture.jpeg" alt="Malek Swilam" class="nav-logo-img" width="28" height="28" />
+          <span>Malek Swilam</span>
+        </a>
+        <span class="nav-context" id="navContext" aria-hidden="true">
+          <span class="nav-context-sep">/</span>
+          <a href="#" class="nav-context-page" id="navPage" title="Back to top"></a>
+          <span class="nav-context-section" id="navSection"></span>
+        </span>
+      </div>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#about" class="nav-link">About</a></li>
+        <li><a href="#experience" class="nav-link">Experience</a></li>
+        <li><a href="#projects" class="nav-link">Projects</a></li>
+        <li><a href="#skills" class="nav-link">Skills</a></li>
+        <li><a href="#education" class="nav-link">Education</a></li>
+        <li><a href="#contact" class="nav-link">Contact</a></li>
+      </ul>
+      <div class="theme-dropdown" id="themeDropdown">
+        <button class="theme-dropdown-btn" id="themeDropdownBtn" aria-haspopup="listbox" aria-expanded="false">
+          <span id="themeDropdownIcon"></span>
+          <svg class="theme-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="11" height="11"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="theme-menu" id="themeMenu" role="listbox" aria-label="Select theme"></div>
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Toggle navigation menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ═══ HERO ═══ -->

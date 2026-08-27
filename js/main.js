@@ -1,178 +1,3 @@
-// Theme system
-
-const DARK_THEMES = new Set(['dark','vscode','darcula','tokyo','dracula','nord','github-dark','atom-one-dark']);
-
-const THEMES = [
-  { id: 'light',       label: 'Light',             color: null,      type: 'mode' },
-  { id: 'dark',        label: 'Dark',              color: null,      type: 'mode' },
-  { id: 'system',      label: 'System',            color: null,      type: 'mode' },
-  { divider: true },
-  { id: 'vscode',      label: 'VS Code Dark+',      color: '#569cd6', bg: '#1e1e1e', type: 'ide' },
-  { id: 'darcula',     label: 'JetBrains Darcula',   color: '#ffc66d', bg: '#2b2b2b', type: 'ide' },
-  { id: 'tokyo',       label: 'Tokyo Night',         color: '#7aa2f7', bg: '#1a1b26', type: 'ide' },
-  { id: 'dracula',     label: 'Dracula',             color: '#bd93f9', bg: '#282a36', type: 'ide' },
-  { id: 'nord',        label: 'Nord',                color: '#88c0d0', bg: '#2e3440', type: 'ide' },
-  { id: 'github-dark',   label: 'GitHub Dark',        color: '#58a6ff', bg: '#0d1117', type: 'ide' },
-  { id: 'atom-one-dark', label: 'Atom One Dark',      color: '#c678dd', bg: '#282c34', type: 'ide' },
-  { id: 'xcode',         label: 'Xcode',              color: '#9b2393', bg: '#ffffff', type: 'ide' },
-];
-
-const MODE_ICONS = {
-  light:  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>`,
-  dark:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`,
-  system: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>`,
-};
-
-// Migrate old stored theme values
-const VALID_THEMES = new Set(THEMES.filter(t => !t.divider).map(t => t.id));
-let _stored = localStorage.getItem('theme') || 'system';
-if (!VALID_THEMES.has(_stored)) _stored = 'system'; // e.g. old "dark" value
-let activeTheme = _stored;
-
-function isDark(theme) {
-  if (DARK_THEMES.has(theme)) return true;
-  if (theme === 'system') return window.matchMedia('(prefers-color-scheme: dark)').matches;
-  return false;
-}
-
-function applyTheme(theme) {
-  activeTheme = theme;
-
-  if (theme === 'system') {
-    document.documentElement.removeAttribute('data-theme');
-  } else {
-    document.documentElement.setAttribute('data-theme', theme);
-  }
-
-  document.documentElement.classList.toggle('is-dark', isDark(theme));
-  localStorage.setItem('theme', theme);
-  updateDropdownBtn(theme);
-}
-
-const THEME_SHORT = {
-  'light': 'Light', 'dark': 'Dark', 'system': 'System',
-  'vscode': 'VS Code', 'darcula': 'Darcula', 'tokyo': 'Tokyo',
-  'dracula': 'Dracula', 'nord': 'Nord', 'github-dark': 'GitHub', 'atom-one-dark': 'Atom', 'xcode': 'Xcode',
-};
-
-function updateDropdownBtn(theme) {
-  const iconEl = document.getElementById('themeDropdownIcon');
-  const btn    = document.getElementById('themeDropdownBtn');
-  if (!iconEl || !btn) return;
-
-  const entry = THEMES.find(t => !t.divider && t.id === theme);
-  if (!entry) return;
-
-  const short = THEME_SHORT[theme] || entry.label;
-
-  if (entry.type === 'mode') {
-    iconEl.innerHTML = `${MODE_ICONS[theme] || ''}<span class="theme-btn-label">${short}</span>`;
-  } else {
-    iconEl.innerHTML = `<span class="theme-dot" style="background:${entry.color};box-shadow:0 0 0 1.5px ${entry.bg}"></span><span class="theme-btn-label">${short}</span>`;
-  }
-  btn.title = entry.label;
-  btn.setAttribute('aria-label', `Theme: ${entry.label}`);
-}
-
-// Build dropdown menu items
-function buildThemeMenu() {
-  const menu = document.getElementById('themeMenu');
-  if (!menu) return;
-
-  menu.innerHTML = '';
-
-  THEMES.forEach(entry => {
-    if (entry.divider) {
-      const div = document.createElement('div');
-      div.className = 'theme-menu-divider';
-      menu.appendChild(div);
-      return;
-    }
-
-    const item = document.createElement('button');
-    item.className = 'theme-menu-item';
-    item.setAttribute('role', 'option');
-    item.dataset.themeId = entry.id;
-
-    if (entry.type === 'mode') {
-      item.innerHTML = `
-        <span class="theme-menu-icon">${MODE_ICONS[entry.id] || ''}</span>
-        <span class="theme-menu-label">${entry.label}</span>
-        <span class="theme-menu-check">✓</span>
-      `;
-    } else {
-      item.innerHTML = `
-        <span class="theme-dot" style="background:${entry.color};box-shadow:0 0 0 1.5px ${entry.bg}"></span>
-        <span class="theme-menu-label">${entry.label}</span>
-        <span class="theme-menu-check">✓</span>
-      `;
-    }
-
-    item.addEventListener('click', () => {
-      applyTheme(entry.id);
-      closeDropdown();
-      updateMenuActive();
-    });
-
-    menu.appendChild(item);
-  });
-
-  updateMenuActive();
-}
-
-function updateMenuActive() {
-  const menu = document.getElementById('themeMenu');
-  if (!menu) return;
-  menu.querySelectorAll('.theme-menu-item').forEach(item => {
-    const isActive = item.dataset.themeId === activeTheme;
-    item.classList.toggle('active', isActive);
-    item.setAttribute('aria-selected', String(isActive));
-  });
-}
-
-// Dropdown open / close
-const themeDropdownEl  = document.getElementById('themeDropdown');
-const themeDropdownBtn = document.getElementById('themeDropdownBtn');
-
-function openDropdown() {
-  if (!themeDropdownEl || !themeDropdownBtn) return;
-  themeDropdownEl.classList.add('open');
-  themeDropdownBtn.setAttribute('aria-expanded', 'true');
-}
-
-function closeDropdown() {
-  if (!themeDropdownEl || !themeDropdownBtn) return;
-  themeDropdownEl.classList.remove('open');
-  themeDropdownBtn.setAttribute('aria-expanded', 'false');
-}
-
-if (themeDropdownBtn) {
-  themeDropdownBtn.addEventListener('click', e => {
-    e.stopPropagation();
-    themeDropdownEl.classList.contains('open') ? closeDropdown() : openDropdown();
-  });
-}
-
-// Close on outside click or Escape
-document.addEventListener('click', e => {
-  if (themeDropdownEl && !themeDropdownEl.contains(e.target)) closeDropdown();
-});
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeDropdown();
-});
-
-// Re-apply is-dark when OS dark mode changes (System mode only)
-window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-  if (activeTheme === 'system') {
-    document.documentElement.classList.toggle('is-dark', isDark('system'));
-  }
-});
-
-// Init
-buildThemeMenu();
-applyTheme(activeTheme);
-
-
 // Typing animation
 const phrases = [
   'Computer Engineering @ GMU',
@@ -211,6 +36,7 @@ function typeLoop() {
 typeLoop();
 
 
+
 // Navbar — scroll state, active link, name reveal
 const navbar   = document.getElementById('navbar');
 const navLinks = document.querySelectorAll('.nav-link');
@@ -218,28 +44,81 @@ const sections = document.querySelectorAll('section[id]');
 const navLogo  = document.getElementById('navLogo');
 const heroName = document.querySelector('.hero-name');
 
+// Only the home page has a hero for the nav name to hide behind. Everywhere
+// else there is nothing to reveal it, so show it straight away.
+if (navLogo && !heroName) navLogo.classList.add('visible');
+
+const PAGE = location.pathname.replace(/index\.html$/, '') || '/';
+
+// A nav link is active when it points at the section currently in view. Page
+// slugs mirror section ids (/experience/ <-> #experience), so a link to another
+// page and a link to a section on this one resolve to the same target name.
+function markActiveLink(current) {
+  navLinks.forEach(link => {
+    const href = link.getAttribute('href');
+    if (!href) return;
+    const url = new URL(href, location.origin);
+    const onThisPage = (url.pathname.replace(/index\.html$/, '') || '/') === PAGE;
+    const target = url.hash ? url.hash.slice(1) : url.pathname.replace(/\//g, '');
+    link.classList.toggle('active', onThisPage && target === current);
+  });
+}
+
+function currentSection() {
+  if (!sections.length) return '';
+  const atBottom = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 8;
+  if (atBottom) return sections[sections.length - 1].getAttribute('id');
+  let current = '';
+  sections.forEach(sec => {
+    if (window.scrollY >= sec.offsetTop - 120) current = sec.getAttribute('id');
+  });
+  return current;
+}
+
+// Breadcrumb: name the page you're on, and the section within it. The page's
+// name comes from whichever nav link points here, so it never drifts from the nav.
+const navContext = document.getElementById('navContext');
+const navPage    = document.getElementById('navPage');
+const navSection = document.getElementById('navSection');
+
+const sectionNames = new Map([...sections].map(sec =>
+  [sec.id, sec.querySelector('.section-title')?.textContent.trim() || '']));
+
+const pageLink = [...navLinks].find(l => {
+  const u = new URL(l.getAttribute('href') || '', location.origin);
+  return !u.hash && (u.pathname.replace(/index\.html$/, '') || '/') === PAGE;
+});
+
+if (navContext && navPage && pageLink && PAGE !== '/') {
+  navPage.textContent = pageLink.textContent.trim();
+  navPage.addEventListener('click', e => {
+    e.preventDefault();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+  navContext.classList.add('visible');
+  navContext.removeAttribute('aria-hidden');
+}
+
+function markSection(current) {
+  if (!navSection) return;
+  const name = sectionNames.get(current) || '';
+  // the page's own name already sits to the left; don't say it twice
+  const label = (navPage && name === navPage.textContent.trim()) ? '' : name;
+  if (navSection.textContent !== label) navSection.textContent = label;
+}
+
 window.addEventListener('scroll', () => {
   navbar.classList.toggle('scrolled', window.scrollY > 20);
-
-  // Reveal name in nav as hero heading scrolls behind the navbar
   if (navLogo && heroName) {
     navLogo.classList.toggle('visible', heroName.getBoundingClientRect().bottom < 72);
   }
-
-  // Highlight the current section link
-  let current = '';
-  const atBottom = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 8;
-  if (atBottom) {
-    current = sections[sections.length - 1].getAttribute('id');
-  } else {
-    sections.forEach(sec => {
-      if (window.scrollY >= sec.offsetTop - 120) current = sec.getAttribute('id');
-    });
-  }
-  navLinks.forEach(link => {
-    link.classList.toggle('active', link.getAttribute('href') === `#${current}`);
-  });
+  const cur = currentSection();
+  markActiveLink(cur);
+  markSection(cur);
 }, { passive: true });
+
+markActiveLink(currentSection());
+markSection(currentSection());
 
 
 // Hamburger menu
@@ -261,19 +140,16 @@ navLinksEl.querySelectorAll('a').forEach(link => {
 });
 
 
-// Scroll animations (IntersectionObserver)
+// Scroll reveal — only section headers carry [data-animate] now, so there are
+// no sibling groups left to stagger. Reveal on sight, no queued delay.
 const animatedEls = document.querySelectorAll('[data-animate]');
 
 const observer = new IntersectionObserver(
   entries => {
     entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const el       = entry.target;
-        const siblings = [...el.parentElement.querySelectorAll('[data-animate]')];
-        const delay    = siblings.indexOf(el) * 80;
-        setTimeout(() => el.classList.add('is-visible'), delay);
-        observer.unobserve(el);
-      }
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('is-visible');
+      observer.unobserve(entry.target);
     });
   },
   { threshold: 0.08, rootMargin: '0px 0px 40px 0px' }

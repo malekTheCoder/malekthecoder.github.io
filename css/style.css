@@ -1,20 +1,24 @@
 /* Light mode (default) */
 :root {
-  --bg:            #ffffff;
-  --bg-alt:        #f5f5f7;
+  --bg:            #fdfcfa;
+  --bg-alt:        #f4f2ee;
   --bg-card:       #ffffff;
-  --text-0:        #111111;
-  --text-1:        #555555;
-  --text-2:        #999999;
-  --accent:        #5b5bd6;
-  --accent-dim:    rgba(91, 91, 214, 0.07);
-  --accent-border: rgba(91, 91, 214, 0.18);
-  --border:        #e4e4e7;
-  --border-hover:  rgba(91, 91, 214, 0.3);
+  --text-0:        #1a1815;
+  --text-1:        #56514b;
+  --text-2:        #736d66;
+  --accent:        #9a3412;
+  --accent-dim:    rgba(154, 52, 18, 0.06);
+  --accent-border: rgba(154, 52, 18, 0.18);
+  --border:        #e3e0dc;
+  --border-hover:  rgba(154, 52, 18, 0.3);
   --shadow:        0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.04);
-  --status-live:   #16a34a;
-  --radius:        12px;
-  --radius-sm:     6px;
+  /* Was Tailwind green-600, which only cleared 3.3:1 as 12px label text. */
+  --status-live:   #17753e;
+  --radius:        6px;
+  --radius-sm:     3px;
+  /* Hairline for rules *inside* a surface — lighter than the surface's own
+     border so a card edge and a row divider don't read as the same weight. */
+  --rule:          color-mix(in srgb, var(--border) 55%, transparent);
   --nav-h:         64px;
   --transition:    0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -23,58 +27,44 @@
 /* System dark (no data-theme set + OS dark) */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
-    --bg:            #0c0c0c;
-    --bg-alt:        #111111;
-    --bg-card:       #161616;
-    --text-0:        #f0f0f0;
-    --text-1:        #888888;
-    --text-2:        #555555;
-    --accent:        #818cf8;
-    --accent-dim:    rgba(129, 140, 248, 0.1);
-    --accent-border: rgba(129, 140, 248, 0.25);
-    --border:        #222222;
-    --border-hover:  rgba(129, 140, 248, 0.4);
+    --bg:            #100e0c;
+    --bg-alt:        #16130f;
+    --bg-card:       #1b1714;
+    --text-0:        #f2efea;
+    --text-1:        #b0a79e;
+    --text-2:        #8a827a;
+    --accent:        #e8825a;
+    --accent-dim:    rgba(232, 130, 90, 0.1);
+    --accent-border: rgba(232, 130, 90, 0.25);
+    --border:        #2b2622;
+    --border-hover:  rgba(232, 130, 90, 0.4);
     --shadow:        0 1px 3px rgba(0, 0, 0, 0.5);
   }
 }
 
 
 /* Brighter status green so the pill stays legible on dark backgrounds */
-html.is-dark { --status-live: #4ade80; }
+html.is-dark { --status-live: #63c98d; }
 
 
-/* Dark */
+/* Dark — must stay byte-identical to the system-dark block above, or the
+   same person sees two different palettes depending on how they got here. */
 :root[data-theme="dark"] {
-  --bg:            #0c0c0c;
-  --bg-alt:        #111111;
-  --bg-card:       #161616;
-  --text-0:        #f0f0f0;
-  --text-1:        #888888;
-  --text-2:        #555555;
-  --accent:        #818cf8;
-  --accent-dim:    rgba(129, 140, 248, 0.1);
-  --accent-border: rgba(129, 140, 248, 0.25);
-  --border:        #222222;
-  --border-hover:  rgba(129, 140, 248, 0.4);
+  --bg:            #100e0c;
+  --bg-alt:        #16130f;
+  --bg-card:       #1b1714;
+  --text-0:        #f2efea;
+  --text-1:        #b0a79e;
+  --text-2:        #8a827a;
+  --accent:        #e8825a;
+  --accent-dim:    rgba(232, 130, 90, 0.1);
+  --accent-border: rgba(232, 130, 90, 0.25);
+  --border:        #2b2622;
+  --border-hover:  rgba(232, 130, 90, 0.4);
   --shadow:        0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 
-/* One Dark Pro */
-:root[data-theme="one-dark"] {
-  --bg:            #282c34;
-  --bg-alt:        #21252b;
-  --bg-card:       #2c313a;
-  --text-0:        #abb2bf;
-  --text-1:        #636d83;
-  --text-2:        #4b5263;
-  --accent:        #61afef;
-  --accent-dim:    rgba(97, 175, 239, 0.1);
-  --accent-border: rgba(97, 175, 239, 0.25);
-  --border:        #3e4451;
-  --border-hover:  rgba(97, 175, 239, 0.4);
-  --shadow:        0 1px 3px rgba(0, 0, 0, 0.5);
-}
 
 
 /* VS Code Dark+ */
@@ -84,7 +74,7 @@ html.is-dark { --status-live: #4ade80; }
   --bg-card:       #2d2d2d;
   --text-0:        #d4d4d4;
   --text-1:        #9d9d9d;
-  --text-2:        #6a6a6a;
+  --text-2:        #777777;
   --accent:        #569cd6;
   --accent-dim:    rgba(86, 156, 214, 0.1);
   --accent-border: rgba(86, 156, 214, 0.25);
@@ -100,8 +90,8 @@ html.is-dark { --status-live: #4ade80; }
   --bg-alt:        #313335;
   --bg-card:       #3c3f41;
   --text-0:        #a9b7c6;
-  --text-1:        #808080;
-  --text-2:        #606060;
+  --text-1:        #a9a9a9;
+  --text-2:        #898989;
   --accent:        #ffc66d;
   --accent-dim:    rgba(255, 198, 109, 0.1);
   --accent-border: rgba(255, 198, 109, 0.25);
@@ -117,8 +107,8 @@ html.is-dark { --status-live: #4ade80; }
   --bg-alt:        #16161e;
   --bg-card:       #1f2335;
   --text-0:        #c0caf5;
-  --text-1:        #565f89;
-  --text-2:        #3b4261;
+  --text-1:        #8189b0;
+  --text-2:        #606b9d;
   --accent:        #7aa2f7;
   --accent-dim:    rgba(122, 162, 247, 0.1);
   --accent-border: rgba(122, 162, 247, 0.25);
@@ -134,8 +124,8 @@ html.is-dark { --status-live: #4ade80; }
   --bg-alt:        #21222c;
   --bg-card:       #343746;
   --text-0:        #f8f8f2;
-  --text-1:        #6272a4;
-  --text-2:        #44475a;
+  --text-1:        #96a0c2;
+  --text-2:        #7b7f9b;
   --accent:        #bd93f9;
   --accent-dim:    rgba(189, 147, 249, 0.1);
   --accent-border: rgba(189, 147, 249, 0.25);
@@ -145,21 +135,6 @@ html.is-dark { --status-live: #4ade80; }
 }
 
 
-/* Monokai */
-:root[data-theme="monokai"] {
-  --bg:            #272822;
-  --bg-alt:        #1e1f1c;
-  --bg-card:       #3e3d32;
-  --text-0:        #f8f8f2;
-  --text-1:        #75715e;
-  --text-2:        #49483e;
-  --accent:        #a6e22e;
-  --accent-dim:    rgba(166, 226, 46, 0.1);
-  --accent-border: rgba(166, 226, 46, 0.25);
-  --border:        #49483e;
-  --border-hover:  rgba(166, 226, 46, 0.4);
-  --shadow:        0 1px 3px rgba(0, 0, 0, 0.5);
-}
 
 
 /* Nord */
@@ -168,8 +143,8 @@ html.is-dark { --status-live: #4ade80; }
   --bg-alt:        #242933;
   --bg-card:       #3b4252;
   --text-0:        #d8dee9;
-  --text-1:        #7b88a1;
-  --text-2:        #4c566a;
+  --text-1:        #a5aebf;
+  --text-2:        #818da5;
   --accent:        #88c0d0;
   --accent-dim:    rgba(136, 192, 208, 0.1);
   --accent-border: rgba(136, 192, 208, 0.25);
@@ -202,8 +177,8 @@ html.is-dark { --status-live: #4ade80; }
   --bg-alt:        #21252b;
   --bg-card:       #21252b;
   --text-0:        #abb2bf;
-  --text-1:        #636d83;
-  --text-2:        #4b5263;
+  --text-1:        #8a93a6;
+  --text-2:        #6b758d;
   --accent:        #c678dd;
   --accent-dim:    rgba(198, 120, 221, 0.1);
   --accent-border: rgba(198, 120, 221, 0.25);
@@ -220,7 +195,7 @@ html.is-dark { --status-live: #4ade80; }
   --bg-card:       #ffffff;
   --text-0:        #000000;
   --text-1:        #5d6c79;
-  --text-2:        #8e8e93;
+  --text-2:        #8b8b91;
   --accent:        #9b2393;
   --accent-dim:    rgba(155, 35, 147, 0.07);
   --accent-border: rgba(155, 35, 147, 0.2);
@@ -244,7 +219,7 @@ body {
   background-color: var(--bg);
   background-size: 28px 28px;
   color: var(--text-0);
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
   line-height: 1.7;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
@@ -303,9 +278,10 @@ img { display: block; max-width: 100%; }
   font-weight: 600;
 }
 .btn-primary:hover {
-  opacity: 0.85;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 14px var(--accent-border);
+  /* Buttons press, they don't float. Darkening the fill instead would drop the
+     label under 4.5:1 on the themes whose accent already sits near the floor
+     (Atom One Dark is 4.75:1 at rest), so the fill is left alone. */
+  transform: translateY(1px);
 }
 
 .btn-outline {
@@ -317,7 +293,7 @@ img { display: block; max-width: 100%; }
   border-color: var(--accent-border);
   color: var(--accent);
   background: var(--accent-dim);
-  transform: translateY(-1px);
+  transform: translateY(1px);
 }
 
 .btn-sm  { padding: 0.45rem 1rem;  font-size: 0.8rem; }
@@ -329,7 +305,7 @@ img { display: block; max-width: 100%; }
   background: var(--bg-alt);
   color: var(--text-1);
   border: 1px solid var(--border);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   font-size: 0.75rem;
   font-family: 'JetBrains Mono', monospace;
   white-space: nowrap;
@@ -344,14 +320,19 @@ img { display: block; max-width: 100%; }
 .tag-group { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1rem; }
 
 
-/* Scroll animations */
+/* Scroll reveal — section headers only. Short and shallow on purpose: it
+   should read as the page settling, not as each block making an entrance. */
 [data-animate] {
   opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.5s ease, transform 0.5s ease;
+  transform: translateY(8px);
+  transition: opacity 0.35s ease, transform 0.35s ease;
 }
 [data-animate="fade-in"] { transform: none; }
 [data-animate].is-visible { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  [data-animate] { opacity: 1; transform: none; transition: none; }
+}
 
 
 /* Navigation */
@@ -372,7 +353,7 @@ img { display: block; max-width: 100%; }
   border-bottom: 1px solid var(--border);
 }
 html.is-dark .nav.scrolled {
-  background: rgba(0, 0, 0, 0.75);
+  background: rgba(12, 10, 8, 0.78);
 }
 
 .nav-container {
@@ -387,6 +368,42 @@ html.is-dark .nav.scrolled {
 }
 
 /* Nav logo — hidden at top, fades in on scroll */
+/* Breadcrumb beside the name: "Malek Swilam / Experience · Education".
+   Mirrors what the project pages already do, so the two halves of the site
+   tell you where you are the same way. */
+.nav-left { display: flex; align-items: baseline; gap: 0.5rem; min-width: 0; }
+
+.nav-context {
+  display: none;
+  align-items: baseline;
+  gap: 0.5rem;
+  min-width: 0;
+}
+.nav-context.visible { display: inline-flex; }
+.nav-context-sep { color: var(--text-2); font-size: 0.95rem; }
+
+.nav-context-page {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-0);
+  white-space: nowrap;
+  transition: color var(--transition);
+}
+.nav-context-page:hover { color: var(--accent); }
+
+.nav-context-section {
+  font-size: 0.9rem;
+  color: var(--text-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.nav-context-section:not(:empty)::before { content: '\00b7 '; color: var(--text-2); }
+
+@media (max-width: 768px) {
+  .nav-context-section { display: none; }
+}
+
 .nav-logo {
   display: inline-flex;
   align-items: center;
@@ -479,7 +496,9 @@ html.is-dark .nav.scrolled {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 5px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
+  /* Kept: this panel genuinely floats above the page. Flat surfaces below
+     get their separation from a border instead. */
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.14);
   z-index: 200;
 }
 html.is-dark .theme-menu {
@@ -492,7 +511,7 @@ html.is-dark .theme-menu {
   align-items: center;
   gap: 9px;
   padding: 7px 9px;
-  border-radius: 7px;
+  border-radius: var(--radius-sm);
   font-size: 0.82rem;
   color: var(--text-1);
   cursor: pointer;
@@ -587,10 +606,6 @@ html.is-dark .theme-menu {
   overflow: hidden;
 }
 
-.hero-bg { display: none; }
-.grid-overlay { display: none; }
-.glow { display: none; }
-
 .hero-inner {
   position: relative;
   z-index: 1;
@@ -608,7 +623,9 @@ html.is-dark .theme-menu {
   line-height: 1.1;
   margin-bottom: 0.75rem;
   color: var(--text-0);
-  font-family: 'Inter', system-ui, sans-serif;
+  /* Inter is no longer loaded — naming it here silently dropped the name into
+     system-ui while the rest of the page ran in Plex. */
+  font-family: inherit;
   transition: font-family 0s;
 }
 
@@ -629,7 +646,19 @@ html.is-dark .theme-menu {
 }
 
 /* Also switch the typing subtitle to mono in IDE themes */
-:root[data-theme="vscode"]      .hero-subtitle,
+:root[data-theme="vscode"]      .type-cursor {
+  color: var(--accent);
+  font-weight: 300;
+  animation: blink 1.1s steps(1) infinite;
+}
+
+@keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .type-cursor { animation: none; }
+}
+
+.hero-subtitle,
 :root[data-theme="one-dark"]    .hero-subtitle,
 :root[data-theme="darcula"]     .hero-subtitle,
 :root[data-theme="tokyo"]       .hero-subtitle,
@@ -644,24 +673,12 @@ html.is-dark .theme-menu {
   font-weight: 400;
 }
 
-.cursor-blink {
-  color: var(--accent);
-  animation: blink 1s step-end infinite;
-}
-@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-
 .hero-subtitle {
   font-size: clamp(1rem, 2.2vw, 1.45rem);
   font-weight: 400;
   color: var(--accent);
   margin-bottom: 1.25rem;
   min-height: 2em;
-}
-
-.type-cursor {
-  color: var(--accent);
-  animation: blink 0.8s step-end infinite;
-  font-weight: 300;
 }
 
 .hero-bio {
@@ -677,133 +694,10 @@ html.is-dark .theme-menu {
 
 .social-link {
   color: var(--text-1);
-  transition: color var(--transition), transform var(--transition);
+  transition: color var(--transition);
 }
-.social-link:hover { color: var(--text-0); transform: translateY(-2px); }
+.social-link:hover { color: var(--text-0); }
 
-
-/* Hero mesh */
-.hero-mesh {
-  position: relative;
-  width: 420px;
-  height: 420px;
-  margin: 0 auto;
-}
-
-.mesh-blob {
-  position: absolute;
-  border-radius: 50%;
-}
-
-/* Large central ambient orb */
-.mesh-blob-1 {
-  width: 310px; height: 310px;
-  background: var(--accent);
-  filter: blur(68px);
-  opacity: 0.26;
-  top: 50%; left: 50%;
-  margin-top: -155px; margin-left: -155px;
-  animation: mesh-1 9s ease-in-out infinite;
-}
-html.is-dark .mesh-blob-1 { opacity: 0.45; }
-
-/* Secondary off-centre accent cloud */
-.mesh-blob-2 {
-  width: 170px; height: 170px;
-  background: var(--accent);
-  filter: blur(44px);
-  opacity: 0.17;
-  top: 6%; right: 4%;
-  animation: mesh-2 13s ease-in-out infinite;
-}
-html.is-dark .mesh-blob-2 { opacity: 0.32; }
-
-/* Bright glowing core */
-.mesh-core {
-  position: absolute;
-  width: 96px; height: 96px;
-  top: 50%; left: 50%;
-  margin-top: -48px; margin-left: -48px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 38% 38%, var(--accent), transparent 68%);
-  filter: blur(16px);
-  opacity: 0.6;
-  animation: mesh-core-pulse 5s ease-in-out infinite alternate;
-}
-html.is-dark .mesh-core { opacity: 0.9; filter: blur(12px); animation-name: mesh-core-pulse-dark; }
-
-/* Orbital ring with a travelling dot */
-.mesh-ring {
-  position: absolute;
-  width: 248px; height: 248px;
-  top: 50%; left: 50%;
-  margin-top: -124px; margin-left: -124px;
-  border-radius: 50%;
-  border: 1px solid var(--accent);
-  opacity: 0.16;
-  animation: mesh-spin 28s linear infinite;
-}
-html.is-dark .mesh-ring { opacity: 0.32; }
-
-.mesh-ring::after {
-  content: '';
-  position: absolute;
-  width: 7px; height: 7px;
-  background: var(--accent);
-  border-radius: 50%;
-  top: -3.5px; left: 50%;
-  transform: translateX(-50%);
-  box-shadow: 0 0 8px 2px var(--accent);
-  opacity: 0.85;
-}
-html.is-dark .mesh-ring::after { opacity: 1; box-shadow: 0 0 12px 3px var(--accent); }
-
-/* Inner dashed ring */
-.mesh-ring-inner {
-  position: absolute;
-  width: 168px; height: 168px;
-  top: 50%; left: 50%;
-  margin-top: -84px; margin-left: -84px;
-  border-radius: 50%;
-  border: 1px dashed var(--accent);
-  opacity: 0.09;
-  animation: mesh-spin 18s linear infinite reverse;
-}
-html.is-dark .mesh-ring-inner { opacity: 0.2; }
-
-@keyframes mesh-1 {
-  0%, 100% { transform: translate(0,    0)    scale(1);    }
-  25%       { transform: translate(14px, -18px) scale(1.05); }
-  50%       { transform: translate(-8px,  8px)  scale(1.02); }
-  75%       { transform: translate(6px,  16px) scale(0.97); }
-}
-@keyframes mesh-2 {
-  0%, 100% { transform: translate(0, 0)          scale(1);    }
-  35%       { transform: translate(-18px, 14px)  scale(1.07); }
-  65%       { transform: translate(12px, -18px)  scale(0.94); }
-}
-@keyframes mesh-core-pulse {
-  from { transform: scale(0.88); opacity: 0.5; }
-  to   { transform: scale(1.14); opacity: 0.7; }
-}
-@keyframes mesh-core-pulse-dark {
-  from { transform: scale(0.88); opacity: 0.75; }
-  to   { transform: scale(1.14); opacity: 1; }
-}
-@keyframes mesh-spin {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
-}
-
-.mesh-dots {
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(circle, var(--border) 1.2px, transparent 1.2px);
-  background-size: 22px 22px;
-  mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black 15%, transparent 78%);
-  opacity: 0.65;
-}
-html.is-dark .mesh-dots { opacity: 0.35; }
 
 .scroll-indicator {
   position: absolute;
@@ -815,8 +709,6 @@ html.is-dark .mesh-dots { opacity: 0.35; }
   border-radius: 50%;
   width: 44px; height: 44px;
   display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
-  animation: bounce 2s ease-in-out infinite;
   transition: color var(--transition), border-color var(--transition), background var(--transition);
   z-index: 1;
 }
@@ -825,29 +717,32 @@ html.is-dark .mesh-dots { opacity: 0.35; }
   border-color: var(--accent-border);
   background: var(--accent-dim);
 }
-html.is-dark .scroll-indicator {
-  box-shadow: 0 2px 16px rgba(0,0,0,0.4);
-}
-@keyframes bounce {
-  0%, 100% { transform: translateX(-50%) translateY(0); }
-  50%       { transform: translateX(-50%) translateY(8px); }
-}
-
 
 /* Sections */
 .section { padding: 5rem 0; }
 .section-alt { background: transparent; }
-.section-header { margin-bottom: 2.5rem; }
 
-.section-label { display: none; }
+/* A header belongs to the block under it, so it sits closer to that block
+   than the blocks sit to each other. */
+.section-header { margin-bottom: 1.75rem; }
+
+/* Two deliberate breaks in the rhythm: the first section needs room after a
+   full-height hero, and the closing note gets the page's widest margins. */
+.section#about   { padding-top: 7rem; }
+.section#contact { padding: 6rem 0 7rem; }
+
+/* Headings inherited the body's 1.7 — far too airy once a title wraps. */
+h1, h2, h3, h4 { line-height: 1.25; }
 
 .section-title {
   font-size: clamp(1.6rem, 3.5vw, 2.6rem);
   font-weight: 700;
-  letter-spacing: -0.03em;
+  /* Plex Sans is wider and rounder than the Inter this was tuned for; -0.03em
+     jammed the counters shut at the top of the clamp. */
+  letter-spacing: -0.015em;
+  line-height: 1.15;
   color: var(--text-0);
 }
-.section-title::after { display: none; }
 
 
 /* About */
@@ -855,32 +750,8 @@ html.is-dark .scroll-indicator {
   display: block;
   max-width: 680px;
 }
-.about-text p { color: var(--text-1); margin-bottom: 1.1rem; line-height: 1.85; font-size: 1.08rem; }
+.about-text p { color: var(--text-1); margin-bottom: 1.1rem; line-height: 1.75; font-size: 1.08rem; }
 .about-text strong { color: var(--text-0); }
-
-.about-facts {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-}
-.about-fact { display: flex; flex-direction: column; gap: 0.2rem; }
-.about-fact-label {
-  font-size: 0.68rem;
-  text-transform: uppercase;
-  letter-spacing: 0.09em;
-  color: var(--text-2);
-  font-family: 'JetBrains Mono', monospace;
-}
-.about-fact-value {
-  font-size: 0.875rem;
-  color: var(--text-0);
-  font-weight: 500;
-}
-
 
 /* Experience timeline */
 .timeline { position: relative; padding-left: 2rem; }
@@ -904,7 +775,6 @@ html.is-dark .scroll-indicator {
   border-radius: 50%;
   background: var(--accent);
   border: 2px solid var(--bg);
-  box-shadow: 0 0 0 3px var(--accent-border);
 }
 .section-alt .timeline-dot { border-color: var(--bg); }
 
@@ -913,8 +783,7 @@ html.is-dark .scroll-indicator {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 1.5rem 1.75rem;
-  box-shadow: var(--shadow);
-  transition: border-color var(--transition), transform var(--transition);
+  transition: border-color var(--transition);
 }
 .timeline-card:hover { border-color: var(--border-hover); }
 
@@ -927,7 +796,7 @@ html.is-dark .scroll-indicator {
   flex-wrap: wrap;
 }
 
-.timeline-role { font-size: 1rem; font-weight: 600; color: var(--text-0); margin-bottom: 0.2rem; }
+.timeline-role { font-size: 1.15rem; font-weight: 600; color: var(--text-0); margin-bottom: 0.2rem; }
 .timeline-company-link {
   display: inline-flex;
   align-items: center;
@@ -937,7 +806,7 @@ html.is-dark .scroll-indicator {
   font-weight: 500;
   transition: opacity var(--transition);
 }
-.timeline-company-link:hover { opacity: 0.7; text-decoration: underline; }
+.timeline-company-link:hover { text-decoration: underline; text-underline-offset: 3px; }
 
 .timeline-right {
   display: flex; flex-direction: column;
@@ -956,16 +825,19 @@ html.is-dark .scroll-indicator {
   border: 1px solid var(--accent-border);
   background: var(--accent-dim);
   padding: 0.25rem 0.7rem;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   font-family: 'JetBrains Mono', monospace;
   transition: all var(--transition);
 }
-.timeline-ext-link:hover { border-color: var(--accent); opacity: 0.8; }
+.timeline-ext-link:hover { border-color: var(--accent); }
 
 .timeline-bullets { padding-left: 1.1rem; margin-bottom: 0.5rem; }
 .timeline-bullets li {
   list-style: disc; color: var(--text-1);
   font-size: 0.9rem; line-height: 1.7; margin-bottom: 0.5rem;
+  /* Cards are full-container width on a wide display; unchecked, a bullet ran
+     ~140 characters. */
+  max-width: 72ch;
 }
 .timeline-bullets li::marker { color: var(--accent); opacity: 0.5; }
 .timeline-bullets strong { color: var(--text-0); }
@@ -985,15 +857,45 @@ html.is-dark .scroll-indicator {
   border-radius: var(--radius);
   padding: 1.75rem;
   display: flex; flex-direction: column;
-  box-shadow: var(--shadow);
-  transition: border-color var(--transition), transform var(--transition), box-shadow var(--transition);
+  transition: border-color var(--transition), background var(--transition);
   position: relative; overflow: hidden;
 }
-.project-card::before { display: none; }
 .project-card:hover {
   border-color: var(--border-hover);
 }
 .project-card.featured { border-color: var(--accent-border); }
+
+/* Cards that are themselves links to a project page */
+a.project-card { text-decoration: none; color: inherit; cursor: pointer; }
+/* Hover reads through the card's own parts — the edge, the title and the
+   arrow — rather than the generic lift-and-glow every surface used to share. */
+a.project-card:hover { border-color: var(--accent); }
+
+/* The banner sits edge-to-edge, cancelling the card's padding */
+a.project-card > .project-banner { margin: -1.75rem -1.75rem 1.25rem; border-radius: var(--radius) var(--radius) 0 0; }
+a.project-card:hover > .project-banner { background: var(--accent-dim); }
+a.project-card:hover .project-name { color: var(--accent); }
+
+.project-card-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.9rem;
+  margin-bottom: 0.6rem;
+}
+
+.project-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 1.25rem;
+  font-size: 0.83rem;
+  font-weight: 500;
+  color: var(--accent);
+  font-family: 'JetBrains Mono', monospace;
+}
+.project-cta svg { transition: transform var(--transition); }
+a.project-card:hover .project-cta svg { transform: translateX(4px); }
 
 /* Project banner — edge-to-edge image at top of card */
 .project-banner-link {
@@ -1004,7 +906,11 @@ html.is-dark .scroll-indicator {
   text-decoration: none;
 }
 .project-banner {
-  height: 116px;
+  /* Cards are full-width in a single-column grid, so a fixed-width drawing sat
+     as a small island in the middle. The diagram now scales to the banner box;
+     preserveAspectRatio keeps it from ever exceeding the height. */
+  height: 130px;
+  padding: 0 1.5rem;
   background: var(--bg-alt);
   border-bottom: 1px solid var(--border);
   display: flex;
@@ -1014,24 +920,29 @@ html.is-dark .scroll-indicator {
 }
 .project-banner-link:hover .project-banner { background: var(--accent-dim); }
 .project-banner-img {
-  max-height: 72px;
+  /* Scaled with the taller banner so the logo cards keep the same visual
+     weight as the diagram cards sitting next to them in the grid. */
+  max-height: 94px;
   max-width: 72%;
   width: auto;
   object-fit: cover;
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   display: block;
 }
 .project-banner-img--contain {
   object-fit: contain;
-  max-height: 60px;
-  max-width: 240px;
+  max-height: 78px;
+  max-width: 312px;
   padding: 0;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
 }
-.project-banner-svg {
-  width: 290px;
-  height: 100px;
-  display: block;
+.project-banner-svg { display: block; }
+
+/* Fills the banner, capped by its own 2.9:1 aspect — on a wide card it renders
+   about 520x180, and it scales down by width on narrow screens. */
+.project-banner-svg.is-diagram {
+  width: 100%;
+  height: 100%;
 }
 
 .project-top {
@@ -1070,7 +981,6 @@ html.is-dark .scroll-indicator {
   color: var(--accent);
   border-color: var(--accent-border);
   background: var(--accent-dim);
-  transform: translateY(-2px);
 }
 .project-link-btn--primary {
   background: var(--accent);
@@ -1079,10 +989,10 @@ html.is-dark .scroll-indicator {
   font-weight: 600;
 }
 .project-link-btn--primary:hover {
-  opacity: 0.85;
   color: var(--bg);
   background: var(--accent);
   border-color: var(--accent);
+  transform: translateY(1px);
 }
 /* Pulsing dot + label — marks a project as actively worked on */
 .project-status {
@@ -1122,76 +1032,24 @@ html.is-dark .scroll-indicator {
   .project-status-dot::after { animation: none; }
 }
 
-.project-coming-soon {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.45rem 1rem;
-  border-radius: var(--radius-sm);
-  font-size: 0.82rem;
-  font-family: var(--font-mono);
-  font-style: italic;
-  color: var(--text-1);
-  background: var(--bg-alt);
-  border: 1px dashed var(--border);
-  white-space: nowrap;
-}
-
 .project-name {
   font-size: 1.1rem; font-weight: 600; color: var(--text-0); margin-bottom: 0.6rem;
+  transition: color var(--transition);
 }
+/* Inside a card head the name sits beside the status pill, so the gap handles spacing */
+.project-card-head .project-name { margin-bottom: 0; }
 .project-name-link {
   color: var(--text-0);
   text-decoration: none;
   transition: color var(--transition);
 }
 .project-name-link:hover { color: var(--accent); }
-.project-desc { font-size: 0.9rem; color: var(--text-1); line-height: 1.75; flex: 1; }
+.project-desc { font-size: 0.9rem; color: var(--text-1); line-height: 1.75; flex: 1; max-width: 70ch; }
 .projects-cta { text-align: center; }
 
 
 /* Skills */
 #skills { position: relative; overflow: hidden; }
-
-.floating-icons {
-  position: absolute; inset: 0;
-  pointer-events: none; z-index: 0;
-}
-.float-icon {
-  position: absolute;
-  width: 40px; height: 40px;
-  opacity: 0.13;
-  filter: grayscale(0.2);
-  animation: float-updown 6s ease-in-out infinite;
-  user-select: none;
-}
-html.is-dark .float-icon {
-  opacity: 0.25;
-  filter: none;
-}
-
-@keyframes float-updown {
-  0%, 100% { transform: translateY(0); }
-  50%       { transform: translateY(-14px); }
-}
-
-@keyframes float-sway {
-  0%, 100% { transform: translate(0, 0); }
-  25%       { transform: translate(7px, -10px); }
-  50%       { transform: translate(2px, -18px); }
-  75%       { transform: translate(-6px, -9px); }
-}
-
-@keyframes float-spin {
-  0%   { transform: translateY(0)    rotate(0deg); }
-  50%  { transform: translateY(-14px) rotate(180deg); }
-  100% { transform: translateY(0)    rotate(360deg); }
-}
-
-@keyframes float-bounce {
-  0%, 100% { transform: translateY(0)    scale(1); }
-  40%       { transform: translateY(-18px) scale(1.18); }
-  60%       { transform: translateY(-12px) scale(1.05); }
-}
 
 .skills-cloud {
   display: flex;
@@ -1203,7 +1061,6 @@ html.is-dark .float-icon {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--bg-card);
-  box-shadow: var(--shadow);
   overflow: hidden;
 }
 
@@ -1212,11 +1069,10 @@ html.is-dark .float-icon {
   align-items: flex-start;
   gap: 2rem;
   padding: 1.1rem 1.5rem;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--rule);
   transition: background var(--transition);
 }
 .skill-row:last-child { border-bottom: none; }
-.skill-row:hover { background: var(--bg-alt); }
 
 .skill-row-label {
   font-size: 0.7rem;
@@ -1242,16 +1098,10 @@ html.is-dark .float-icon {
   padding: 0.3rem 0.75rem;
   background: var(--bg-alt);
   border: 1px solid var(--border);
-  border-radius: 100px;
+  border-radius: var(--radius-sm);
   font-size: 0.82rem;
   color: var(--text-0);
-  transition: all var(--transition);
   cursor: default;
-}
-.skill-pill:hover {
-  border-color: var(--accent-border);
-  color: var(--accent);
-  background: var(--accent-dim);
 }
 
 
@@ -1261,14 +1111,14 @@ html.is-dark .float-icon {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 2rem;
-  box-shadow: var(--shadow);
   position: relative; z-index: 1;
 }
-.honors-title { font-size: 0.95rem; font-weight: 600; color: var(--text-0); margin-bottom: 1.5rem; }
+/* Was 0.95rem — smaller than the body copy it heads. */
+.honors-title { font-size: 1.05rem; font-weight: 600; color: var(--text-0); margin-bottom: 1.5rem; }
 .honors-list { display: flex; flex-direction: column; gap: 1.25rem; }
 .honor-item { display: flex; align-items: flex-start; gap: 1rem; }
 .honor-icon { font-size: 1.3rem; flex-shrink: 0; margin-top: 2px; }
-.honor-icon-img { width: 28px; height: 28px; object-fit: contain; flex-shrink: 0; border-radius: 4px; }
+.honor-icon-img { width: 28px; height: 28px; object-fit: contain; flex-shrink: 0; border-radius: var(--radius-sm); }
 .honor-item div { display: flex; flex-direction: column; gap: 0.15rem; }
 .honor-item strong { font-size: 0.9rem; color: var(--text-0); }
 .honor-sub { font-size: 0.8rem; color: var(--text-1); }
@@ -1285,8 +1135,7 @@ html.is-dark .float-icon {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 1.75rem;
-  box-shadow: var(--shadow);
-  transition: border-color var(--transition), transform var(--transition);
+  transition: border-color var(--transition);
 }
 .edu-card:hover { border-color: var(--border-hover); }
 .edu-card.featured-edu { border-color: var(--accent-border); }
@@ -1297,7 +1146,7 @@ html.is-dark .float-icon {
   opacity: 1;
   background: #fff;
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   padding: 6px 10px;
   display: flex;
   align-items: center;
@@ -1315,9 +1164,11 @@ html.is-dark .float-icon {
   font-size: 0.7rem; padding: 0.2rem 0.6rem;
   background: var(--accent-dim); color: var(--accent);
   border: 1px solid var(--accent-border);
-  border-radius: 4px; font-family: 'JetBrains Mono', monospace; white-space: nowrap;
+  border-radius: var(--radius-sm); font-family: 'JetBrains Mono', monospace; white-space: nowrap;
 }
-.edu-school { font-size: 1rem; font-weight: 600; color: var(--text-0); margin-bottom: 0.25rem; }
+/* Was exactly the base body size — a card title separated from its own body
+   copy by weight alone. */
+.edu-school { font-size: 1.05rem; font-weight: 600; color: var(--text-0); margin-bottom: 0.25rem; }
 .edu-school-link { color: inherit; text-decoration: none; transition: color var(--transition); }
 .edu-school-link:hover { color: var(--accent); }
 .edu-honors { font-size: 0.8rem; color: var(--text-muted); font-weight: 500; margin-bottom: 0.25rem; }
@@ -1326,7 +1177,7 @@ html.is-dark .float-icon {
 .edu-date { font-size: 0.78rem; color: var(--text-1); font-family: 'JetBrains Mono', monospace; margin-bottom: 0.75rem; }
 .edu-courses {
   font-size: 0.78rem; color: var(--text-1); line-height: 1.65;
-  border-top: 1px solid var(--border); padding-top: 0.75rem; margin-top: 0.25rem;
+  border-top: 1px solid var(--rule); padding-top: 0.75rem; margin-top: 0.25rem;
 }
 
 
@@ -1339,12 +1190,12 @@ html.is-dark .float-icon {
   font-size: 0.875rem; color: var(--text-1);
   border: 1px solid var(--border); background: var(--bg-card);
   padding: 0.5rem 1.25rem;
-  border-radius: var(--radius-sm); box-shadow: var(--shadow);
+  border-radius: var(--radius-sm);
   transition: all var(--transition);
 }
 .contact-social-link:hover {
   color: var(--accent); border-color: var(--accent-border);
-  background: var(--accent-dim); transform: translateY(-2px);
+  background: var(--accent-dim);
 }
 
 
@@ -1378,7 +1229,7 @@ html.is-dark .float-icon {
     transition: transform var(--transition), opacity var(--transition);
     z-index: 99;
   }
-  html.is-dark .nav-links { background: rgba(0, 0, 0, 0.95); }
+  html.is-dark .nav-links { background: rgba(12, 10, 8, 0.96); }
   .nav-links.open { transform: translateY(0); opacity: 1; pointer-events: all; }
   .nav-links li { width: 100%; }
   .nav-link { display: block; padding: 0.85rem 2rem; font-size: 1rem; }
@@ -1441,3 +1292,24 @@ html.is-dark .float-icon {
   transition: opacity 0.5s ease 1.1s;
 }
 .theme-hint.is-visible .theme-hint-text { opacity: 0.8; }
+
+/* Landing from a project page scrolls to that project's card, clear of the nav */
+.project-card { scroll-margin-top: calc(var(--nav-h) + 2rem); }
+
+/* Named workstreams inside one role — a quiet label above each bullet group */
+.timeline-project + .timeline-project { margin-top: 1rem; }
+
+.timeline-project-name {
+  /* Sits third in the hierarchy: role, company, workstream, bullets. Mono at
+     600 reads much heavier than sans at the same size, so this stays numerically
+     below the 0.9rem bullets while still clearly out-ranking them — the weight,
+     the full-contrast colour and the accent rule do that work, not the size. */
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--text-0);
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.01em;
+  margin-bottom: 0.5rem;
+  padding-left: 0.75rem;
+  border-left: 2px solid var(--accent);
+}
