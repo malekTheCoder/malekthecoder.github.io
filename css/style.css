@@ -1080,9 +1080,9 @@ a.project-card:hover .project-cta svg { transform: translateX(4px); }
   letter-spacing: 0.1em;
   color: var(--accent);
   font-family: 'JetBrains Mono', monospace;
-  white-space: nowrap;
+  line-height: 1.5;
   padding-top: 0.35rem;
-  min-width: 90px;
+  flex: 0 0 104px;
 }
 
 .skill-pills {
@@ -1237,7 +1237,7 @@ a.project-card:hover .project-cta svg { transform: translateX(4px); }
   .hamburger { display: flex; }
 
   .skill-row { flex-direction: column; gap: 0.6rem; }
-  .skill-row-label { min-width: auto; }
+  .skill-row-label { flex: 0 0 auto; }
 
   .timeline { padding-left: 1.5rem; }
   .timeline-dot { left: calc(-1.5rem + 1px); }
