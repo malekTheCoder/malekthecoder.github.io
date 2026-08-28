@@ -1186,7 +1186,7 @@ a.project-card:hover .project-cta svg { transform: translateX(4px); }
 .edu-timeline {
   /* how far the rail sits from the section's left edge; the year column
      occupies everything to the left of it */
-  --edu-rail: 6.25rem;
+  --edu-rail: 7.25rem;
   position: relative;
   padding-left: calc(var(--edu-rail) + 2rem);
 }
@@ -1241,7 +1241,7 @@ a.project-card:hover .project-cta svg { transform: translateX(4px); }
   text-transform: uppercase;
   color: var(--text-1);
 }
-.edu-year-num { display: block; font-size: 0.95rem; color: var(--text-0); }
+.edu-year-num { display: block; font-size: 0.95rem; color: var(--text-0); white-space: nowrap; }
 
 .edu-dot {
   flex: 0 0 auto;
@@ -1277,7 +1277,7 @@ a.project-card:hover .project-cta svg { transform: translateX(4px); }
 /* One stop, one row. GMU sits alone on its row; the concurrent pair shares
    the one below, which is what makes them read as a pair. */
 .edu-row { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
-.edu-row--pair { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+.edu-row--pair { grid-template-columns: minmax(0, 1.32fr) minmax(0, 1fr); }
 
 .edu-card {
   background: var(--bg-card);
@@ -1327,6 +1327,27 @@ a.project-card:hover .project-cta svg { transform: translateX(4px); }
 .edu-courses {
   font-size: 0.87rem; color: var(--text-1); line-height: 1.7;
   border-top: 1px solid var(--rule); padding-top: 0.75rem; margin-top: 0.25rem;
+}
+
+.edu-courses--grouped {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.35rem 1.5rem;
+}
+.edu-course-col { list-style: none; margin: 0; padding: 0; }
+.edu-course-col li {
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: var(--text-1);
+  margin-bottom: 0.15rem;
+}
+.edu-course-label {
+  color: var(--text-2);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+}
+@media (max-width: 420px) {
+  .edu-courses--grouped { grid-template-columns: 1fr; gap: 0.5rem; }
 }
 
 
@@ -1417,6 +1438,11 @@ a.project-card:hover .project-cta svg { transform: translateX(4px); }
     margin-right: 0;
   }
   .edu-row--pair { grid-template-columns: 1fr; }
+  /* Logo and badge side by side are wider than a phone column, and a grid item
+     will not shrink below its own content. Let the badge drop to its own line
+     rather than push the card past the screen edge. */
+  .edu-card { min-width: 0; }
+  .edu-header { flex-wrap: wrap; gap: 0.75rem; }
 
   .theme-menu { right: 0; }
 }
