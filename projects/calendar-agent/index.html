@@ -43,7 +43,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/style.css?v=61" />
+  <link rel="stylesheet" href="/css/style.css?v=66" />
   <link rel="stylesheet" href="/css/project.css?v=36" />
 
   <script type="application/ld+json">
@@ -108,8 +108,9 @@
       <header class="proj-hero">
         <h1 class="proj-title">Desk Calendar Agent</h1>
         <p class="proj-tagline">
-          A calendar assistant on a Raspberry Pi you can text from anywhere. The language model runs on the
-          device itself, so nothing gets sent to a cloud provider. An 80%-accurate model, with zero destructive
+          You send the agent a message like "lunch with John Appleseed on Friday at noon." A 3B parameter
+          model running on the Raspberry Pi reads that into a title, a date and a time, creates the event
+          through the Google Calendar API, and the e-ink panel updates. An 80%-accurate model, with zero destructive
           actions ever reaching the calendar.
         </p>
         <div class="proj-actions">
@@ -145,14 +146,15 @@
             <div class="proj-toc-title">On this page</div>
             <ul>
               <li><a href="#overview">Overview</a></li>
-              <li><a href="#demo">Demo</a></li>
               <li><a href="#photos">The device</a></li>
+              <li><a href="#interface">The interface</a></li>
+              <li><a href="#demo">Full demo</a></li>
               <li><a href="#problem">The accuracy problem</a></li>
               <li><a href="#safety">Validation layer</a></li>
               <li><a href="#numbers">Numbers</a></li>
               <li><a href="#model">Choosing the model</a></li>
               <li><a href="#hardware">Hardware constraints</a></li>
-              <li><a href="#failures">Two bugs, and the fixes</a></li>
+              <li><a href="#harness">Testing it the way it actually runs</a></li>
               <li><a href="#limits">Known limitations</a></li>
               <li><a href="#stack">Tech stack</a></li>
             </ul>
@@ -165,15 +167,45 @@
           <section class="proj-section" id="overview" data-animate="fade-up">
             <h2 class="proj-h2">Overview</h2>
             <p>
-            You text it in plain English, "move my dentist appointment to Thursday at 2", or hold a button
-            and say it, and it edits your Google Calendar. A 7.5-inch e-paper panel shows the day, week, or month,
-            and three buttons switch between them.
+            There are two ways to reach the agent, both in the web UI: type the request, or hold the record
+            button and speak it, which whisper.cpp transcribes on the Pi and shows back to you before the agent
+            acts on it. Either way the request goes through the same path. The 7.5 inch e-ink panel shows the
+            day, week, or month, and three physical buttons on the device switch between them.
           </p>
             <p>
-            The model is Qwen2.5 3B, quantized to 4-bit and served locally by Ollama. It runs on the Pi, so the
-            app makes no API calls and none of my calendar data is sent to a cloud provider.
+            The model is Qwen2.5 3B, quantized to 4-bit and served by Ollama on the Pi. Nothing about the
+            reasoning leaves the device, and neither does your voice, since whisper.cpp transcribes locally
+            too. The only thing that goes out is the Google Calendar API call that makes the edit.
           </p>
-
+          </section>
+          <section class="proj-section" id="photos" data-animate="fade-up">
+            <h2 class="proj-h2">The device</h2>
+            <p>
+            A Raspberry Pi 5 and a Waveshare 7.5 inch e-ink panel, 800x480 at one bit per pixel. The panel runs
+            off its own driver HAT over a 9-pin cable, which leaves the GPIO header free for the three view
+            buttons on the breadboard. Those switch straight to ground and lean on the Pi's internal pull-ups,
+            so there are no resistors on the board.
+          </p>
+            <figure class="proj-figure">
+              <div class="proj-carousel" aria-label="Photos of the device">
+                <img src="/assets/projects/calendar-agent/device-1.jpg" alt="The assembled Desk Calendar Agent: a 7.5-inch e-ink panel showing the day view for Thursday 20 August, mounted above a Raspberry Pi and a breadboard of three coloured buttons" data-lightbox />
+                <img src="/assets/projects/calendar-agent/device-2.jpg" alt="The same device showing the week view, 16–22 August, with each day's events laid out in columns" data-lightbox />
+                <img src="/assets/projects/calendar-agent/device-3.jpg" alt="The device showing the month view for August 2026, with dots marking the days that have events" data-lightbox />
+                <img src="/assets/projects/calendar-agent/device-4.jpg" alt="Close-up of the e-ink panel in week view, showing the DAY / WEEK / MONTH selector along the bottom edge with WEEK highlighted" data-lightbox />
+                <img src="/assets/projects/calendar-agent/device-5.jpg" alt="Close-up of the e-ink panel in day view, listing each event with its start and end time" data-lightbox />
+              </div>
+              <div class="proj-carousel-thumbs" role="tablist" aria-label="Choose photo"></div>
+            </figure>
+          </section>
+          <!-- ═══ INTERFACE ═══ -->
+          <section class="proj-section" id="interface" data-animate="fade-up">
+            <h2 class="proj-h2">The interface</h2>
+            <p>
+            The web UI is a chat log: you send a request, the agent says what it did, and the week view under it
+            redraws. FastAPI serves it off the Pi, and Tailscale makes it reachable from anywhere. Tailscale
+            also gives it a real HTTPS certificate, which is what makes voice input work at all, since browsers
+            only allow microphone access on a secure origin.
+          </p>
             <figure class="proj-figure">
               <div class="device device--phone">
                 <div class="device-screen">
@@ -182,12 +214,11 @@
               </div>
             </figure>
           </section>
-
-          <!-- ═══ DEMO ═══ -->
           <section class="proj-section" id="demo" data-animate="fade-up">
-            <h2 class="proj-h2">Demo</h2>
+            <h2 class="proj-h2">Full demo</h2>
             <p>
-            A full run: I say a command, the model works through it, and the panel redraws with the change.
+            A 40-second run: a request typed into the web UI, the 3B model working it out on the Pi, and the
+            e-ink panel redrawing with the new event.
           </p>
             <figure class="proj-figure">
               <div class="proj-video" data-video-id="dp1a_B39hyU" data-video-title="Desk Calendar Agent demo" role="button" tabindex="0" aria-label="Play demo video">
@@ -199,32 +230,24 @@
             </figure>
           </section>
 
+          <!-- ═══ DEMO ═══ -->
+
           <!-- ═══ PHOTOS ═══ -->
-          <section class="proj-section" id="photos" data-animate="fade-up">
-            <h2 class="proj-h2">The device</h2>
-            <p>The Pi, the e-paper panel and the three view buttons.</p>
-            <figure class="proj-figure">
-              <div class="proj-carousel" aria-label="Photos of the device">
-                <img src="/assets/projects/calendar-agent/device-1.jpg" alt="The assembled Desk Calendar Agent: a 7.5-inch e-paper panel showing the day view for Thursday 20 August, mounted above a Raspberry Pi and a breadboard of three coloured buttons" data-lightbox />
-                <img src="/assets/projects/calendar-agent/device-2.jpg" alt="The same device showing the week view, 16–22 August, with each day's events laid out in columns" data-lightbox />
-                <img src="/assets/projects/calendar-agent/device-3.jpg" alt="The device showing the month view for August 2026, with dots marking the days that have events" data-lightbox />
-                <img src="/assets/projects/calendar-agent/device-4.jpg" alt="Close-up of the e-paper panel in week view, showing the DAY / WEEK / MONTH selector along the bottom edge with WEEK highlighted" data-lightbox />
-                <img src="/assets/projects/calendar-agent/device-5.jpg" alt="Close-up of the e-paper panel in day view, listing each event with its start and end time" data-lightbox />
-              </div>
-              <div class="proj-carousel-thumbs" role="tablist" aria-label="Choose photo"></div>
-            </figure>
-          </section>
 
           <!-- ═══ PROBLEM ═══ -->
           <section class="proj-section" id="problem" data-animate="fade-up">
             <h2 class="proj-h2">The accuracy problem</h2>
             <p>
-            <strong>Problem:</strong> a 3B model picks the right tool about 80% of the time. That is not good
-            enough for software that can delete appointments, and a larger model does not fit on the Pi.
+            <strong>Problem:</strong> the 3B model picks the right tool 80% of the time. That is not good enough
+            for something that can delete appointments off your real calendar. Qwen2.5 7B scores better, but it
+            ran 5x slower on a laptop, before even moving to the Pi's much weaker processor, and the 14B does
+            not fit at all: 9 GB at 4-bit against the Pi's 8 GB of RAM. So the accuracy had to come from code
+            instead of a bigger model, which is the better trade here anyway. The checks run instantly and cost
+            nothing, while a bigger model would cost seconds on every single message.
           </p>
             <p>
-            <strong>Solution:</strong> at first I tried prompt engineering, but every revision I wrote traded one
-            failure for another, so the overall failure rate stayed about the same. What actually worked was moving
+            <strong>Solution:</strong> at first I tried prompt engineering, but every problem I fixed just turned into a
+            different one, so the overall failure rate barely moved. What actually worked was moving
             the decisions the model kept getting wrong out of the model entirely. It still picks the tool and names
             the event, which it is good at, and Python checks everything else before anything irreversible runs.
           </p>
@@ -236,7 +259,7 @@
 
             <figure class="proj-figure">
               <div class="proj-diagram">
-                <svg viewBox="0 0 880 248" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Flow: text, voice or SMS goes to the local 3B model, which proposes a tool call; a validation gate either passes it to Google Calendar or rejects it and asks the user instead">
+                <svg viewBox="0 0 880 248" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Flow: text or voice goes to the local 3B model, which proposes a tool call; a validation gate either passes it to Google Calendar or rejects it and asks the user instead">
                   <defs>
                     <marker id="c-arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                       <path d="M0 0 L10 5 L0 10 z" fill="var(--accent)"/>
@@ -263,7 +286,7 @@
                   <circle cx="60" cy="94" r="1.3" fill="var(--accent)"/>
                   <path d="M49 102 l-3 7 l9 -7" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
                   <text x="84" y="93" font-family="'IBM Plex Sans', sans-serif" font-size="14.5" font-weight="600" fill="var(--text-0)">Your words</text>
-                  <text x="84" y="112" font-family="'JetBrains Mono', monospace" font-size="10" fill="var(--text-1)">web · SMS · voice</text>
+                  <text x="84" y="112" font-family="'JetBrains Mono', monospace" font-size="10" fill="var(--text-1)">web · voice</text>
 
                   <!-- 3B model (hub) -->
                   <rect x="234" y="50" width="192" height="96" rx="18" fill="var(--accent)" fill-opacity="0.32" filter="url(#c-glow)"/>
@@ -313,7 +336,7 @@
               <figcaption class="proj-caption">Nothing irreversible happens until deterministic code agrees</figcaption>
             </figure>
 
-            <p>Five decisions moved out of the model, each one after watching it get them wrong:</p>
+            <p>After testing I found five decisions the model kept getting wrong, so I moved all five out of it:</p>
             <ul class="proj-list">
               <li><strong>Relative dates.</strong> The model cannot see today's date, so "next Friday" is resolved in Python.</li>
               <li><strong>Ambiguous references.</strong> It acted on the first matching event instead of asking which one I meant.</li>
@@ -323,14 +346,8 @@
             </ul>
 
             <p>
-            Across the evaluation set the model proposes seven destructive actions it should not. The validation
-            layer catches all seven, so none of them reach the calendar.
-          </p>
-
-            <h3 class="proj-h3">It caught a real one, on the device</h3>
-            <p>
-            In one test the model invented a start time nobody had given it. Validation rejected the call and made
-            the agent ask me instead.
+            Across 76 labelled cases the model proposed seven destructive actions it should not have. The
+            validation layer caught all seven, so none of them reached the calendar.
           </p>
           </section>
 
@@ -354,8 +371,8 @@
             </div>
 
             <p>
-            The hosted model is there for comparison only. A test asserts nothing in the app can reach a hosted
-            provider at runtime.
+            Claude Sonnet is in the table as a ceiling, not as a fallback. No app module on the live agent path even
+            imports the hosted client, and a test fails if one ever does.
           </p>
 
             <p>Speed, measured on the Pi:</p>
@@ -390,8 +407,8 @@
             </div>
 
             <p>
-            The 7B was more accurate and still wrong: five times slower on a laptop, and it proposed two destructive
-            actions the 3B never did.
+            The 7B scored higher and was still the wrong pick. It proposed two destructive actions the 3B never
+            did, and it was the quickest of the five to reach for a destructive tool on its own.
           </p>
           </section>
 
@@ -400,66 +417,52 @@
             <h2 class="proj-h2">Hardware constraints</h2>
 
             <p>
-            An e-ink refresh takes four seconds and the panel only has so many, so the display hashes what it would
-            show and redraws only on change. The hash skips the minute, or the clock would trigger one every poll.
+            <strong>Refresh is expensive.</strong> A full e-ink refresh takes about four seconds and visibly flashes, and the panel only has a finite
+            number of them in it. So the display hashes the image it is about to draw and redraws only when that
+            hash changes. The hash ignores the minute on purpose, since otherwise the clock alone would force a
+            refresh on every poll.
           </p>
 
             <p>
-            Button presses overwrite instead of queueing, a refresh takes four seconds and more arrive during it.
+            <strong>Presses outrun the panel.</strong> Button presses overwrite instead of queueing. A refresh takes four seconds, and more presses arrive
+            during it.
           </p>
 
             <p>
-            Webhook retries dedupe on a composite key of (source, update_id). The uniqueness constraint is the lock,
-            so it survives a restart.
+            <strong>Prompt caching.</strong> Prefilling the 2.2k-token system prompt costs about 100 seconds on
+            the Pi, a cache hit about 6. Ollama caches by longest common prefix, so the timestamp rides on the
+            user turn. Anywhere in the system prompt and every message pays the prefill again.
           </p>
 
             <p>
-            Prompt caching is why it's usable. Prefilling the 2,200-token system prompt takes about 100 seconds, and
-            Ollama caches by longest common prefix, so the timestamp goes last, or every message pays it again.
-          </p>
-
-            <p>
-            The Pi is on a private Tailscale network with a real certificate. Browsers only give microphone access to
-            a secure origin, so voice needs it.
-          </p>
-
-            <p>
-            The display is output only, so the whole agent is testable with no hardware attached.
+            <strong>The panel is the last link.</strong> The display is output only, so the whole agent is testable with no hardware attached. The e-ink path
+            is the last thing in the chain and nothing upstream depends on it, which means the model, the
+            validation layer and the calendar client all run and get tested on a laptop.
           </p>
 
             <figure class="proj-figure">
               <div class="device device--mac" style="max-width:620px">
                 <div class="device-bar"><span></span><span></span><span></span></div>
-                <img src="/assets/projects/calendar-agent/epaper-week.png" alt="The 800x480 1-bit week view rendered for the e-paper panel" loading="lazy" data-lightbox />
+                <img src="/assets/projects/calendar-agent/epaper-week.png" alt="The 800x480 1-bit week view rendered for the e-ink panel" loading="lazy" data-lightbox />
               </div>
               <figcaption class="proj-caption">The 800×480 1-bit week render, identical on panel and phone</figcaption>
             </figure>
           </section>
 
-          <!-- ═══ FAILURES ═══ -->
-          <section class="proj-section" id="failures" data-animate="fade-up">
-            <h2 class="proj-h2">Two bugs, and the fixes</h2>
 
-            <h3 class="proj-h3">A performance fix that caused a data-loss bug</h3>
+          <!-- ═══ HARNESS ═══ -->
+          <section class="proj-section" id="harness" data-animate="fade-up">
+            <h2 class="proj-h2">Testing it the way it actually runs</h2>
             <p>
-            Moving the timestamp to the front made the prompt cache work, and primed the model toward time queries and
-            away from actions. A politely worded delete started producing an update_event against the real event.
+            A whole class of bug cannot appear until the system runs the way it really runs, and the only defence
+            is a harness shaped like the real thing rather than shaped like whatever is convenient to test.
           </p>
             <p>
-            At 20 samples per case, 14/20 correct became 0/20 with three destructive false positives. Moving it to the
-            end kept the speed and lost the priming.
-          </p>
-            <p>
-            The eval caught it. The unit tests passed and the device worked.
-          </p>
-
-            <h3 class="proj-h3">A display bug that only existed in production</h3>
-            <p>
-            Every manual test used a one-shot render, so it always passed. The panel's sleep() closes the SPI handle,
-            which was only opened at startup, the first refresh worked, every one after it failed.
-          </p>
-            <p>
-            Both bugs came from testing the system differently than it actually runs.
+            Every manual test of the display was a single render, and every one of them passed. On the device the
+            display is a loop, and only the first refresh ever worked. The panel's <code>sleep()</code> ends in
+            <code>SPI.close()</code>, and the connection was only opened once when the object was built, so every
+            refresh after the first had nothing to write to. The fix was to open and close the connection inside
+            each refresh instead of once at startup.
           </p>
           </section>
 
@@ -467,23 +470,23 @@
           <section class="proj-section" id="limits" data-animate="fade-up">
             <h2 class="proj-h2">Known limitations</h2>
             <p>
-            It is slow. Sixty seconds is what it costs to run the model on hardware I own rather than someone
-            else's, and there is no way around that at this size.
+            <strong>Speed.</strong> A warm turn takes about 50 seconds, and that is what it costs to run the model on
+            hardware I own rather than someone else's.
           </p>
             <p>
-            A single turn can take longer than the browser is willing to wait, so the page sometimes reports a
-            network error for a request that actually succeeded. The work still completes and is logged. The
-            fix is to acknowledge the message immediately and poll for the result instead of holding one
-            request open.
-          </p>
-            <p>
-            About 4,200 lines of Python and 227 tests, none needing hardware.
+            <strong>Long requests time out in the browser.</strong> A turn can outlast the browser, so the page
+            sometimes shows a network error for something that actually worked. The event still gets created and the turn still
+            gets logged, so it is a reporting problem rather than a lost request. The fix is to acknowledge the
+            message right away and poll for the result instead of keeping one request open the whole time.
           </p>
           </section>
 
           <!-- ═══ TECH STACK ═══ -->
           <section class="proj-section" id="stack" data-animate="fade-up">
             <h2 class="proj-h2">Tech stack</h2>
+            <p>
+            About 8,100 lines of Python and 590 tests, none of which need the hardware attached.
+          </p>
             <div class="proj-stack">
               <div class="stack-row">
                 <span class="stack-label">Language</span>
@@ -499,11 +502,11 @@
               </div>
               <div class="stack-row">
                 <span class="stack-label">Services</span>
-                <div class="stack-items"><span class="stack-item">Google Calendar API</span><span class="stack-item">Twilio</span></div>
+                <div class="stack-items"><span class="stack-item">Google Calendar API</span></div>
               </div>
               <div class="stack-row">
                 <span class="stack-label">Device</span>
-                <div class="stack-items"><span class="stack-item">Raspberry Pi 5</span><span class="stack-item">Waveshare 7.5&quot; e-paper</span><span class="stack-item">gpiozero</span><span class="stack-item">spidev</span><span class="stack-item">Pillow</span></div>
+                <div class="stack-items"><span class="stack-item">Raspberry Pi 5</span><span class="stack-item">Waveshare 7.5&quot; e-ink</span><span class="stack-item">gpiozero</span><span class="stack-item">spidev</span><span class="stack-item">Pillow</span></div>
               </div>
               <div class="stack-row">
                 <span class="stack-label">Ops</span>

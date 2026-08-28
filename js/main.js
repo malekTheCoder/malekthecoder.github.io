@@ -158,6 +158,125 @@ const observer = new IntersectionObserver(
 animatedEls.forEach(el => observer.observe(el));
 
 
+// Section rails: the line fills in behind you as you read down a section, and
+// each dot lights as the fill reaches it. CSS keeps a rail solid until its
+// progress class arrives, so a page without JS still looks finished. Two
+// sections run one: Experience, and Education, which labels its stops with
+// years but is otherwise identical.
+
+// the track is inset top and bottom by this much (see .timeline::before)
+const RAIL_INSET = 8;
+// Anything above this line on screen counts as read. Sitting it a little
+// past centre means the fill reaches a card about when you start reading it.
+const MARK = 0.55;
+
+// Slack around a dot's own threshold. Without it a dot sitting right on the
+// mark flips on and off as the page settles under your finger, and its
+// colour transition restarts each way, which strobes.
+const DOT_HOLD = 8;
+
+function makeRail(railSelector, dotSelector, progressClass) {
+  const rail = document.querySelector(railSelector);
+  if (!rail) return null;
+
+  const dots = [...rail.querySelectorAll(dotSelector)];
+
+  let dotOffsets = [];   // dot centres, measured down from the rail's top
+  let dotLit     = [];
+  let lastFill   = -1;
+  let lastHeight = -1;
+  let ticking    = false;
+  // The observer below only ever narrows this. Starting true means a browser
+  // that never reports back still gets a working rail, just a busier one.
+  let onScreen   = true;
+
+  function measureRail() {
+    const top = rail.getBoundingClientRect().top;
+    dotOffsets = dots.map(dot => {
+      const r = dot.getBoundingClientRect();
+      return r.top + r.height / 2 - top;
+    });
+  }
+
+  // One rect read, then one style write, in that order and nothing in between,
+  // so a frame never has to lay the page out twice.
+  function updateRail() {
+    const rect  = rail.getBoundingClientRect();
+    const read  = window.innerHeight * MARK - rect.top;
+    const track = Math.max(rect.height - RAIL_INSET * 2, 1);
+    const dpr   = window.devicePixelRatio || 1;
+    // Snap the tip to a whole device pixel. Left on a fraction it gets
+    // re-antialiased every frame and reads as a flickering end to the line.
+    const fill = Math.round(Math.min(Math.max(read - RAIL_INSET, 0), track) * dpr) / dpr;
+
+    if (fill !== lastFill) {
+      lastFill = fill;
+      rail.style.setProperty('--timeline-fill', fill + 'px');
+    }
+
+    dots.forEach((dot, i) => {
+      const lit = dotLit[i];
+      const mark = dotOffsets[i] - (lit ? DOT_HOLD : 0);
+      const next = read >= mark;
+      if (next === lit) return;
+      dotLit[i] = next;
+      dot.classList.toggle('is-lit', next);
+    });
+  }
+
+  // One layout read per frame, and only while the section is anywhere near view
+  function onRailScroll() {
+    if (!onScreen || ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      ticking = false;
+      updateRail();
+    });
+  }
+
+  const railObserver = new IntersectionObserver(
+    entries => {
+      onScreen = entries[0].isIntersecting;
+      if (onScreen) updateRail();
+    },
+    { rootMargin: '25% 0px' }
+  );
+
+  rail.style.setProperty('--timeline-fill', '0px');
+  rail.classList.add(progressClass);
+  dotLit = dots.map(() => false);
+  measureRail();
+  updateRail();
+
+  railObserver.observe(rail);
+
+  // Cards reflow as fonts land and as the window narrows; re-measure then too.
+  // Only when the height genuinely moved, so a stray callback cannot turn into
+  // a measure-every-frame loop.
+  if (window.ResizeObserver) {
+    new ResizeObserver(() => {
+      const h = rail.getBoundingClientRect().height;
+      if (h === lastHeight) return;
+      lastHeight = h;
+      measureRail();
+      updateRail();
+    }).observe(rail);
+  }
+
+  return { update: updateRail, measure: measureRail, onScroll: onRailScroll };
+}
+
+const rails = [
+  makeRail('.timeline', '.timeline-dot', 'timeline--progress'),
+  makeRail('.edu-timeline', '.edu-dot', 'edu-timeline--progress'),
+].filter(Boolean);
+
+if (rails.length) {
+  window.addEventListener('scroll', () => rails.forEach(r => r.onScroll()), { passive: true });
+  window.addEventListener('resize', () => rails.forEach(r => { r.measure(); r.update(); }));
+}
+
+
 // Smooth scroll for anchor links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   anchor.addEventListener('click', e => {

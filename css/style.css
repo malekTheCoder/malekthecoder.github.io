@@ -764,6 +764,28 @@ h1, h2, h3, h4 { line-height: 1.25; }
   border-radius: 2px;
 }
 
+/* Scroll progress rail. The track above only fades back once JS is there to
+   light it again: main.js adds .timeline--progress and grows
+   --timeline-fill from 0 as you read down the section. Without JS
+   none of this applies and the rail stays solid. */
+.timeline--progress::before {
+  background: color-mix(in srgb, var(--text-2) 32%, transparent);
+}
+.timeline--progress::after {
+  content: '';
+  position: absolute;
+  left: 0; top: 8px;
+  width: 2px;
+  /* Height rather than scaleY. Scaling a 2px strip stretches its rounded cap
+     out of shape and leaves the tip on a fraction of a pixel, which shimmers
+     the whole way down. And no transition: main.js writes this once per frame
+     off the scroll position, so the scroll already is the animation. A
+     transition on top of that just trails behind it. */
+  height: var(--timeline-fill, 0px);
+  background: var(--accent);
+  border-radius: 2px;
+}
+
 .timeline-item { position: relative; margin-bottom: 2.5rem; }
 .timeline-item:last-child { margin-bottom: 0; }
 
@@ -775,8 +797,29 @@ h1, h2, h3, h4 { line-height: 1.25; }
   border-radius: 50%;
   background: var(--accent);
   border: 2px solid var(--bg);
+  /* keep the dot over the travelling fill, which paints after it */
+  z-index: 1;
 }
 .section-alt .timeline-dot { border-color: var(--bg); }
+
+/* Each dot waits its turn, dim until the fill reaches it */
+.timeline--progress .timeline-dot {
+  background: color-mix(in srgb, var(--text-2) 45%, var(--bg));
+  transition: background var(--transition);
+}
+.timeline--progress .timeline-dot.is-lit { background: var(--accent); }
+
+@media (prefers-reduced-motion: reduce) {
+  /* No travelling fill at all: the rail renders solid, exactly as it does
+     with JS switched off */
+  .timeline--progress::before { background: var(--text-2); }
+  .timeline--progress::after { display: none; }
+  .timeline--progress .timeline-dot,
+  .timeline--progress .timeline-dot.is-lit {
+    background: var(--accent);
+    transition: none;
+  }
+}
 
 .timeline-card {
   background: var(--bg-card);
@@ -894,6 +937,16 @@ a.project-card:hover .project-name { color: var(--accent); }
   color: var(--accent);
   font-family: 'JetBrains Mono', monospace;
 }
+.project-cta-note {
+  color: var(--text-2);
+  font-weight: 400;
+}
+.project-cta-note::after {
+  content: '\00b7';
+  margin-left: 6px;
+  color: var(--text-2);
+}
+
 .project-cta svg { transition: transform var(--transition); }
 a.project-card:hover .project-cta svg { transform: translateX(4px); }
 
@@ -1125,11 +1178,107 @@ a.project-card:hover .project-cta svg { transform: translateX(4px); }
 
 
 /* Education */
-.edu-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
+
+/* A rail, same mechanism as Experience, but read top down it has to carry one
+   fact the old grid hid: the bottom row was taken *during* the years above it,
+   not after them. Hence two stops rather than three, and years beside the rail
+   so the overlap is legible without reading the cards. */
+.edu-timeline {
+  /* how far the rail sits from the section's left edge; the year column
+     occupies everything to the left of it */
+  --edu-rail: 6.25rem;
+  position: relative;
+  padding-left: calc(var(--edu-rail) + 2rem);
 }
+.edu-timeline::before {
+  content: '';
+  position: absolute;
+  left: var(--edu-rail); top: 8px; bottom: 8px;
+  width: 2px;
+  background: var(--text-2);
+  border-radius: 2px;
+}
+
+/* Scroll progress rail, exactly as Experience: the track only fades back once
+   main.js is there to light it again, so no JS leaves the rail solid. */
+.edu-timeline--progress::before {
+  background: color-mix(in srgb, var(--text-2) 32%, transparent);
+}
+.edu-timeline--progress::after {
+  content: '';
+  position: absolute;
+  left: var(--edu-rail); top: 8px;
+  width: 2px;
+  height: var(--timeline-fill, 0px);
+  background: var(--accent);
+  border-radius: 2px;
+}
+
+.edu-entry { position: relative; margin-bottom: 2.5rem; }
+.edu-entry:last-child { margin-bottom: 0; }
+
+/* Year and dot travel together so the year is always level with its own stop */
+.edu-node {
+  position: absolute;
+  top: 2rem;
+  left: calc(0px - var(--edu-rail) - 2rem);
+  width: var(--edu-rail);
+  display: flex;
+  align-items: center;
+}
+.edu-year {
+  flex: 1;
+  min-width: 0;
+  text-align: right;
+  padding-right: 0.9rem;
+  font-family: 'JetBrains Mono', monospace;
+  line-height: 1.4;
+}
+.edu-year-kicker {
+  display: block;
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-1);
+}
+.edu-year-num { display: block; font-size: 0.95rem; color: var(--text-0); }
+
+.edu-dot {
+  flex: 0 0 auto;
+  width: 10px; height: 10px;
+  /* pull the dot past the end of the year column to sit centred on the rail */
+  margin-right: -6px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--bg);
+  /* keep the dot over the travelling fill, which paints after it */
+  z-index: 1;
+}
+
+/* Each dot waits its turn, dim until the fill reaches it */
+.edu-timeline--progress .edu-dot {
+  background: color-mix(in srgb, var(--text-2) 45%, var(--bg));
+  transition: background var(--transition);
+}
+.edu-timeline--progress .edu-dot.is-lit { background: var(--accent); }
+
+@media (prefers-reduced-motion: reduce) {
+  /* No travelling fill at all: the rail renders solid, exactly as it does
+     with JS switched off */
+  .edu-timeline--progress::before { background: var(--text-2); }
+  .edu-timeline--progress::after { display: none; }
+  .edu-timeline--progress .edu-dot,
+  .edu-timeline--progress .edu-dot.is-lit {
+    background: var(--accent);
+    transition: none;
+  }
+}
+
+/* One stop, one row. GMU sits alone on its row; the concurrent pair shares
+   the one below, which is what makes them read as a pair. */
+.edu-row { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+.edu-row--pair { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+
 .edu-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -1168,15 +1317,15 @@ a.project-card:hover .project-cta svg { transform: translateX(4px); }
 }
 /* Was exactly the base body size — a card title separated from its own body
    copy by weight alone. */
-.edu-school { font-size: 1.05rem; font-weight: 600; color: var(--text-0); margin-bottom: 0.25rem; }
+.edu-school { font-size: 1.15rem; font-weight: 600; color: var(--text-0); margin-bottom: 0.25rem; }
 .edu-school-link { color: inherit; text-decoration: none; transition: color var(--transition); }
 .edu-school-link:hover { color: var(--accent); }
-.edu-honors { font-size: 0.8rem; color: var(--text-muted); font-weight: 500; margin-bottom: 0.25rem; }
-.edu-degree { font-size: 0.875rem; color: var(--text-1); margin-bottom: 0.2rem; }
-.edu-detail { font-size: 0.8rem; color: var(--text-1); margin-bottom: 0.2rem; font-family: 'JetBrains Mono', monospace; }
-.edu-date { font-size: 0.78rem; color: var(--text-1); font-family: 'JetBrains Mono', monospace; margin-bottom: 0.75rem; }
+.edu-honors { font-size: 0.86rem; color: var(--text-muted); font-weight: 500; margin-bottom: 0.25rem; }
+.edu-degree { font-size: 0.95rem; color: var(--text-1); margin-bottom: 0.2rem; }
+.edu-detail { font-size: 0.86rem; color: var(--text-1); margin-bottom: 0.2rem; font-family: 'JetBrains Mono', monospace; }
+.edu-date { font-size: 0.83rem; color: var(--text-1); font-family: 'JetBrains Mono', monospace; margin-bottom: 0.75rem; }
 .edu-courses {
-  font-size: 0.78rem; color: var(--text-1); line-height: 1.65;
+  font-size: 0.87rem; color: var(--text-1); line-height: 1.7;
   border-top: 1px solid var(--rule); padding-top: 0.75rem; margin-top: 0.25rem;
 }
 
@@ -1244,7 +1393,30 @@ a.project-card:hover .project-cta svg { transform: translateX(4px); }
   .timeline-meta { flex-direction: column; gap: 0.5rem; }
   .timeline-right { align-items: flex-start; }
 
-  .edu-grid { grid-template-columns: 1fr; }
+  /* No room for a year column beside the rail. The year leaves the gutter and
+     becomes a line above its own row instead, on one line, with the rail
+     pushed to the edge the way the Experience one is. */
+  .edu-timeline { --edu-rail: 0rem; padding-left: 1.5rem; }
+  .edu-node {
+    position: static;
+    width: auto;
+    margin-bottom: 0.7rem;
+  }
+  .edu-year {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    text-align: left;
+    padding-right: 0;
+  }
+  .edu-dot {
+    position: absolute;
+    left: calc(-1.5rem + 1px); top: 0.4rem;
+    transform: translateX(-50%);
+    margin-right: 0;
+  }
+  .edu-row--pair { grid-template-columns: 1fr; }
 
   .theme-menu { right: 0; }
 }
