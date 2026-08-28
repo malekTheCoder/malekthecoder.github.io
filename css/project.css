@@ -1070,9 +1070,9 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 62px;
-  padding: 0 18px;
-  border-radius: 10px;
+  height: 50px;
+  padding: 0 14px;
+  border-radius: 8px;
   background: #fff;
   border: 1px solid var(--border);
   transition: border-color var(--transition), transform var(--transition);
@@ -1082,8 +1082,8 @@
   display: block;
   width: auto;
   height: auto;
-  max-height: 38px;
-  max-width: 176px;
+  max-height: 30px;
+  max-width: 140px;
   /* The plate is inline-flex, so the img is a flex item whose default min-width:auto
      resolves to its own intrinsic width. min-width beats max-width, so a wide mark like
      the 377px Vision Times wordmark ignored the 176px cap and stretched its plate. */
