@@ -330,7 +330,7 @@
                   <rect x="330.1" y="199" width="219.8" height="21.5" rx="10.75" fill="var(--bg-card)" stroke="var(--accent)" stroke-opacity="0.4" stroke-width="1"/>
                   <text x="440" y="213.5" font-family="'JetBrains Mono', monospace" font-size="10.5" fill="var(--accent)" text-anchor="middle" opacity="0.9">rejected → ask the user instead</text>
                   <rect x="239.55" y="224" width="400.9" height="20.5" rx="10.25" fill="var(--accent)" fill-opacity="0.08" stroke="var(--accent)" stroke-opacity="0.25" stroke-width="1"/>
-                  <text x="440" y="237.75" font-family="'JetBrains Mono', monospace" font-size="9.5" fill="var(--text-1)" text-anchor="middle">eval: 7 destructive proposals · 7 caught · 0 reached the calendar</text>
+                  <text x="440" y="237.75" font-family="'JetBrains Mono', monospace" font-size="9.5" fill="var(--text-1)" text-anchor="middle">eval: 54 destructive proposals · 54 caught · 0 reached the calendar</text>
                 </svg>
               </div>
               <figcaption class="proj-caption">Nothing irreversible happens until deterministic code agrees</figcaption>
@@ -346,8 +346,8 @@
             </ul>
 
             <p>
-            Across 76 labelled cases the model proposed seven destructive actions it should not have. The
-            validation layer caught all seven, so none of them reached the calendar.
+            Across 462 labelled cases the model proposed 54 destructive actions it should not have. The
+            validation layer caught all 54, so none of them reached the calendar.
           </p>
           </section>
 
@@ -355,7 +355,7 @@
           <section class="proj-section" id="numbers" data-animate="fade-up">
             <h2 class="proj-h2">Numbers</h2>
             <p>
-            Accuracy across 76 labelled cases, 3 samples each:
+            Accuracy across 462 labelled cases, 3 samples each:
           </p>
 
             <div class="proj-table-wrap">
@@ -364,14 +364,14 @@
                   <tr><th>Model</th><th>Tool choice</th><th>Arguments</th><th>Destructive FPs</th></tr>
                 </thead>
                 <tbody>
-                  <tr><td><strong>qwen2.5:3b</strong>, local, on device</td><td><span class="metric"><span class="metric-val"><strong>80.7%</strong></span><span class="metric-bar" style="--pct:80.7"></span></span></td><td><span class="metric"><span class="metric-val"><strong>89.5%</strong></span><span class="metric-bar" style="--pct:89.5"></span></span></td><td><span class="fp fp-none">0</span></td></tr>
+                  <tr><td><strong>qwen2.5:3b</strong>, local, on device</td><td><span class="metric"><span class="metric-val"><strong>79.8%</strong></span><span class="metric-bar" style="--pct: 79.8"></span></span></td><td><span class="metric"><span class="metric-val"><strong>90.6%</strong></span><span class="metric-bar" style="--pct: 90.6"></span></span></td><td><span class="fp fp-none">0</span></td></tr>
               <tr><td>claude-sonnet-5, hosted, as a ceiling</td><td><span class="metric"><span class="metric-val">96.1%</span><span class="metric-bar" style="--pct:96.1"></span></span></td><td><span class="metric"><span class="metric-val">96.7%</span><span class="metric-bar" style="--pct:96.7"></span></span></td><td><span class="fp fp-none">0</span></td></tr>
                 </tbody>
               </table>
             </div>
 
             <p>
-            Claude Sonnet is in the table as a ceiling, not as a fallback. No app module on the live agent path even
+            Claude Sonnet is in the table as a ceiling, not as a fallback, and it was scored on a 51 case subset rather than the full 462. No app module on the live agent path even
             imports the hosted client, and a test fails if one ever does.
           </p>
 
@@ -388,7 +388,7 @@
           <section class="proj-section" id="model" data-animate="fade-up">
             <h2 class="proj-h2">Choosing the model</h2>
             <p>
-            I tested five models:
+            I tested five models on the same 50 cases, one sample each:
           </p>
 
             <div class="proj-table-wrap">
@@ -397,11 +397,11 @@
                   <tr><th>Model</th><th>Tool accuracy</th><th>Destructive FPs</th><th>Wall time</th></tr>
                 </thead>
                 <tbody>
-                  <tr><td>qwen2.5:7b</td><td><span class="metric"><span class="metric-val">88%</span><span class="metric-bar" style="--pct:88"></span></span></td><td><span class="fp fp-some">2</span></td><td><span class="metric"><span class="metric-val">263 s</span><span class="metric-bar" style="--pct:12.7"></span></span></td></tr>
-              <tr><td><strong>qwen2.5:3b</strong></td><td><span class="metric"><span class="metric-val"><strong>78%</strong></span><span class="metric-bar" style="--pct:78"></span></span></td><td><span class="fp fp-none">0</span></td><td><span class="metric"><span class="metric-val"><strong>54 s</strong></span><span class="metric-bar" style="--pct:2.6"></span></span></td></tr>
-              <tr><td>llama3.2:3b</td><td><span class="metric"><span class="metric-val">66%</span><span class="metric-bar" style="--pct:66"></span></span></td><td><span class="fp fp-some">1</span></td><td><span class="metric"><span class="metric-val">73 s</span><span class="metric-bar" style="--pct:3.5"></span></span></td></tr>
-              <tr><td>qwen3:4b</td><td><span class="metric"><span class="metric-val">46%</span><span class="metric-bar" style="--pct:46"></span></span></td><td><span class="fp fp-none">0</span></td><td><span class="metric"><span class="metric-val">2075 s</span><span class="metric-bar" style="--pct:100.0"></span></span></td></tr>
-              <tr><td>hermes3:3b</td><td><span class="metric"><span class="metric-val">20%</span><span class="metric-bar" style="--pct:20"></span></span></td><td><span class="fp fp-none">0</span></td><td><span class="metric"><span class="metric-val">75 s</span><span class="metric-bar" style="--pct:3.6"></span></span></td></tr>
+                  <tr><td>qwen2.5:7b</td><td><span class="metric"><span class="metric-val">88%</span><span class="metric-bar" style="--pct:88"></span></span></td><td><span class="fp fp-some">2</span></td><td>263 s</td></tr>
+              <tr><td><strong>qwen2.5:3b</strong></td><td><span class="metric"><span class="metric-val"><strong>78%</strong></span><span class="metric-bar" style="--pct:78"></span></span></td><td><span class="fp fp-none">0</span></td><td><strong>54 s</strong></td></tr>
+              <tr><td>llama3.2:3b</td><td><span class="metric"><span class="metric-val">66%</span><span class="metric-bar" style="--pct:66"></span></span></td><td><span class="fp fp-some">1</span></td><td>73 s</td></tr>
+              <tr><td>qwen3:4b</td><td><span class="metric"><span class="metric-val">46%</span><span class="metric-bar" style="--pct:46"></span></span></td><td><span class="fp fp-none">0</span></td><td>2075 s</td></tr>
+              <tr><td>hermes3:3b</td><td><span class="metric"><span class="metric-val">20%</span><span class="metric-bar" style="--pct:20"></span></span></td><td><span class="fp fp-none">0</span></td><td>75 s</td></tr>
                 </tbody>
               </table>
             </div>

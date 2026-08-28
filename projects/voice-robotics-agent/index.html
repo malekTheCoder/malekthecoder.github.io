@@ -360,31 +360,29 @@
               leave the task half done.
             </p>
             <p>
-              <strong>Solution:</strong> at first the failure went into the next prompt as a generic "that didn't
-              work, try again", and the model ignored it. What worked was making the instruction specific and
-              blocking. The placement primitive reports which object failed and whether it fell off the table, and
-              the next prompt tells the agent to grasp that object again and not to touch anything else until it is
-              placed. If the same object fails twice, it escalates to a different strategy: move the wobbly piece to
-              a temporary spot, move the problem object to a second spot, then rebuild. An object that has left the
-              table is marked unreachable instead, so no retries are spent on it. After four failures on one object
-              the agent replans from the current scene, and after two replans it reports failure rather than
-              looping.
-            </p>
+            <strong>Solution:</strong> at first the failure went into the next prompt as a generic "that didn't
+            work, try again", and the model ignored it. What worked was making the instruction specific and
+            blocking, then escalating if the same object keeps failing:
+          </p>
+            <ul class="proj-list">
+              <li><strong>Retry, and nothing else.</strong> The placement primitive names the object that failed, and the next prompt tells the agent to grasp that one again and touch nothing else until it is placed.</li>
+              <li><strong>Twice failed, change the approach.</strong> Move the wobbly piece to a temporary spot, put the problem object down, then rebuild.</li>
+              <li><strong>Off the table, stop trying.</strong> An object that has left the table is marked unreachable, so no retries are spent on it.</li>
+              <li><strong>Four failures, replan.</strong> The agent replans from the current scene, and after two replans it reports failure rather than looping.</li>
+            </ul>
             <p>
-              The piece I would defend hardest is the check on success. A separate call gets the live scene and the
-              original request and decides whether they actually match, and it is strict: two objects sitting next
-              to each other are not a stack, a knocked-over tower is not a finished one. If it disagrees, the
-              specific missing piece goes into the next prompt and the loop continues, up to three times, and then
-              the agent reports what it actually managed.
-            </p>
+            The piece I would defend hardest is the check on success. A separate call compares the live scene to
+            the original request, and it is strict: two objects side by side are not a stack, a toppled tower is
+            not a finished one. If it disagrees, the missing piece goes into the next prompt, up to three times,
+            and then the agent reports what it actually managed.
+          </p>
             <p>
-              Some requests are impossible and the honest answer is to say so. A third cylinder on a two-cylinder
-              stack falls every time, because holding a 5 cm cylinder puts the fingers right at the edge of the one
-              below, so opening them shoves it sideways. A sphere never stays on top either. I tried about fifteen
-              grip and release strategies for both and none of them held, so both are hard limits in the planner
-              now. Ask for a four cylinder tower and the agent builds two high, leaves the rest on the table, and
-              tells you why.
-            </p>
+            Some requests are impossible, and saying so is the honest answer. A third cylinder on a two-cylinder
+            stack falls every time: holding a 5 cm cylinder puts the fingers right at the edge of the one below,
+            so opening them shoves it sideways. A sphere never stays on top either. Fifteen or so grip and
+            release strategies later, both are hard limits in the planner. Ask for a four cylinder tower and the
+            agent builds two, leaves the rest, and tells you why.
+          </p>
           </section>
 
           <!-- ═══ MOTION ═══ -->
