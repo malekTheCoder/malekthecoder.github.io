@@ -1022,7 +1022,7 @@
   display: flex;
   gap: 3rem;
   overflow: hidden;
-  padding: 1.25rem 0;
+  padding: 1.5rem 0 1.25rem;
   margin: 1.5rem 0 0.5rem;
   max-width: 720px;
   /* fade the edges so logos don't hard-clip at the boundary */
@@ -1049,8 +1049,6 @@
   gap: 3rem;
   flex-shrink: 0;
 }
-
-.press-marquee:hover .press-scroller { animation-play-state: paused; }
 
 /* Scroller width is 2 tracks + one 3rem gap, so -50% is one track + 1.5rem.
    Another 1.5rem lands it exactly one track-plus-gap along: a seamless loop
@@ -1086,11 +1084,19 @@
   height: auto;
   max-height: 38px;
   max-width: 176px;
+  /* The plate is inline-flex, so the img is a flex item whose default min-width:auto
+     resolves to its own intrinsic width. min-width beats max-width, so a wide mark like
+     the 377px Vision Times wordmark ignored the 176px cap and stretched its plate. */
+  min-width: 0;
 }
 
+/* Hovering used to pause the whole marquee, which made it visibly lurch when the
+   animation picked back up. The feedback now lives on the individual plate instead,
+   so the scroll never stops and nothing jumps. */
 .press-logo:hover .press-mark {
-  border-color: var(--accent-border);
-  transform: translateY(-2px);
+  border-color: var(--accent);
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px var(--accent-dim);
 }
 
 /* On dark themes the plate is the only bright element in the row, so soften

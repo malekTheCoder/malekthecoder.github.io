@@ -44,7 +44,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/css/style.css?v=68" />
-  <link rel="stylesheet" href="/css/project.css?v=36" />
+  <link rel="stylesheet" href="/css/project.css?v=37" />
 
   <script type="application/ld+json">
   {
@@ -109,8 +109,10 @@
       <header class="proj-hero">
         <h1 class="proj-title">Voice-Controlled Robotics Agent</h1>
         <p class="proj-tagline">
-          Speak a command in plain English and a Franka Panda arm plans and carries it out in a live physics
-          simulation, decomposing the request into steps, noticing when a step goes wrong, and replanning on its own.
+          You say something like "stack the red cube on the blue cylinder." Claude Sonnet breaks that into
+          ordered steps and a Franka Panda arm carries them out in a live physics simulation, one action at a
+          time. When a step goes wrong the agent sees it in the next scene and replans, and it never reports
+          success unless an independent check of the scene agrees.
         </p>
         <div class="proj-actions">
           <a href="https://youtu.be/Gv5HVdmMMBE" target="_blank" rel="noopener" class="btn btn-primary">
@@ -159,34 +161,34 @@
           <section class="proj-section" id="overview" data-animate="fade-up">
             <h2 class="proj-h2">Overview</h2>
             <p>
-            You speak a natural language command like <em>"stack the red cube on top of the blue cylinder"</em> or
-            <em>"arrange all objects in a line"</em>, and a Franka Panda arm carries it out in real time in the MuJoCo
-            physics simulation.
-          </p>
+              You speak a command like <em>"stack the red cube on top of the blue cylinder"</em> or
+              <em>"arrange all objects in a line"</em>, and a Franka Panda arm carries it out in real time in a
+              MuJoCo physics simulation.
+            </p>
             <p>
-            The system transcribes what I said, the model breaks the request into an ordered list of sub-goals,
-            and the arm executes them one at a time. Gravity, collisions and contact forces are live, so things
-            genuinely go wrong: a grip slips, a stack topples, an object ends up somewhere unintended. When that
-            happens the agent notices, works out why, and plans a new route to the same goal.
-          </p>
+              Deepgram transcribes what you said, Claude Sonnet breaks the request into an ordered list of
+              sub-goals, and the arm works through them one action at a time. Gravity, collisions and contact
+              forces are all live, so things genuinely go wrong: a grip slips, a stack tips over, a cylinder rolls
+              off. The agent reads the new scene on the next step and plans around what actually happened.
+            </p>
             <p>
-            Before it reports success, a second independent model call compares the live scene against the intended
-            arrangement and rejects false completions.
-          </p>
+              When the model says the task is done, that is treated as a proposal, not a result. A second
+              independent call compares the live scene against the intended arrangement and can reject the claim.
+            </p>
             <p>Commands it handles:</p>
             <ul class="proj-list">
-              <li><strong>Pick and place</strong> to a named location or exact coordinates</li>
+              <li><strong>Pick and place</strong> to a named location or absolute coordinates</li>
               <li><strong>Stacking</strong>, including order-specific requests like <em>"reverse the stack"</em></li>
               <li><strong>Spatial arrangements</strong>, lines, rows, corners, grids</li>
               <li><strong>Relative instructions</strong> like <em>"move it to the other side"</em> or <em>"put it next to the cylinder"</em></li>
-              <li><strong>Multi-object tasks</strong> like <em>"move all cylinders to the left"</em></li>
+              <li><strong>Multi-object tasks</strong> like <em>"move all cylinders to the left side"</em></li>
             </ul>
           </section>
 
           <!-- ═══ DEMO ═══ -->
           <section class="proj-section" id="demo" data-animate="fade-up">
             <h2 class="proj-h2">Demo</h2>
-            <p>Two minutes of the agent taking spoken commands and working through them end to end.</p>
+            <p>The agent taking spoken commands and working through them end to end.</p>
             <figure class="proj-figure">
               <div class="proj-video" data-video-id="Gv5HVdmMMBE" data-video-title="Voice-Controlled Robotics Agent demo" role="button" tabindex="0" aria-label="Play demo video">
                 <img src="/assets/projects/robotics/demo-thumb.jpg" alt="Voice-Controlled Robotics Agent demo video" width="1280" height="720" loading="lazy" />
@@ -201,9 +203,9 @@
           <section class="proj-section" id="how" data-animate="fade-up">
             <h2 class="proj-h2">How it works</h2>
             <p>
-            Five stages with a loop in the middle: the agent cycles between acting and checking until the scene
-            matches the request, or it decides the task can't be done.
-          </p>
+              Five stages with a loop in the middle. The agent cycles between acting and checking until the scene
+              matches the request, or until it decides the task cannot be done.
+            </p>
 
             <figure class="proj-figure">
               <div class="proj-diagram">
@@ -297,99 +299,148 @@
             </figure>
 
             <p>
-            Two model roles do the thinking. One handles task decomposition and goal verification; the other decides
-            the next action at every step.
-          </p>
+              Claude Sonnet does all four jobs: the decomposition, the decision at each step, the goal check, and
+              any replan. The part that matters is that it runs once per action rather than once per task. Every
+              step it gets the live scene again, so it can read that the cube it just placed is back on the table
+              and deal with that, instead of following a plan that stopped being true three steps ago.
+            </p>
             <p>
-            Voice runs through Deepgram (Nova-3 for speech-to-text, Aura-2 for text-to-speech) when a key is present,
-            and falls back to faster-whisper and pyttsx3 locally when it isn't.
-          </p>
+              Voice runs through Deepgram, Nova-3 for speech to text and Aura-2 for text to speech. Without a
+              Deepgram key it falls back to faster-whisper and pyttsx3, both running locally.
+            </p>
           </section>
 
           <!-- ═══ PLANNING ═══ -->
           <section class="proj-section" id="planning" data-animate="fade-up">
             <h2 class="proj-h2">Planning and decomposition</h2>
             <p>
-            The agent's behaviour at every step comes down to one system prompt: the actions it can call, the
-            coordinate system and reachable workspace, pre-computed coordinates for lines, rows and grids so it
-            never guesses, and a strict JSON output format so every step is parseable.
-          </p>
+              What the agent does at each step is decided by one system prompt, sent to Claude alongside a text
+              description of the live scene. Each section of it has a job:
+            </p>
             <ul class="proj-list">
               <li><strong>Available actions</strong>, pick, place, move, open/close gripper, wait, report success/partial/failure, and ask the user a clarifying question</li>
               <li><strong>Coordinate system</strong>, axes and reachable workspace bounds, so the agent never targets a position the arm physically cannot reach</li>
               <li><strong>Table placement rules</strong>, how to interpret <em>"left side"</em>, <em>"the other side"</em>, <em>"across the table"</em></li>
               <li><strong>Pre-computed arrangements</strong>, exact safe coordinates for lines, rows, corners, and grids, so the agent looks them up instead of guessing</li>
-              <li><strong>Anti-oscillation</strong>, stops the agent picking up an object it just placed and putting it back</li>
+              <li><strong>Rules</strong>, the edge cases: ambiguous references, stacking limits the physics won't allow, and reporting honestly when only part of a task got done</li>
               <li><strong>Strict output format</strong>, every response must be <code>{"reasoning", "action", "parameters"}</code> so each step is machine-parseable</li>
             </ul>
 
-<p>
-            Anti-oscillation is in there too. The agent would place a cube correctly, look at the scene again, decide
-            the cube was in the wrong spot, and move it back. This used to be one of the most common failures.
-          </p>
+            <p>
+              <strong>Problem:</strong> <em>"move everything to the other side"</em> ran forever. The agent moved an
+              object across, looked at the scene again, and from where the object now sat "the other side" was where
+              it came from, so it moved it back, over and over until the step budget ran out.
+            </p>
+            <p>
+              <strong>Solution:</strong> relative wording is resolved once, at planning time, into an absolute side
+              of the table, and the plan the agent sees each step is that resolved one. The scene description backs
+              this up by labelling every object with a fixed side instead of a relative one. On top of that a guard
+              counts re-grasps of objects that were already placed successfully and stops at three, while a re-grasp
+              after a <em>failed</em> placement is a legitimate retry and is not counted, which an earlier version
+              got wrong and gave up on dropped objects after one try. A three-object move went from 30 steps and
+              failing to 7 steps and done.
+            </p>
+            <p>
+              That system prompt is around 10,800 characters and goes out with every per-action call, so it is
+              cached with a five minute breakpoint. After the first call of a task it costs roughly 3 input tokens
+              instead of 2,600.
+            </p>
           </section>
 
           <!-- ═══ RECOVERY ═══ -->
           <section class="proj-section" id="recovery" data-animate="fade-up">
             <h2 class="proj-h2">When a plan fails</h2>
             <p>
-            In a real physics simulation, plans fail. The gripper closes a fraction too early, a stack tips, an object
-            slides out of reach.
-          </p>
-            <ul class="proj-list">
-              <li><strong>Classifier</strong>, decides <em>what kind</em> of failure just happened. A dropped object and an unreachable target need different responses.</li>
-              <li><strong>Handler</strong>, produces a new plan given that classification, or concludes the task genuinely cannot be completed.</li>
-              <li><strong>Verifier</strong>, the independent check that runs before any success is reported.</li>
-            </ul>
+              Plans fail here all the time, because the physics is real. The gripper closes a fraction too early, a
+              stack tips, an object slides out of reach. Every failure is classified by type first, since a slipped
+              grasp and an unreachable target need different answers.
+            </p>
             <p>
-            The verifier is the piece I'd defend hardest. It's a separate LLM call that gets the serialized scene and
-            the original request, and it rejects completions that don't match.
-          </p>
+              <strong>Problem:</strong> after a failed placement the agent would move on to the next object and
+              leave the task half done.
+            </p>
             <p>
-            When it fails, the agent replans from the current scene rather than retrying the same action.
-          </p>
+              <strong>Solution:</strong> at first the failure went into the next prompt as a generic "that didn't
+              work, try again", and the model ignored it. What worked was making the instruction specific and
+              blocking. The placement primitive reports which object failed and whether it fell off the table, and
+              the next prompt tells the agent to grasp that object again and not to touch anything else until it is
+              placed. If the same object fails twice, it escalates to a different strategy: move the wobbly piece to
+              a temporary spot, move the problem object to a second spot, then rebuild. An object that has left the
+              table is marked unreachable instead, so no retries are spent on it. After four failures on one object
+              the agent replans from the current scene, and after two replans it reports failure rather than
+              looping.
+            </p>
             <p>
-            It can also report a task as impossible instead of looping until something times out.
-          </p>
+              The piece I would defend hardest is the check on success. A separate call gets the live scene and the
+              original request and decides whether they actually match, and it is strict: two objects sitting next
+              to each other are not a stack, a knocked-over tower is not a finished one. If it disagrees, the
+              specific missing piece goes into the next prompt and the loop continues, up to three times, and then
+              the agent reports what it actually managed.
+            </p>
+            <p>
+              Some requests are impossible and the honest answer is to say so. A third cylinder on a two-cylinder
+              stack falls every time, because holding a 5 cm cylinder puts the fingers right at the edge of the one
+              below, so opening them shoves it sideways. A sphere never stays on top either. I tried about fifteen
+              grip and release strategies for both and none of them held, so both are hard limits in the planner
+              now. Ask for a four cylinder tower and the agent builds two high, leaves the rest on the table, and
+              tells you why.
+            </p>
           </section>
 
           <!-- ═══ MOTION ═══ -->
           <section class="proj-section" id="motion" data-animate="fade-up">
             <h2 class="proj-h2">Motion and collisions</h2>
             <p>
-            Arm motion uses inverse kinematics via mink, backed by the daqp solver: given a target pose for the
-            gripper, IK works out the joint angles that put it there.
-          </p>
+              Arm motion goes through inverse kinematics: mink, backed by the daqp solver, works out the joint
+              velocities that move the gripper toward a target point.
+            </p>
             <p>
-            <strong>Problem:</strong> the solver is position only and not collision aware. It will happily drive
-            the arm straight through a stack of cubes to reach a target.
-          </p>
+              <strong>Problem:</strong> mink solves for the gripper pose and nothing else. It knows nothing about
+              the arm's own links, the table, or the objects on it, so a straight line to the target will drag the
+              arm through a stack on the way.
+            </p>
 
             <p>
-            <strong>Solution:</strong> every motion routes through a transit arc instead of driving straight at
-            the target.
-          </p>
+              <strong>Solution:</strong> every motion routes through a transit arc instead of driving straight at
+              the target.
+            </p>
             <div class="proj-code">
 <pre>lift straight up  &rarr;  travel at a safe height  &rarr;  descend onto target</pre>
             </div>
             <p>
-            A <code>TRANSIT_Z_MAX</code> ceiling and an <code>APPROACH_CAP_Z</code> floor stop the wrist tilting
-            on tall stacks, and a descent orientation lock stops cylinders spinning as they are placed. It is a
-            constraint rather than a real fix: the arc is conservative and sometimes takes a longer path than it
-            needs to.
-          </p>
+              The travel height is the lowest one that clears the tallest object on the table, clamped between
+              <code>TRANSIT_Z_MIN</code> and <code>TRANSIT_Z_MAX</code>. Staying low is deliberate: higher up the
+              wrist tilts, and about 22° of tilt is enough to roll a friction-held cylinder out of the fingers mid
+              carry. Placement approaches are capped by <code>APPROACH_CAP_Z</code> at 0.62 m so the arm never has
+              to climb above that band on the final leg. On the descent onto a stack the wrist orientation is
+              locked as well, since position-only IK let it spin 10 to 15° about its own axis, which twisted a held
+              cylinder until it was lying horizontal. A placement geometry that failed three times out of three
+              worked three out of three after the lock.
+            </p>
+            <p>
+              This is routing around the problem rather than solving it. A collision-aware planner would find
+              shorter paths; the arc is conservative and often takes a longer way round than it needs to.
+            </p>
           </section>
 
           <!-- ═══ PORTAL ═══ -->
           <section class="proj-section" id="portal" data-animate="fade-up">
             <h2 class="proj-h2">The web portal</h2>
             <p>
-            A FastAPI portal streams the simulation as MJPEG at about 30 fps, with a WebSocket carrying state.
-          </p>
+              The portal is a FastAPI app with a plain JavaScript front end, using three transports for the three
+              things it has to carry. The simulation video is an MJPEG stream at about 30 fps, state goes over a
+              WebSocket as a JSON snapshot five times a second, and commands and scene edits are REST calls.
+            </p>
             <p>
-            You can add and remove objects mid-session, pick a layout, watch the reasoning trace, and export session
-            logs.
-          </p>
+              It started as a Streamlit app that pushed each video frame as base64 and choked at 8 to 12 fps.
+              Splitting the video and the state onto transports built for them fixed that without touching any of
+              the simulation, agent or voice code.
+            </p>
+            <p>
+              The page shows the plan as a checklist, the current action in plain language with the reasoning
+              behind it, and every object's live coordinates. You can add and remove objects mid session, switch
+              layouts, stop a running task between actions, and export the whole session as JSON.
+            </p>
           </section>
 
           <!-- ═══ TECH STACK ═══ -->

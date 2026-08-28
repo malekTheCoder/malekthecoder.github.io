@@ -43,7 +43,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/css/style.css?v=68" />
-  <link rel="stylesheet" href="/css/project.css?v=36" />
+  <link rel="stylesheet" href="/css/project.css?v=37" />
 
   <script type="application/ld+json">
   {
@@ -111,14 +111,12 @@
             <h1 class="proj-title">OCRadar</h1>
             <p class="proj-byline">
               <span class="proj-byline-tag">Team project</span>
-              <span class="proj-byline-role">Android &amp; Windows lead &middot; ML &amp; computer vision</span>
+              <span class="proj-byline-role">Android lead &middot; ML &amp; computer vision</span>
             </p>
           </div>
         </div>
         <p class="proj-tagline">
-          A cross-platform app that screens for early signs of oral cancer from a phone camera. Point it at the
-          inside of your mouth and a computer vision model classifies what it sees against thousands of labeled
-          clinical samples.
+          OCRadar looks for early signs of oral cancer in a photo of your mouth, taken on an ordinary phone camera.
         </p>
         <div class="proj-actions">
           <a href="https://ocradar.com" target="_blank" rel="noopener" class="btn btn-primary">
@@ -150,8 +148,6 @@
             <ul>
               <li><a href="#overview">Overview</a></li>
               <li><a href="#demo">Demo</a></li>
-              <li><a href="#how">How it works</a></li>
-              <li><a href="#limits">Limits</a></li>
               <li><a href="#press">Recognition</a></li>
               <li><a href="#stack">Tech stack</a></li>
             </ul>
@@ -164,22 +160,25 @@
           <section class="proj-section" id="overview" data-animate="fade-up">
             <h2 class="proj-h2">Overview</h2>
             <p>
-            Oral cancer is highly treatable when caught early, but the early signs are easy to miss if you
-            aren't a clinician, and most people aren't screened between dental visits.
+            Oral cancer is highly treatable when it's caught early, but the early signs are easy to miss if you
+            aren't a clinician, and most people go unscreened between dental visits. You photograph the inside of
+            your mouth, a CNN running on Azure AI Vision classifies the image at 98% accuracy, and the app tells you in plain
+            language whether it's worth getting looked at.
           </p>
             <p>
-            OCRadar is a cross-platform app that classifies photos of the mouth with a CNN and turns the result
-            into plain-language guidance, reaching 98% accuracy. The models run through Azure AI Vision.
+            It's a team project. I lead Android development, in Flutter and Dart, and work on the computer vision
+            side; iOS is native Swift and SwiftUI.
           </p>
             <p>
-            iOS is native Swift and SwiftUI; Android is Flutter.
+            It's a screening aid, not a diagnosis. A concerning result means one thing: get it looked at by a
+            professional.
           </p>
           </section>
 
           <!-- ═══ DEMO ═══ -->
           <section class="proj-section" id="demo" data-animate="fade-up">
             <h2 class="proj-h2">Demo</h2>
-            <p>The capture-to-result flow on a phone, start to finish.</p>
+            <p>Capture to result on a phone, start to finish.</p>
             <figure class="proj-figure">
               <div class="device device--phone">
                 <div class="device-screen">
@@ -193,32 +192,9 @@
             </figure>
           </section>
 
-          <!-- ═══ HOW IT WORKS ═══ -->
-          <section class="proj-section" id="how" data-animate="fade-up">
-            <h2 class="proj-h2">How it works</h2>
-            <p>
-            You photograph the inside of your mouth, a CNN classifies the image, and the app tells you in plain
-            language whether to see a professional.
-          </p>
-          </section>
-
-          <!-- ═══ LIMITS ═══ -->
-          <section class="proj-section" id="limits" data-animate="fade-up">
-            <h2 class="proj-h2">Limits</h2>
-            <p>
-            OCRadar is a screening aid, not a diagnostic tool. A concerning result means one thing: get it looked
-            at by a professional.
-          </p>
-            <p>
-            An accuracy figure says nothing about which errors a model makes or on whom. Holding up across every
-            phone camera, lighting condition and skin tone is a separate question from a test-set score.
-          </p>
-          </section>
-
           <!-- ═══ PRESS ═══ -->
           <section class="proj-section" id="press" data-animate="fade-up">
             <h2 class="proj-h2">Recognition</h2>
-            <p>OCRadar was covered by:</p>
 
             <div class="press-list">
               <a href="https://wtop.com/fairfax-county/2025/04/fairfax-co-students-crafting-app-to-find-signs-of-oral-cancer/" target="_blank" rel="noopener">WTOP News</a>
