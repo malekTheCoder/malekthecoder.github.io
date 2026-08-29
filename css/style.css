@@ -1341,6 +1341,7 @@ a.project-card:hover .project-cta svg { transform: translateX(4px); }
   color: var(--text-1);
   margin-bottom: 0.15rem;
 }
+.edu-course-note { color: var(--text-2); }
 .edu-course-label {
   color: var(--text-2);
   font-family: 'JetBrains Mono', monospace;

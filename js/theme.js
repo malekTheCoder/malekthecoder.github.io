@@ -25,8 +25,10 @@ const MODE_ICONS = {
 
 // Migrate old stored theme values
 const VALID_THEMES = new Set(THEMES.filter(t => !t.divider).map(t => t.id));
-let _stored = localStorage.getItem('theme') || 'system';
-if (!VALID_THEMES.has(_stored)) _stored = 'system'; // e.g. old "dark" value
+let _stored = localStorage.getItem('theme') || 'light';
+// Light is the deliberate default rather than following the OS. System stays available in
+// the menu for anyone who wants it.
+if (!VALID_THEMES.has(_stored)) _stored = 'light';
 let activeTheme = _stored;
 
 function isDark(theme) {
@@ -81,7 +83,16 @@ function buildThemeMenu() {
 
   menu.innerHTML = '';
 
+  // System resolves to whichever of Light/Dark the OS is set to, so one of those two is always a
+  // duplicate of it. Hide whichever half of that pair is not the active theme, which leaves exactly
+  // two modes on offer: the current one, and the other thing you could have.
+  const osIsDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const twin = osIsDark ? 'dark' : 'light';
+  const hiddenMode = activeTheme === twin ? 'system' : twin;
+
   THEMES.forEach(entry => {
+    if (entry.type === 'mode' && entry.id === hiddenMode) return;
+
     if (entry.divider) {
       const div = document.createElement('div');
       div.className = 'theme-menu-divider';
@@ -166,6 +177,9 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () 
   if (activeTheme === 'system') {
     document.documentElement.classList.toggle('is-dark', isDark('system'));
   }
+  // The OS just changed which mode System duplicates, so the menu pair has to swap too.
+  buildThemeMenu();
+  updateDropdownBtn(activeTheme);
 });
 
 // Init

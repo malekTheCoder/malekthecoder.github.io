@@ -32,8 +32,8 @@
     (function(){
       var DARK = new Set(['dark','vscode','darcula','tokyo','dracula','nord','github-dark','atom-one-dark']);
       var VALID = new Set(['light','dark','system','vscode','darcula','tokyo','dracula','nord','github-dark','atom-one-dark','xcode']);
-      var t = localStorage.getItem('theme') || 'system';
-      if (!VALID.has(t)) { t = 'system'; localStorage.setItem('theme', t); }
+      var t = localStorage.getItem('theme') || 'light';
+      if (!VALID.has(t)) { t = 'light'; localStorage.setItem('theme', t); }
       if (t !== 'system') document.documentElement.setAttribute('data-theme', t);
       var dark = DARK.has(t) || (t === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
       if (dark) document.documentElement.classList.add('is-dark');
@@ -43,8 +43,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/style.css?v=68" />
-  <link rel="stylesheet" href="/css/project.css?v=38" />
+  <link rel="stylesheet" href="/css/style.css?v=69" />
+  <link rel="stylesheet" href="/css/project.css?v=39" />
 
   <script type="application/ld+json">
   {
@@ -499,7 +499,7 @@
 
   <div class="lightbox" id="lightbox"><img alt="" /></div>
 
-  <script src="/js/theme.js?v=1"></script>
+  <script src="/js/theme.js?v=5"></script>
   <script src="/js/project.js?v=16"></script>
 </body>
 </html>

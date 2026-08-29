@@ -31,8 +31,8 @@
     (function(){
       var DARK = new Set(['dark','vscode','darcula','tokyo','dracula','nord','github-dark','atom-one-dark']);
       var VALID = new Set(['light','dark','system','vscode','darcula','tokyo','dracula','nord','github-dark','atom-one-dark','xcode']);
-      var t = localStorage.getItem('theme') || 'system';
-      if (!VALID.has(t)) { t = 'system'; localStorage.setItem('theme', t); }
+      var t = localStorage.getItem('theme') || 'light';
+      if (!VALID.has(t)) { t = 'light'; localStorage.setItem('theme', t); }
       if (t !== 'system') document.documentElement.setAttribute('data-theme', t);
       var dark = DARK.has(t) || (t === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
       if (dark) document.documentElement.classList.add('is-dark');
@@ -42,8 +42,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/style.css?v=68" />
-  <link rel="stylesheet" href="/css/project.css?v=38" />
+  <link rel="stylesheet" href="/css/style.css?v=69" />
+  <link rel="stylesheet" href="/css/project.css?v=39" />
 
   <script type="application/ld+json">
   {
@@ -200,7 +200,7 @@
             <div class="press-list">
               <a href="https://wtop.com/fairfax-county/2025/04/fairfax-co-students-crafting-app-to-find-signs-of-oral-cancer/" target="_blank" rel="noopener">WTOP News</a>
               <span class="sep">·</span>
-              <a href="https://www.fcps.edu/news/sixteen-years-old-and-solving-world-problems-oakton-high-school-juniors-tackle-oral-cancer" target="_blank" rel="noopener">FCPS News</a>
+              <a href="https://www.fcps.edu/news/sixteen-years-old-and-solving-world-problems-oakton-high-school-juniors-tackle-oral-cancer#:~:text=Juniors%20Aniketh%20Bandlamudi,are%20diminished" target="_blank" rel="noopener">FCPS News</a>
               <span class="sep">·</span>
               <a href="http://dc.koreatimes.com/article/20250409/1559471" target="_blank" rel="noopener">Korea Times</a>
               <span class="sep">·</span>
@@ -209,44 +209,46 @@
               <a href="https://www.instagram.com/techroastshow/reel/DJh3DyTxumJ/" target="_blank" rel="noopener">Tech Roast Show</a>
             </div>
 
-            <!-- Track is duplicated so the marquee can loop seamlessly; the copy
-                 is hidden from screen readers and the animation pauses on hover -->
+            <!-- The track is duplicated so the strip can loop seamlessly; the copy
+                 is hidden from screen readers and its links are unfocusable. The
+                 logos are not lazy-loaded: they are five small files, and loading
+                 them late changed the track width while the scroll was running. -->
             <div class="press-marquee" aria-label="Press coverage">
               <div class="press-scroller">
                 <div class="press-track">
                   <a href="https://wtop.com/fairfax-county/2025/04/fairfax-co-students-crafting-app-to-find-signs-of-oral-cancer/" target="_blank" rel="noopener" class="press-logo" title="WTOP News, Fairfax Co. students crafting app to find signs of oral cancer">
-                    <span class="press-mark" role="img" aria-label="WTOP News"><img src="/assets/projects/ocradar/press/wtop.png" alt="" width="560" height="200" loading="lazy" /></span>
+                    <span class="press-mark" role="img" aria-label="WTOP News"><img src="/assets/projects/ocradar/press/wtop.png" alt="" width="560" height="200" /></span>
                   </a>
-                  <a href="https://www.fcps.edu/news/sixteen-years-old-and-solving-world-problems-oakton-high-school-juniors-tackle-oral-cancer" target="_blank" rel="noopener" class="press-logo" title="FCPS News, Sixteen years old and solving world problems">
-                    <span class="press-mark" role="img" aria-label="Fairfax County Public Schools News"><img src="/assets/projects/ocradar/press/fcps.png" alt="" width="217" height="200" loading="lazy" /></span>
+                  <a href="https://www.fcps.edu/news/sixteen-years-old-and-solving-world-problems-oakton-high-school-juniors-tackle-oral-cancer#:~:text=Juniors%20Aniketh%20Bandlamudi,are%20diminished" target="_blank" rel="noopener" class="press-logo" title="FCPS News, Sixteen years old and solving world problems">
+                    <span class="press-mark" role="img" aria-label="Fairfax County Public Schools News"><img src="/assets/projects/ocradar/press/fcps.png" alt="" width="217" height="200" /></span>
                   </a>
                   <a href="http://dc.koreatimes.com/article/20250409/1559471" target="_blank" rel="noopener" class="press-logo" title="Korea Times">
-                    <span class="press-mark" role="img" aria-label="Korea Times"><img src="/assets/projects/ocradar/press/koreatimes.png" alt="" width="1964" height="200" loading="lazy" /></span>
+                    <span class="press-mark" role="img" aria-label="Korea Times"><img src="/assets/projects/ocradar/press/koreatimes.png" alt="" width="1964" height="200" /></span>
                   </a>
                   <a href="https://www.secretchina.com/news/gb/2025/04/10/1080410.html" target="_blank" rel="noopener" class="press-logo" title="Vision Times China">
-                    <span class="press-mark" role="img" aria-label="Vision Times China"><img src="/assets/projects/ocradar/press/visiontimeschina.svg" alt="" width="377" height="38" loading="lazy" /></span>
+                    <span class="press-mark" role="img" aria-label="Vision Times China"><img src="/assets/projects/ocradar/press/visiontimeschina.svg" alt="" width="377" height="38" /></span>
                   </a>
                   <a href="https://www.instagram.com/techroastshow/reel/DJh3DyTxumJ/" target="_blank" rel="noopener" class="press-logo" title="Tech Roast Show">
-                    <span class="press-mark" role="img" aria-label="Tech Roast Show"><img src="/assets/projects/ocradar/press/techroastshow.png" alt="" width="173" height="200" loading="lazy" /></span>
+                    <span class="press-mark" role="img" aria-label="Tech Roast Show"><img src="/assets/projects/ocradar/press/techroastshow.png" alt="" width="173" height="200" /></span>
                   </a>
                 </div>
                 <div class="press-track" aria-hidden="true">
                   <a href="https://wtop.com/fairfax-county/2025/04/fairfax-co-students-crafting-app-to-find-signs-of-oral-cancer/" target="_blank" rel="noopener" tabindex="-1" class="press-logo">
-                    <span class="press-mark" aria-hidden="true"><img src="/assets/projects/ocradar/press/wtop.png" alt="" width="560" height="200" loading="lazy" /></span>
+                    <span class="press-mark" aria-hidden="true"><img src="/assets/projects/ocradar/press/wtop.png" alt="" width="560" height="200" /></span>
                   </a>
-                  <a href="https://www.fcps.edu/news/sixteen-years-old-and-solving-world-problems-oakton-high-school-juniors-tackle-oral-cancer" target="_blank" rel="noopener" tabindex="-1" class="press-logo">
-                    <span class="press-mark" aria-hidden="true"><img src="/assets/projects/ocradar/press/fcps.png" alt="" width="217" height="200" loading="lazy" /></span>
+                  <a href="https://www.fcps.edu/news/sixteen-years-old-and-solving-world-problems-oakton-high-school-juniors-tackle-oral-cancer#:~:text=Juniors%20Aniketh%20Bandlamudi,are%20diminished" target="_blank" rel="noopener" tabindex="-1" class="press-logo">
+                    <span class="press-mark" aria-hidden="true"><img src="/assets/projects/ocradar/press/fcps.png" alt="" width="217" height="200" /></span>
                   </a>
                   <a href="http://dc.koreatimes.com/article/20250409/1559471" target="_blank" rel="noopener" tabindex="-1" class="press-logo">
-                    <span class="press-mark" aria-hidden="true"><img src="/assets/projects/ocradar/press/koreatimes.png" alt="" width="1964" height="200" loading="lazy" /></span>
+                    <span class="press-mark" aria-hidden="true"><img src="/assets/projects/ocradar/press/koreatimes.png" alt="" width="1964" height="200" /></span>
                   </a>
                   <a href="https://www.secretchina.com/news/gb/2025/04/10/1080410.html" target="_blank" rel="noopener" tabindex="-1" class="press-logo">
-                    <span class="press-mark" aria-hidden="true"><img src="/assets/projects/ocradar/press/visiontimeschina.svg" alt="" width="377" height="38" loading="lazy" /></span>
+                    <span class="press-mark" aria-hidden="true"><img src="/assets/projects/ocradar/press/visiontimeschina.svg" alt="" width="377" height="38" /></span>
                   </a>
                   <a href="https://www.instagram.com/techroastshow/reel/DJh3DyTxumJ/" target="_blank" rel="noopener" tabindex="-1" class="press-logo">
-                    <span class="press-mark" aria-hidden="true"><img src="/assets/projects/ocradar/press/techroastshow.png" alt="" width="173" height="200" loading="lazy" /></span>
+                    <span class="press-mark" aria-hidden="true"><img src="/assets/projects/ocradar/press/techroastshow.png" alt="" width="173" height="200" /></span>
                   </a>
-              </div>
+                </div>
               </div>
             </div>
           </section>
@@ -297,7 +299,7 @@
 
   <div class="lightbox" id="lightbox"><img alt="" /></div>
 
-  <script src="/js/theme.js?v=1"></script>
+  <script src="/js/theme.js?v=5"></script>
   <script src="/js/project.js?v=16"></script>
 </body>
 </html>

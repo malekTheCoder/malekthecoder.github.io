@@ -1,6 +1,6 @@
-/* Project page styles — loaded only under /projects/, on top of style.css */
+/* Project page styles, loaded only under /projects/, on top of style.css */
 
-/* Reading progress lives on the nav's bottom edge rather than as its own bar —
+/* Reading progress lives on the nav's bottom edge rather than as its own bar -
    one less floating element, and it reads as part of the chrome */
 .nav { --read: 0%; }
 
@@ -17,7 +17,7 @@
 }
 
 
-/* Nav breadcrumb — project name and current section, revealed on scroll */
+/* Nav breadcrumb, project name and current section, revealed on scroll */
 .nav-left {
   display: flex;
   align-items: center;
@@ -25,7 +25,7 @@
   min-width: 0;
 }
 
-/* Hidden entirely rather than transparent — the breadcrumb and the site links
+/* Hidden entirely rather than transparent, the breadcrumb and the site links
    are mutually exclusive, so each must actually free its space for the other. */
 .nav-context {
   display: none;
@@ -80,16 +80,16 @@
 }
 .nav-context-section:not(:empty)::before { content: '· '; color: var(--text-2); }
 
-/* Too tight to show both — the project name is the one that matters */
+/* Too tight to show both, the project name is the one that matters */
 @media (max-width: 900px) {
   .nav-context-section { display: none; }
 }
 
 /* Once you're reading a project, the homepage section links step aside and the
    breadcrumb takes the space. They're one scroll-to-top away again. The `reading`
-   class is only applied above 769px (see project.js) — below that the links are
+   class is only applied above 769px (see project.js), below that the links are
    the hamburger's slide-out menu and must stay under its own control. */
-/* display:none, not visibility:hidden — visibility left a ~500px hole in the
+/* display:none, not visibility:hidden, visibility left a ~500px hole in the
    middle of the navbar, since the links kept their layout space */
 .nav.reading .nav-links { display: none; }
 
@@ -104,7 +104,7 @@
   padding: 0 2rem;
 }
 
-/* Narrower measure for prose — long lines are the fastest way to lose a reader */
+/* Narrower measure for prose, long lines are the fastest way to lose a reader */
 .proj-prose { max-width: 720px; }
 
 
@@ -161,7 +161,7 @@
 }
 
 /* Byline under the project title. OCRadar is a team product, and a project page
-   on a personal site reads as sole authorship unless it says otherwise — but
+   on a personal site reads as sole authorship unless it says otherwise, but
    that only needs one line next to the name, not a boxed callout. */
 .proj-byline {
   display: flex;
@@ -195,7 +195,7 @@
 
 
 
-/* Body layout — floating TOC beside the content on wide screens */
+/* Body layout, floating TOC beside the content on wide screens */
 .proj-body {
   display: grid;
   grid-template-columns: 1fr;
@@ -217,7 +217,7 @@
   top: calc(var(--nav-h) + 2rem);
 }
 
-/* Carries the project name (filled in by project.js). Not uppercased — at this
+/* Carries the project name (filled in by project.js). Not uppercased, at this
    width the full name needs every pixel, and uppercase + letter-spacing would
    force it onto three lines. */
 .proj-toc-title {
@@ -232,7 +232,7 @@
   padding-left: 1.1rem;
   border-bottom: 1px solid transparent;
 
-  /* Collapsed until the hero title scrolls out of sight — otherwise it is just
+  /* Collapsed until the hero title scrolls out of sight, otherwise it is just
      restating a name the reader can already see. Height, spacing and rule all
      collapse together so the section list sits flush at the top of the page
      rather than under an empty gap. */
@@ -272,7 +272,7 @@
 /* Constellation rail. Each entry is a dot on a hairline; the active dot grows
    with an accent halo. Dots for sections already scrolled past stay lit at low
    opacity, so the rail encodes read-state, not just current position. Labels
-   are always readable — an unlabelled TOC can't be navigated. */
+   are always readable, an unlabelled TOC can't be navigated. */
 .proj-toc ul {
   list-style: none;
   position: relative;
@@ -532,7 +532,7 @@
 .proj-phone video { display: block; width: 100%; height: auto; }
 
 
-/* Device frames — screenshots sit inside a drawn bezel so a watch capture reads
+/* Device frames, screenshots sit inside a drawn bezel so a watch capture reads
    as a watch and not as a small phone. All CSS, no frame images. */
 .device { margin: 0 auto; position: relative; }
 .device img { display: block; width: 100%; height: auto; cursor: zoom-in; }
@@ -540,7 +540,7 @@
 .device--watch img { aspect-ratio: 416 / 496; object-fit: cover; }
 .device video { display: block; width: 100%; height: auto; }
 
-/* Mac — a window with a title bar */
+/* Mac, a window with a title bar */
 .device--mac {
   width: 100%;
   max-width: 100%;
@@ -569,7 +569,7 @@
   opacity: 0.45;
 }
 
-/* iPhone 14 — aluminium rail, notch, and real side buttons. The frame is
+/* iPhone 14, aluminium rail, notch, and real side buttons. The frame is
    drawn in a fixed colour rather than a theme token so it reads as a physical
    device on every theme instead of inverting to white on dark. */
 .device--phone {
@@ -611,7 +611,7 @@
   z-index: 2;
 }
 
-/* Side buttons — volume pair + silent switch on the left, power on the right */
+/* Side buttons, volume pair + silent switch on the left, power on the right */
 .device--phone::before,
 .device--phone::after {
   content: '';
@@ -644,7 +644,7 @@
   height: 62px;
 }
 
-/* Apple Watch — squircle bezel with a digital crown */
+/* Apple Watch, squircle bezel with a digital crown */
 .device--watch {
   width: 178px;
   max-width: 100%;
@@ -806,7 +806,7 @@
   .proj-nav { padding: 2rem 0 3rem; }
 }
 
-/* Data tables — used for eval results and model comparisons */
+/* Data tables, used for eval results and model comparisons */
 .proj-table-wrap { overflow-x: auto; margin: 1.25rem 0 1.75rem; max-width: 720px; }
 
 .proj-table {
@@ -839,7 +839,7 @@
 .proj-table td strong { color: var(--accent); font-weight: 600; }
 .proj-table tbody tr:hover td { background: var(--accent-dim); }
 
-/* Device photo carousel — photos crossfade on a timer; dots pick one directly.
+/* Device photo carousel, photos crossfade on a timer; dots pick one directly.
    Phone shots of a desk object are almost always portrait, so the frame is
    sized portrait-first (4:5) rather than a landscape box that leaves the
    photo small with wide empty bars on both sides. Still letterboxes rather
@@ -876,7 +876,7 @@
   pointer-events: auto;
 }
 
-/* Prev / next controls — always visible, not hover-only: a control you can't
+/* Prev / next controls, always visible, not hover-only: a control you can't
    see is a control most readers never find. Styled as the site's own card so
    they read as chrome rather than sitting on top of the photo. */
 .proj-carousel-nav {
@@ -912,7 +912,7 @@
 }
 .proj-carousel-nav:active { transform: translateY(-50%) scale(0.96); }
 
-/* Position counter — states the set size outright, so the reader knows how
+/* Position counter, states the set size outright, so the reader knows how
    many photos there are without counting thumbnails. */
 .proj-carousel-count {
   position: absolute;
@@ -931,7 +931,7 @@
 }
 .proj-carousel-count b { color: var(--text-0); font-weight: 600; }
 
-/* Auto-advance progress — drains across the bottom of the frame on the same
+/* Auto-advance progress, drains across the bottom of the frame on the same
    clock as the timer. A faint track sits under the fill so the bar is legible
    against whatever photo is behind it, and so the remaining time is readable
    rather than just the elapsed part. Present only while auto-play is running,
@@ -959,7 +959,7 @@
   transform-origin: left center;
 }
 
-/* Filmstrip — real thumbnails rather than abstract dots. The whole set is
+/* Filmstrip, real thumbnails rather than abstract dots. The whole set is
    visible at a glance, every frame is reachable in one click, and the strip
    makes the frame above unmistakably a carousel. */
 .proj-carousel-thumbs {
@@ -1015,12 +1015,12 @@
   .proj-carousel-thumb:hover { transform: none; }
 }
 
-/* Press logo marquee — two identical tracks scroll left in tandem so the loop
-   is seamless; logos are grayscale until hovered, matching ocradar.com */
+/* Press logo marquee. One animated element carries two identical tracks, so the
+   strip loops without a seam and without either track's measured width
+   mattering. Nothing here pauses or reverses on hover: the row keeps moving. */
 .press-marquee {
   position: relative;
   display: flex;
-  gap: 3rem;
   overflow: hidden;
   padding: 1.5rem 0 1.25rem;
   margin: 1.5rem 0 0.5rem;
@@ -1032,12 +1032,14 @@
 
 /* Both copies live inside ONE animated element. Animating the two tracks
    separately made each translate by -100% of its *own* width, so any moment
-   where the two measured differently — lazy images landing at different times —
-   slid them out of step and the strip appeared to jump backwards. */
+   where the two measured differently slid them out of step.
+   The scroller carries no gap of its own; each track supplies its own trailing
+   3rem as padding instead. That makes the scroller exactly two equal halves, so
+   -50% is always exactly one track plus one gap and the loop stays seamless
+   with no hand-tuned offset to get wrong if the gap or the logo count changes. */
 .press-scroller {
   display: flex;
   align-items: center;
-  gap: 3rem;
   flex-shrink: 0;
   animation: press-scroll 26s linear infinite;
   will-change: transform;
@@ -1047,25 +1049,20 @@
   display: flex;
   align-items: center;
   gap: 3rem;
+  padding-right: 3rem;
   flex-shrink: 0;
 }
 
-/* Scroller width is 2 tracks + one 3rem gap, so -50% is one track + 1.5rem.
-   Another 1.5rem lands it exactly one track-plus-gap along: a seamless loop
-   that no longer depends on either track's measured width. */
 @keyframes press-scroll {
   from { transform: translateX(0); }
-  to   { transform: translateX(calc(-50% - 1.5rem)); }
+  to   { transform: translateX(-50%); }
 }
 
 .press-logo { display: flex; align-items: center; flex-shrink: 0; }
 
 /* Press logos sit on a white plate. The outlets' real marks are dark navy,
-   black and multi-colour — on a white card they keep their brand colour and
-   stay legible on all eleven themes, which no single recolour could do.
-   Sizes are set by max-width/max-height rather than a fixed height: the
-   wordmarks run from 1:1 to nearly 10:1, so a shared height would make the
-   wide ones enormous and the square ones tiny. */
+   black and multi-colour, so on a white card they keep their brand colour and
+   stay legible on every theme, which no single recolour could do. */
 .press-mark {
   display: inline-flex;
   align-items: center;
@@ -1075,45 +1072,69 @@
   border-radius: 8px;
   background: #fff;
   border: 1px solid var(--border);
-  transition: border-color var(--transition), transform var(--transition);
+  /* box-shadow has to be in this list. Without it the hover glow snapped on
+     instantly while the border and the lift eased over 0.2s, and that mismatch
+     is what read as the plate jumping. */
+  transition: border-color var(--transition), box-shadow var(--transition),
+              transform var(--transition);
 }
 
+/* The image box is a fixed 30px tall and takes its width from the mark's aspect
+   ratio, capped at 140px. Two things fall out of that:
+   1. the width/height attributes on the <img> supply the ratio before the file
+      itself loads, so a plate measures the same width empty as it does full and
+      the track can no longer change size mid-scroll as images arrive;
+   2. the box is identical in every state, hover included, so a plate cannot
+      resize when it is hovered, lifted, or promoted to its own paint layer.
+   object-fit letterboxes the artwork inside that box, so the very wide
+   wordmarks keep their proportions instead of stretching to fill 140x30. */
 .press-mark img {
   display: block;
+  height: 30px;
   width: auto;
-  height: auto;
-  max-height: 30px;
   max-width: 140px;
-  /* The plate is inline-flex, so the img is a flex item whose default min-width:auto
-     resolves to its own intrinsic width. min-width beats max-width, so a wide mark like
-     the 377px Vision Times wordmark ignored the 176px cap and stretched its plate. */
+  /* A flex item's default min-width:auto resolves to the mark's own intrinsic
+     width, and min-width beats max-width, so without this the 377px Vision
+     Times wordmark and the 1964px Korea Times mark blow out their plates. */
   min-width: 0;
+  flex: 0 0 auto;
+  object-fit: contain;
 }
 
-/* Hovering used to pause the whole marquee, which made it visibly lurch when the
-   animation picked back up. The feedback now lives on the individual plate instead,
-   so the scroll never stops and nothing jumps. */
-.press-logo:hover .press-mark {
-  border-color: var(--accent);
-  transform: translateY(-4px);
-  box-shadow: 0 6px 16px var(--accent-dim);
-}
-
-/* On dark themes the plate is the only bright element in the row, so soften
-   its edge rather than letting a hard white rectangle punch out of the page */
+/* On dark themes the plate is the only bright element in the row, so soften its
+   edge rather than letting a hard white rectangle punch out of the page. */
 html.is-dark .press-mark {
   border-color: rgba(255, 255, 255, 0.14);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
 }
 
+/* Hovering used to pause the whole marquee, which made it lurch when the
+   animation picked back up. The feedback lives on the individual plate now, and
+   it only touches paint (colour, shadow, a translate), never layout, so the
+   scroll never stops and no plate changes size. Declared after the dark-theme
+   block so it wins on source order as well as specificity. */
+.press-logo:hover .press-mark,
+.press-logo:focus-visible .press-mark {
+  border-color: var(--accent);
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px var(--accent-dim);
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .press-scroller { animation: none; }
-  .press-marquee { flex-wrap: wrap; overflow: visible; -webkit-mask-image: none; mask-image: none; }
+  /* Without the scroll there is nothing to clip, so the strip becomes a static
+     wrapped row. The marquee and the scroller drop out of flex layout entirely:
+     as flex items they were flex-shrink:0, so the single track kept its
+     764px max-content width and pushed the page sideways on a phone once the
+     overflow clipping was gone. As plain blocks they take the column width and
+     the track wraps inside it. */
+  .press-marquee { display: block; overflow: visible; -webkit-mask-image: none; mask-image: none; }
+  .press-scroller { display: block; animation: none; }
+  .press-track { flex-wrap: wrap; row-gap: 1rem; padding-right: 0; }
   .press-track[aria-hidden="true"] { display: none; }
 }
 
 
-/* Compact outlet list above the marquee — the marquee is decorative, this is
+/* Compact outlet list above the marquee, the marquee is decorative, this is
    the part that's actually clickable and scannable */
 .press-list {
   display: flex;
