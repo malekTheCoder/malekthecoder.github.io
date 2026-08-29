@@ -1,8 +1,8 @@
 // Typing animation
 const phrases = [
   'Computer Engineering @ GMU',
-  'Machine Learning Researcher',
-  'Robotics Programmer',
+  'Machine Learning Engineer',
+  'Robotics & AI Engineer',
   'Eagle Scout',
 ];
 
