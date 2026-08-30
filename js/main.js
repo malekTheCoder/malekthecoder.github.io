@@ -367,25 +367,29 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     if (window.scrollY > startY + 40) dismiss();
   }
 
+  // The arrow is drawn by 1.9s. Holding it much past that reads as nagging rather than
+  // pointing, so it leaves shortly after it finishes rather than sitting out a long timer.
+  const APPEAR_AT   = 700;
+  const DISMISS_AT  = 3400;
+
   setTimeout(() => {
     hint.classList.add('is-visible');
 
     // Draw in: wavy body first, then arrowhead
     if (paths[0]) {
-      paths[0].style.transition = 'stroke-dashoffset 1s cubic-bezier(0.4,0,0.2,1)';
+      paths[0].style.transition = 'stroke-dashoffset 0.8s cubic-bezier(0.4,0,0.2,1)';
       paths[0].style.strokeDashoffset = '0';
     }
     if (paths[1]) {
-      paths[1].style.transition = 'stroke-dashoffset 0.3s ease 0.95s';
+      paths[1].style.transition = 'stroke-dashoffset 0.25s ease 0.75s';
       paths[1].style.strokeDashoffset = '0';
     }
 
     document.addEventListener('click', dismiss, true);
     window.addEventListener('scroll', onScroll, { passive: true });
-  }, 900);
+  }, APPEAR_AT);
 
-  // Auto-dismiss after 6s
-  setTimeout(dismiss, 6000);
+  setTimeout(dismiss, DISMISS_AT);
 })();
 
 

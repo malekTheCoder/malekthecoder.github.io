@@ -1544,7 +1544,7 @@ a.project-card:hover .project-cta svg { transform: translateX(4px); }
   font-style: italic;
   font-family: 'JetBrains Mono', 'Fira Code', monospace;
   opacity: 0;
-  transition: opacity 0.5s ease 1.1s;
+  transition: opacity 0.4s ease 0.85s;
 }
 .theme-hint.is-visible .theme-hint-text { opacity: 0.8; }
 
