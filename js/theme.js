@@ -185,3 +185,26 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () 
 // Init
 buildThemeMenu();
 applyTheme(activeTheme);
+
+
+// Nav background on scroll.
+//
+// .nav.scrolled supplies the opaque backdrop that stops page content showing through the fixed
+// nav. main.js and project.js each toggle it, but the resume page loads neither, so its heading
+// and buttons scrolled straight under a transparent bar. This file is the only script every page
+// loads, so the toggle lives here. The class toggle is idempotent, so pages that also run one of
+// the other scripts are unaffected.
+const navbarEl = document.getElementById('navbar');
+if (navbarEl) {
+  let ticking = false;
+  const sync = () => {
+    navbarEl.classList.toggle('scrolled', window.scrollY > 20);
+    ticking = false;
+  };
+  sync();
+  window.addEventListener('scroll', () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(sync);
+  }, { passive: true });
+}

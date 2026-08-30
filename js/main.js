@@ -355,3 +355,21 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   // Auto-dismiss after 6s
   setTimeout(dismiss, 6000);
 })();
+
+
+// The scroll cue has done its job the moment the reader starts scrolling, so it gets out of
+// the way rather than sitting pinned in the hero.
+const scrollCue = document.querySelector('.scroll-indicator');
+if (scrollCue) {
+  let cueTicking = false;
+  const syncCue = () => {
+    scrollCue.classList.toggle('is-gone', window.scrollY > 40);
+    cueTicking = false;
+  };
+  syncCue();
+  window.addEventListener('scroll', () => {
+    if (cueTicking) return;
+    cueTicking = true;
+    requestAnimationFrame(syncCue);
+  }, { passive: true });
+}

@@ -42,8 +42,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/style.css?v=77" />
-  <link rel="stylesheet" href="/css/project.css?v=47" />
+  <link rel="stylesheet" href="/css/style.css?v=85" />
+  <link rel="stylesheet" href="/css/project.css?v=48" />
 </head>
 <body>
 
@@ -87,11 +87,7 @@
           Open PDF
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M7 17L17 7M7 7h10v10"/></svg>
         </a>
-        <button type="button" class="btn btn-outline" id="resumeShare" hidden>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14" style="margin-right:6px"><path d="M12 3v13M8 7l4-4 4 4M5 14v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/></svg>
-          Share
-        </button>
-        <a class="btn btn-outline" id="resumeDownload" href="/assets/Malek_Swilam_Resume.pdf" download="Malek_Swilam_Resume.pdf">
+        <a class="btn btn-outline resume-save" id="resumeDownload" href="/assets/Malek_Swilam_Resume.pdf" download="Malek_Swilam_Resume.pdf">
           Download
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M12 3v12M7 12l5 5 5-5M5 21h14"/></svg>
         </a>
@@ -147,13 +143,13 @@
   <div class="resume-viewer" id="resumeViewer" role="dialog" aria-modal="true" aria-label="Resume, full size" hidden>
     <div class="resume-viewer-bar">
       <a class="resume-bar-link" href="/assets/Malek_Swilam_Resume.pdf" target="_blank" rel="noopener">Open PDF</a>
-      <a class="resume-bar-link" href="/assets/Malek_Swilam_Resume.pdf" download="Malek_Swilam_Resume.pdf">Download</a>
+      <a class="resume-bar-link resume-save" href="/assets/Malek_Swilam_Resume.pdf" download="Malek_Swilam_Resume.pdf">Download</a>
       <button type="button" class="resume-bar-link" id="resumeViewerClose" aria-label="Close">Close</button>
     </div>
     <div class="resume-viewer-body" id="resumeViewerBody"></div>
   </div>
 
-  <script src="/js/theme.js?v=5"></script>
-  <script src="/js/resume.js?v=6"></script>
+  <script src="/js/theme.js?v=6"></script>
+  <script src="/js/resume.js?v=7"></script>
 </body>
 </html>

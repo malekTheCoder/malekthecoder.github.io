@@ -1394,7 +1394,9 @@ html.is-dark .press-mark {
   background: var(--accent-dim);
 }
 
-/* The hidden attribute is applied by the UA as display:none, which an author
-   display:inline-flex silently beats. The share button relies on staying hidden
-   where the Web Share API is absent, so make it explicit. */
-.btn[hidden] { display: none; }
+/* Saving is a desktop idea. A phone honours the download attribute by tucking the file into Files
+   or a downloads tray, so the PDF never opens and the reader never reaches the system share sheet.
+   On touch, opening the PDF is the whole story and the save link steps aside. */
+@media (hover: none) and (pointer: coarse) {
+  .resume-save { display: none; }
+}

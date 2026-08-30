@@ -701,50 +701,70 @@ html.is-dark .theme-menu {
 
 
 .scroll-indicator {
-  /* In flow, not absolutely positioned. Pinning it to the bottom made it sit on top
-     of the social icons whenever the hero was short enough to be content-bound. */
   margin-top: auto;
   padding-top: 2.5rem;
   align-self: center;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.6rem;
+  gap: 1.4rem;
   color: var(--text-1);
   text-decoration: none;
   transition: color var(--transition);
 }
 .scroll-indicator-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.7rem;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
+  font-size: 0.86rem;
   white-space: nowrap;
 }
-.scroll-indicator-dot {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px; height: 40px;
-  border-radius: 50%;
-  color: var(--text-0);
-  background: var(--bg-card);
-  border: 1.5px solid var(--border);
-  animation: scroll-nudge 2.4s ease-in-out infinite;
-  transition: color var(--transition), border-color var(--transition), background var(--transition);
+/* A hairline with an accent segment travelling down it: the motion describes the
+   gesture rather than pointing at it. */
+.scroll-indicator-rail {
+  position: relative;
+  width: 3px;
+  height: 62px;
+  border-radius: 2px;
+  background: var(--rule);
 }
-@keyframes scroll-nudge {
-  0%, 62%, 100% { transform: translateY(0); }
-  76%           { transform: translateY(5px); }
+/* One cycle: the line grows down the track, the arrowhead strokes itself in at the
+   bottom, both hold for a beat, then the whole thing fades and starts over. */
+.scroll-indicator-bar {
+  position: absolute;
+  left: 0; top: 0;
+  width: 3px;
+  border-radius: 2px;
+  background: var(--accent);
+  height: 100%;
+  transform-origin: top;
+  animation: scroll-grow 3.4s ease-in-out infinite;
 }
-@media (prefers-reduced-motion: reduce) {
-  .scroll-indicator-dot { animation: none; }
+.scroll-indicator-head {
+  position: absolute;
+  left: 50%;
+  bottom: -13px;
+  transform: translateX(-50%);
+  color: var(--accent);
+}
+.scroll-indicator-head path {
+  stroke-dasharray: 20;
+  stroke-dashoffset: 20;
+  animation: scroll-draw 3.4s ease-in-out infinite;
 }
 .scroll-indicator:hover { color: var(--accent); }
-.scroll-indicator:hover .scroll-indicator-dot {
-  color: var(--accent);
-  border-color: var(--accent);
-  background: var(--accent-dim);
+@keyframes scroll-grow {
+  0%           { transform: scaleY(0); opacity: 1; }
+  26%          { transform: scaleY(1); opacity: 1; }
+  88%          { transform: scaleY(1); opacity: 1; }
+  100%         { transform: scaleY(1); opacity: 0; }
+}
+@keyframes scroll-draw {
+  0%, 26%      { stroke-dashoffset: 20; opacity: 1; }
+  38%          { stroke-dashoffset: 0;  opacity: 1; }
+  88%          { stroke-dashoffset: 0;  opacity: 1; }
+  100%         { stroke-dashoffset: 0;  opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .scroll-indicator-bar { animation: none; }
+  .scroll-indicator-head path { animation: none; stroke-dashoffset: 0; }
 }
 
 /* Sections */
@@ -1542,3 +1562,11 @@ a.project-card:hover .project-cta svg { transform: translateX(4px); }
   border-left: 2px solid var(--accent);
 }
 
+
+.scroll-indicator {
+  transition: opacity 0.35s ease, visibility 0.35s ease;
+}
+.scroll-indicator.is-gone {
+  opacity: 0;
+  visibility: hidden;
+}

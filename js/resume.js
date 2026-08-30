@@ -82,34 +82,13 @@ if (dl) {
   });
 }
 
-// Share. On iOS the download attribute is unreliable: Safari tends to open the PDF in a bare
-// viewer with no share affordance, which is exactly the complaint. The Web Share API hands the
-// file to the native share sheet instead. The button stays hidden where the API is absent, so
-// desktop browsers without it never see a dead control.
-const shareBtn = document.getElementById('resumeShare');
-const PDF_URL = '/assets/Malek_Swilam_Resume.pdf';
-
-if (shareBtn && navigator.share) {
-  shareBtn.hidden = false;
-
-  shareBtn.addEventListener('click', async () => {
-    // Sharing the file itself is the useful case: the recipient gets the PDF, not a link.
-    try {
-      const blob = await (await fetch(PDF_URL)).blob();
-      const file = new File([blob], 'Malek_Swilam_Resume.pdf', { type: 'application/pdf' });
-      if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        await navigator.share({ files: [file], title: 'Malek Swilam, resume' });
-        return;
-      }
-    } catch (err) {
-      if (err && err.name === 'AbortError') return;   // dismissed, not a failure
-    }
-
-    // No file sharing available, so share the address of this page instead.
-    try {
-      await navigator.share({ title: 'Malek Swilam, resume', url: location.href });
-    } catch (err) {
-      /* dismissed */
-    }
+// Phones get the PDF itself, not a copy of it filed away. iOS and Android both open a PDF in their
+// own viewer, and that viewer already carries a share control, so the tap only has to land there.
+// A new tab is a desktop nicety and some in-app browsers drop the request on the floor, so on touch
+// the PDF links navigate in place instead.
+if (window.matchMedia('(hover: none) and (pointer: coarse)').matches) {
+  document.querySelectorAll('a[href$=".pdf"]').forEach(a => {
+    a.removeAttribute('target');
+    a.removeAttribute('rel');
   });
 }
