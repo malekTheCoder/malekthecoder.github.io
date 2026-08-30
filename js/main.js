@@ -2,7 +2,7 @@
 const phrases = [
   'Computer Engineering @ GMU',
   'Machine Learning Engineer',
-  'Robotics & AI Engineer',
+  'Robotics Engineer',
   'Eagle Scout',
 ];
 
