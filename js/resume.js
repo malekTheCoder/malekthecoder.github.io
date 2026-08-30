@@ -84,11 +84,8 @@ if (dl) {
 
 // Phones get the PDF itself, not a copy of it filed away. iOS and Android both open a PDF in their
 // own viewer, and that viewer already carries a share control, so the tap only has to land there.
-// A new tab is a desktop nicety and some in-app browsers drop the request on the floor, so on touch
-// the PDF links navigate in place instead.
-if (window.matchMedia('(hover: none) and (pointer: coarse)').matches) {
-  document.querySelectorAll('a[href$=".pdf"]').forEach(a => {
-    a.removeAttribute('target');
-    a.removeAttribute('rel');
-  });
-}
+//
+// It opens in a new tab on purpose. A same tab navigation works too, but Safari's PDF viewer hides
+// its toolbar as soon as you scroll, and a page cannot put a back button inside a viewer it is not
+// rendering, so the reader is left with a full screen document and no obvious way out. A new tab
+// leaves this page intact behind it, so closing the PDF returns to where they were.
