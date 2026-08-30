@@ -42,8 +42,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/style.css?v=71" />
-  <link rel="stylesheet" href="/css/project.css?v=45" />
+  <link rel="stylesheet" href="/css/style.css?v=77" />
+  <link rel="stylesheet" href="/css/project.css?v=47" />
 </head>
 <body>
 
@@ -87,6 +87,10 @@
           Open PDF
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M7 17L17 7M7 7h10v10"/></svg>
         </a>
+        <button type="button" class="btn btn-outline" id="resumeShare" hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14" style="margin-right:6px"><path d="M12 3v13M8 7l4-4 4 4M5 14v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/></svg>
+          Share
+        </button>
         <a class="btn btn-outline" id="resumeDownload" href="/assets/Malek_Swilam_Resume.pdf" download="Malek_Swilam_Resume.pdf">
           Download
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M12 3v12M7 12l5 5 5-5M5 21h14"/></svg>
@@ -107,9 +111,20 @@
 
     <section class="proj-section" id="document">
       <div class="resume-sheets">
-        <button type="button" class="resume-sheet" data-page="1" aria-label="Enlarge page 1 of the resume">
+        <div class="resume-sheet" data-page="1">
           <img src="/assets/resume/page-1.svg" alt="Resume, page 1" width="612" height="792" loading="eager" />
-        </button>
+          <a class="resume-link" href="mailto:malekgswilam@gmail.com" aria-label="malekgswilam@gmail.com" style="left:17.538%;top:3.62%;width:18.627%;height:1.263%"></a>
+          <a class="resume-link" href="https://malekswilam.dev" target="_blank" rel="noopener" aria-label="malekswilam.dev" style="left:37.473%;top:3.62%;width:12.309%;height:1.263%"></a>
+          <a class="resume-link" href="https://linkedin.com/in/malek-swilam" target="_blank" rel="noopener" aria-label="linkedin.com/in/malek-swilam" style="left:51.089%;top:3.62%;width:21.786%;height:1.263%"></a>
+          <a class="resume-link" href="https://github.com/malekTheCoder" target="_blank" rel="noopener" aria-label="github.com/malekTheCoder" style="left:74.183%;top:3.62%;width:20.261%;height:1.263%"></a>
+          <a class="resume-link" href="https://ocradar.com" target="_blank" rel="noopener" aria-label="ocradar.com" style="left:84.641%;top:63.131%;width:9.804%;height:1.431%"></a>
+          <a class="resume-link" href="https://malekswilam.dev/projects/voice-robotics-agent/" target="_blank" rel="noopener" aria-label="Project Walkthrough" style="left:77.778%;top:69.613%;width:16.667%;height:1.431%"></a>
+          <a class="resume-link" href="https://malekswilam.dev/projects/calendar-agent/" target="_blank" rel="noopener" aria-label="Project Walkthrough" style="left:77.778%;top:77.357%;width:16.667%;height:1.431%"></a>
+          <button type="button" class="resume-zoom" data-page="1" aria-label="Enlarge page 1 of the resume">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+            Enlarge
+          </button>
+        </div>
       </div>
       <noscript>
         <p class="resume-note">
@@ -139,6 +154,6 @@
   </div>
 
   <script src="/js/theme.js?v=5"></script>
-  <script src="/js/resume.js?v=4"></script>
+  <script src="/js/resume.js?v=6"></script>
 </body>
 </html>

@@ -602,7 +602,7 @@ html.is-dark .theme-menu {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: calc(var(--nav-h) + 3rem) 2rem 6rem;
+  padding: calc(var(--nav-h) + 3rem) 2rem 4rem;
   overflow: hidden;
 }
 
@@ -614,6 +614,7 @@ html.is-dark .theme-menu {
   align-items: flex-start;
   width: 100%;
   max-width: 820px;
+  margin-top: auto;
 }
 
 .hero-name {
@@ -700,21 +701,49 @@ html.is-dark .theme-menu {
 
 
 .scroll-indicator {
-  position: absolute;
-  bottom: 2rem; left: 50%;
-  transform: translateX(-50%);
+  /* In flow, not absolutely positioned. Pinning it to the bottom made it sit on top
+     of the social icons whenever the hero was short enough to be content-bound. */
+  margin-top: auto;
+  padding-top: 2.5rem;
+  align-self: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--text-1);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+.scroll-indicator-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.scroll-indicator-dot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px; height: 40px;
+  border-radius: 50%;
   color: var(--text-0);
   background: var(--bg-card);
   border: 1.5px solid var(--border);
-  border-radius: 50%;
-  width: 44px; height: 44px;
-  display: flex; align-items: center; justify-content: center;
+  animation: scroll-nudge 2.4s ease-in-out infinite;
   transition: color var(--transition), border-color var(--transition), background var(--transition);
-  z-index: 1;
 }
-.scroll-indicator:hover {
+@keyframes scroll-nudge {
+  0%, 62%, 100% { transform: translateY(0); }
+  76%           { transform: translateY(5px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .scroll-indicator-dot { animation: none; }
+}
+.scroll-indicator:hover { color: var(--accent); }
+.scroll-indicator:hover .scroll-indicator-dot {
   color: var(--accent);
-  border-color: var(--accent-border);
+  border-color: var(--accent);
   background: var(--accent-dim);
 }
 

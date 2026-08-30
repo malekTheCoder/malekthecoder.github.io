@@ -1263,24 +1263,58 @@ html.is-dark .press-mark {
 }
 
 .resume-sheet {
-  display: block;
+  position: relative;
   width: 100%;
   max-width: 700px;
-  padding: 0;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: #fff;
-  cursor: zoom-in;
   overflow: hidden;
-  transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
+  transition: border-color var(--transition), box-shadow var(--transition);
 }
-.resume-sheet:hover,
-.resume-sheet:focus-visible {
-  border-color: var(--accent);
-  box-shadow: 0 8px 26px var(--accent-dim);
-  transform: translateY(-2px);
-}
+.resume-sheet:hover { border-color: var(--accent-border); }
 .resume-sheet img { display: block; width: 100%; height: auto; }
+
+/* Rendering the PDF to SVG drops its link annotations, so each one is re-created as a
+   transparent anchor positioned over the text it belongs to. */
+.resume-link {
+  position: absolute;
+  display: block;
+  border-radius: 2px;
+  background: transparent;
+  transition: background var(--transition), box-shadow var(--transition);
+}
+.resume-link:hover,
+.resume-link:focus-visible {
+  background: var(--accent-dim);
+  box-shadow: 0 0 0 2px var(--accent-border);
+  outline: none;
+}
+
+.resume-zoom {
+  position: absolute;
+  top: 0.75rem; right: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.4rem 0.7rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.74rem;
+  color: var(--text-0);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity var(--transition), color var(--transition), border-color var(--transition);
+}
+.resume-sheet:hover .resume-zoom,
+.resume-zoom:focus-visible { opacity: 1; }
+.resume-zoom:hover { color: var(--accent); border-color: var(--accent); }
+
+@media (hover: none) {
+  .resume-zoom { opacity: 1; }
+}
 
 .resume-note { font-size: 0.88rem; color: var(--text-1); text-align: center; margin-top: 1rem; }
 .resume-note a { color: var(--accent); }
@@ -1328,11 +1362,17 @@ html.is-dark .press-mark {
   padding: 0 1rem 1.5rem;
   overflow: auto;
 }
-.resume-viewer-img {
+.resume-viewer-page {
+  position: relative;
   max-width: min(100%, 900px);
-  height: auto;
   background: #fff;
   border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+.resume-viewer-img {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
 @media (max-width: 768px) {
@@ -1353,3 +1393,8 @@ html.is-dark .press-mark {
   border-color: var(--accent);
   background: var(--accent-dim);
 }
+
+/* The hidden attribute is applied by the UA as display:none, which an author
+   display:inline-flex silently beats. The share button relies on staying hidden
+   where the Web Share API is absent, so make it explicit. */
+.btn[hidden] { display: none; }
