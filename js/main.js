@@ -317,13 +317,24 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     hint.style.transform = 'translateX(-50%)';
   }
 
-  // On a short screen the hero name sits right behind the hint. Measure first and skip the hint
-  // entirely rather than drawing one on top of the other.
+  // The hint hangs under the nav, and on a phone the hero name sits in exactly that band:
+  // roughly 28px of clear space below a 64px nav. Rather than drop the hint on small screens,
+  // the hero steps down far enough to open the gap and settles back once the hint goes. Only
+  // if even the stepped-down position would collide is the hint skipped.
+  const HERO_SHIFT = 56;
+  const heroEl = document.querySelector('.hero');
   const nameEl = document.querySelector('.hero-name') || document.querySelector('.hero h1');
+  let shifted = false;
+
   if (nameEl) {
     const hr = hint.getBoundingClientRect();
     const nr = nameEl.getBoundingClientRect();
-    if (hr.bottom > nr.top - 8 && hr.right > nr.left && hr.left < nr.right) return;
+    const sameColumn = hr.right > nr.left && hr.left < nr.right;
+    if (sameColumn && hr.bottom > nr.top - 12) {
+      if (!heroEl || hr.bottom > nr.top + HERO_SHIFT - 12) return;
+      heroEl.classList.add('is-hint-shifted');
+      shifted = true;
+    }
   }
 
   // The scroll cue waits its turn, so the two are not animating at once.
@@ -335,18 +346,25 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     if (gone) return;
     gone = true;
     hint.classList.remove('is-visible');
-    if (cueEl) cueEl.classList.remove('is-waiting');
+
+    if (shifted) {
+      heroEl.classList.remove('is-hint-shifted');
+      // One movement at a time: the hero rises back, and only then does the cue arrive.
+      if (cueEl) setTimeout(() => cueEl.classList.remove('is-waiting'), 560);
+    } else if (cueEl) {
+      cueEl.classList.remove('is-waiting');
+    }
+
     window.removeEventListener('scroll', onScroll);
     document.removeEventListener('click', dismiss, true);
   }
 
-  // Dismiss when the hero name scrolls close to the hint
-  const heroName = document.querySelector('.hero-name');
+  // Dismiss once the reader actually starts scrolling. Measuring the name against the hint
+  // does not work on a phone: the two sit within a few dozen pixels of each other at rest, so
+  // the condition is already true before any scrolling and the first scroll event kills it.
+  const startY = window.scrollY;
   function onScroll() {
-    if (!heroName) { if (window.scrollY > 80) dismiss(); return; }
-    const hintBottom = hint.getBoundingClientRect().bottom;
-    const nameTop    = heroName.getBoundingClientRect().top;
-    if (nameTop < hintBottom + 80) dismiss();
+    if (window.scrollY > startY + 40) dismiss();
   }
 
   setTimeout(() => {

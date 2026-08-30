@@ -1548,6 +1548,19 @@ a.project-card:hover .project-cta svg { transform: translateX(4px); }
 }
 .theme-hint.is-visible .theme-hint-text { opacity: 0.8; }
 
+/* The hint hangs under the nav, which on a phone is where the hero name already is. The hero
+   steps down for as long as the hint is up, then settles back. A transform rather than
+   padding, so nothing around it reflows and the movement runs on the compositor. */
+.hero-inner {
+  transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.hero.is-hint-shifted .hero-inner {
+  transform: translateY(56px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-inner { transition: none; }
+}
+
 /* Landing from a project page scrolls to that project's card, clear of the nav */
 .project-card { scroll-margin-top: calc(var(--nav-h) + 2rem); }
 
