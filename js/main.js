@@ -317,11 +317,25 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     hint.style.transform = 'translateX(-50%)';
   }
 
+  // On a short screen the hero name sits right behind the hint. Measure first and skip the hint
+  // entirely rather than drawing one on top of the other.
+  const nameEl = document.querySelector('.hero-name') || document.querySelector('.hero h1');
+  if (nameEl) {
+    const hr = hint.getBoundingClientRect();
+    const nr = nameEl.getBoundingClientRect();
+    if (hr.bottom > nr.top - 8 && hr.right > nr.left && hr.left < nr.right) return;
+  }
+
+  // The scroll cue waits its turn, so the two are not animating at once.
+  const cueEl = document.querySelector('.scroll-indicator');
+  if (cueEl) cueEl.classList.add('is-waiting');
+
   let gone = false;
   function dismiss() {
     if (gone) return;
     gone = true;
     hint.classList.remove('is-visible');
+    if (cueEl) cueEl.classList.remove('is-waiting');
     window.removeEventListener('scroll', onScroll);
     document.removeEventListener('click', dismiss, true);
   }

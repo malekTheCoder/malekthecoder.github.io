@@ -598,6 +598,9 @@ html.is-dark .theme-menu {
 .hero {
   position: relative;
   min-height: 100vh;
+  /* dvh tracks Safari's collapsing toolbar; vh does not, so the cue ended up
+     underneath it on iOS. */
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1569,4 +1572,19 @@ a.project-card:hover .project-cta svg { transform: translateX(4px); }
 .scroll-indicator.is-gone {
   opacity: 0;
   visibility: hidden;
+}
+
+/* The scroll cue holds off while the first-visit theme hint is on screen. Two
+   animations competing for attention at once is too much on a small display. */
+.scroll-indicator.is-waiting {
+  opacity: 0;
+  visibility: hidden;
+}
+
+@media (max-width: 768px) {
+  /* The hint is pinned under the nav and the hero name sits close behind it on a
+     short screen, so it shrinks rather than colliding. */
+  .theme-hint-arrow { width: 22px; height: 30px; }
+  .theme-hint-text { font-size: 0.72rem; }
+  .theme-hint { gap: 0.15rem; }
 }
