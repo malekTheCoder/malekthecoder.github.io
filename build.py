@@ -35,7 +35,7 @@ PAGES = {
         "Malek Swilam is a Computer Engineering student at George Mason University's "
         "Honors College specializing in machine learning, computer vision, and robotics. "
         "Eagle Scout, ML researcher, and FTC programming lead.",
-        "Malek Swilam \u00b7 Computer Engineering @ GMU",
+        "Malek Swilam",
     ),
 }
 
