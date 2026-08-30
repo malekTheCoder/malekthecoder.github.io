@@ -601,9 +601,10 @@ html.is-dark .theme-menu {
 .hero {
   position: relative;
   min-height: 100vh;
-  /* dvh tracks Safari's collapsing toolbar; vh does not, so the cue ended up
-     underneath it on iOS. */
-  min-height: 100dvh;
+  /* svh is the viewport with the browser chrome EXPANDED, so the hero is sized for
+     the worst case and the cue at its bottom is never swallowed by a toolbar. dvh
+     would be wrong here: it changes as the chrome hides, reflowing mid scroll. */
+  min-height: 100svh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1619,4 +1620,55 @@ a, button, .skill-pill, .tag {
   .timeline-ext-link,
   .proj-btn,
   .btn { min-height: 42px; }
+}
+
+/* Height aware sizing. Width alone does not describe a phone: a landscape handset
+   is wide and very short, and browser chrome takes a bigger share of a small screen
+   than a large one. These compress the hero so its cue always has somewhere to sit. */
+@media (max-height: 740px) {
+  .hero { padding-top: calc(var(--nav-h) + 1.25rem); padding-bottom: 2.5rem; }
+  .hero-name { font-size: clamp(2.2rem, 11vw, 3.2rem); }
+  .hero-desc { margin-bottom: 1.25rem; }
+  .scroll-indicator { padding-top: 1.25rem; gap: 0.8rem; }
+  .scroll-indicator-rail { height: 40px; }
+  .scroll-indicator-head { bottom: -11px; }
+}
+
+/* Short AND landscape is a phone on its side: the hero cannot fit and the cue costs
+   more than it earns, so it goes. Short but portrait is an ordinary phone once the
+   browser chrome is counted, which is most of them, so the cue stays and shrinks. */
+@media (max-height: 600px) and (orientation: landscape) {
+  .hero { min-height: auto; padding-top: calc(var(--nav-h) + 1rem); padding-bottom: 2rem; }
+  .scroll-indicator { display: none; }
+  .hero-socials { margin-top: 0.75rem; }
+}
+
+@media (max-height: 600px) and (orientation: portrait) {
+  .hero { padding-top: calc(var(--nav-h) + 0.5rem); padding-bottom: 1.25rem; }
+  .hero-name { font-size: clamp(1.9rem, 10vw, 2.4rem); margin-bottom: 0.4rem; }
+  .hero-desc { font-size: 0.92rem; line-height: 1.5; margin-bottom: 0.9rem; }
+  /* Side by side rather than stacked: one full width button plus its gap is most of
+     what the cue needs to stay on screen. */
+  .hero-actions { flex-direction: row; justify-content: center; gap: 0.5rem; margin-bottom: 1rem; }
+  .hero-actions .btn { width: auto; max-width: none; padding-left: 0.9rem; padding-right: 0.9rem; font-size: 0.82rem; }
+  .hero-socials { margin-top: 0.5rem; gap: 1rem; }
+  .scroll-indicator { padding-top: 0.75rem; gap: 0.45rem; }
+  .scroll-indicator-rail { height: 22px; }
+  .scroll-indicator-head { bottom: -9px; }
+  .scroll-indicator-label { font-size: 0.76rem; }
+}
+
+/* Below about 500px of usable height there is no room for the cue whatever we shrink,
+   so it steps aside and the hero simply flows. */
+@media (max-height: 500px) {
+  .hero { min-height: auto; }
+  .scroll-indicator { display: none; }
+}
+
+/* Very narrow phones, down to 320px. */
+@media (max-width: 360px) {
+  .hero { padding-left: 1.25rem; padding-right: 1.25rem; }
+  .hero-name { font-size: clamp(2rem, 12vw, 2.6rem); }
+  .scroll-indicator-label { font-size: 0.78rem; }
+  .btn { padding-left: 1rem; padding-right: 1rem; }
 }
