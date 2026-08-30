@@ -1241,3 +1241,115 @@ html.is-dark .press-mark {
 @media (prefers-reduced-motion: no-preference) {
   .metric-bar::after { transition: width 0.4s ease; }
 }
+
+
+/* ─── Resume page ─────────────────────────────────────────────────────────────
+   The resume is shown as SVG pages rendered from the PDF, not as an embedded
+   <object>. Mobile Safari and Firefox handle inline PDFs badly, and the browsers
+   that do render them wrap the document in viewer chrome. An image looks like a
+   sheet of paper and behaves the same everywhere. */
+
+.resume-wrap .proj-hero { margin-bottom: 1.5rem; }
+
+/* Breathing room under the sheet so the page scrolls comfortably rather than
+   ending abruptly against the footer. */
+.resume-wrap #document { padding-bottom: 4rem; }
+
+.resume-sheets {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.resume-sheet {
+  display: block;
+  width: 100%;
+  max-width: 700px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: #fff;
+  cursor: zoom-in;
+  overflow: hidden;
+  transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
+}
+.resume-sheet:hover,
+.resume-sheet:focus-visible {
+  border-color: var(--accent);
+  box-shadow: 0 8px 26px var(--accent-dim);
+  transform: translateY(-2px);
+}
+.resume-sheet img { display: block; width: 100%; height: auto; }
+
+.resume-note { font-size: 0.88rem; color: var(--text-1); text-align: center; margin-top: 1rem; }
+.resume-note a { color: var(--accent); }
+
+/* Full size */
+.resume-viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  background: rgba(0, 0, 0, 0.85);
+}
+.resume-viewer[hidden] { display: none; }
+
+.resume-viewer-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  padding: 0.75rem 1rem;
+  flex-shrink: 0;
+}
+
+.resume-bar-link {
+  padding: 0.4rem 0.8rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  color: #fff;
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--transition);
+}
+.resume-bar-link:hover { background: rgba(255, 255, 255, 0.2); }
+
+.resume-viewer-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 0 1rem 1.5rem;
+  overflow: auto;
+}
+.resume-viewer-img {
+  max-width: min(100%, 900px);
+  height: auto;
+  background: #fff;
+  border-radius: var(--radius-sm);
+}
+
+@media (max-width: 768px) {
+  .resume-sheets { gap: 1rem; }
+  .resume-viewer-body { padding: 0 0.5rem 1rem; }
+}
+
+.resume-socials {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin-top: 1.25rem;
+}
+
+/* A download produces no visible change on its own, so the button says so briefly. */
+.btn.is-done {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-dim);
+}
