@@ -1,0 +1,181 @@
+%-------------------------------------------------------------------------------
+% Malek Swilam -- resume
+%
+% Based on the widely used template by Jake Gutierrez (MIT licensed).
+% Compile with:  tectonic resume.tex
+%
+% Kept deliberately ATS-plain: no tables for layout beyond the two-column
+% headings, no images, no text in headers or footers, and glyphtounicode so
+% every character extracts as real text rather than a font-specific code.
+%-------------------------------------------------------------------------------
+\documentclass[letterpaper,11pt]{article}
+
+\usepackage{latexsym}
+\usepackage[letterpaper,left=0.35in,right=0.35in,top=0.08in,bottom=0.12in]{geometry}
+\usepackage{titlesec}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\usepackage{textcomp}
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\urlstyle{same}
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+% Section headings: small caps, followed by a full-width rule.
+\titleformat{\section}{
+  \vspace{-4pt}\scshape\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
+
+% Makes every glyph extract as proper Unicode. This is the single most important
+% line in the file for ATS parsing.
+\ifdefined\pdfgentounicode
+  \input{glyphtounicode}
+  \pdfgentounicode=1
+\fi
+
+%------------------------ CUSTOM COMMANDS -------------------------------------
+\newcommand{\resumeItem}[1]{
+  \item\small{
+    {#1 \vspace{-2pt}}
+  }
+}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-2pt}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & #2 \\[-3pt]
+      \textit{\small#3} & \textit{\small #4} \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeProjectHeading}[2]{
+    \item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \small#1 & #2 \\
+    \end{tabular*}\vspace{-2pt}
+}
+
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}[itemsep=0pt, parsep=0pt, topsep=2pt, partopsep=0pt]}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-10pt}}
+
+%===============================================================================
+\begin{document}
+
+%------------------------ HEADING ---------------------------------------------
+\begin{center}
+    \textbf{\Huge Malek Swilam} \\ \vspace{2pt}
+    \small
+    (703) 832-1915 $|$
+    \href{mailto:malekgswilam@gmail.com}{\underline{malekgswilam@gmail.com}} $|$
+    \href{https://malekswilam.dev}{\underline{malekswilam.dev}} $|$
+    \href{https://linkedin.com/in/malek-swilam}{\underline{linkedin.com/in/malek-swilam}} $|$
+    \href{https://github.com/malekTheCoder}{\underline{github.com/malekTheCoder}}
+\end{center}
+
+%------------------------ EDUCATION -------------------------------------------
+\section{Education}
+  \resumeSubHeadingListStart
+    \resumeSubheading
+      {George Mason University, Honors College}{Fairfax, VA}
+      {B.S. Computer Engineering}{Aug. 2026 -- May 2030 (Expected)}
+    \resumeSubheading
+      {Oakton High School}{Vienna, VA}
+      {Advanced Studies Diploma $|$ SAT: 1510 (Math 780, EBRW 730)}{Aug. 2022 -- Jun. 2026}
+      \resumeItemListStart
+        \resumeItem{\textbf{Relevant Coursework:} Advanced Data Structures \& Algorithms, AP Computer Science A, AP Calculus BC, AP Physics C: Electricity \& Magnetism, AP Statistics, AP Physics C: Mechanics (exam only), AP Physics 1}
+      \resumeItemListEnd
+  \resumeSubHeadingListEnd
+
+%------------------------ EXPERIENCE ------------------------------------------
+\section{Experience}
+  \resumeSubHeadingListStart
+
+    \resumeSubheading
+      {Machine Learning Intern}{Jun. 2026 -- Present}
+      {Yanez Compliance}{Remote}
+      \resumeItemListStart
+        \resumeItem{Built a face anti-spoofing ensemble combining a gradient-boosted model on \textbf{50+} engineered image cues with a CNN-based depth-predicting model, cutting error \textbf{75\%} versus the deployed rule-based system on unseen data}
+        \resumeItem{Designed a rank-based score fusion for models with incomparable output scales, adding \textbf{3.4 AUC points} over the stronger component and catching \textbf{100\%} of real attacks that had bypassed the production system}
+        \resumeItem{Automated an adversarial document tampering pipeline, increasing throughput \textbf{500\%+} via multi-threading and a load-aware scheduler, and replacing general-purpose generative models with a dedicated face-swap model at \textbf{85--93\% lower cost} per image}
+      \resumeItemListEnd
+
+    \resumeSubheading
+      {Engineering Intern}{May 2026}
+      {Alarm.com}{Tysons Corner, VA}
+      \resumeItemListStart
+        \resumeItem{Performed hands-on hardware lab work soldering buck converters and embedded boards, and provisioned Raspberry Pi units to build out physical test automation infrastructure for the hardware QA team}
+        \resumeItem{Configured and integrated home security devices (locks, sensors, cameras, thermostats, Flex I/O) into automated testing workflows}
+        \resumeItem{Built an internal Python tool for lab device management}
+      \resumeItemListEnd
+
+    \resumeSubheading
+      {Machine Learning Research Intern}{Jun. -- Sep. 2025}
+      {George Mason University, ASSIP}{Fairfax, VA (Hybrid)}
+      \resumeItemListStart
+        \resumeItem{Built a full ML pipeline for short-term rainfall forecasting, implementing and comparing LSTM, XGBoost, and ensemble models evaluated via MAE, RMSE, and R\textsuperscript{2}}
+        \resumeItem{Improved prediction accuracy \textbf{12--15\%} over individual models by combining LSTM and XGBoost into an ensemble, achieving \textbf{96\%+} of predictions within $\pm$1mm of actual; published in \textit{GMU Journal of Student-Scientists' Research}}
+      \resumeItemListEnd
+
+    \resumeSubheading
+      {Programming Lead}{2023 -- 2026}
+      {FTC Robotics, Team 369 (Oakton)}{Vienna, VA}
+      \resumeItemListStart
+        \resumeItem{Led all robot software development in Java across two varsity seasons; built an autonomous localization pipeline fusing wheel odometry with IMU, with AprilTag detection for field-relative pose correction and Road Runner motion profiling}
+        \resumeItem{Designed multi-subsystem PIDF control (turret, flywheel, pose stabilization) and a Limelight-based vision targeting system; qualified for \textbf{State Championship} both seasons and \textbf{World Championship} one season}
+      \resumeItemListEnd
+
+  \resumeSubHeadingListEnd
+
+%------------------------ PROJECTS --------------------------------------------
+\section{Projects}
+    \resumeSubHeadingListStart
+
+      \resumeProjectHeading
+          {\textbf{OCRadar -- Oral Cancer Detection App} $|$ \emph{Python, Azure AI Vision, Flutter, Dart}}{\href{https://ocradar.com}{\underline{ocradar.com}}}
+          \resumeItemListStart
+            \resumeItem{Co-built a cross-platform iOS/Android/web app screening for early signs of oral cancer via Azure AI Custom Vision trained on thousands of labeled clinical images, reaching \textbf{98\% accuracy}; joined as COO and lead developer for Android/Windows; featured by WTOP News and international outlets}
+          \resumeItemListEnd
+
+      \resumeProjectHeading
+          {\textbf{Voice-Controlled Robotics Agent} $|$ \emph{Python, MuJoCo, Claude API, FastAPI, Whisper}}{\href{https://malekswilam.dev/projects/voice-robotics-agent/}{\underline{Project Walkthrough}}}
+          \resumeItemListStart
+            \resumeItem{Built a voice-controlled robotic manipulation agent in MuJoCo where an LLM decomposes natural-language commands into sub-goals via chain-of-thought reasoning, detects mid-task failures, and replans autonomously}
+            \resumeItem{Solved robot motion via inverse kinematics with the mink library; streamed the live simulation through a FastAPI WebSocket portal}
+          \resumeItemListEnd
+
+      \resumeProjectHeading
+          {\textbf{Desk Calendar Agent} $|$ \emph{Python, Raspberry Pi 5, Local LLM, Google Calendar API}}{\href{https://malekswilam.dev/projects/calendar-agent/}{\underline{Project Walkthrough}}}
+          \resumeItemListStart
+            \resumeItem{Built an agent that turns a texted or spoken instruction (e.g.\ ``lunch with John Appleseed on Friday at noon'') into a Google Calendar event using a 4-bit quantized 3B-parameter model (Qwen2.5) running fully on-device on a Raspberry Pi 5, with deterministic checks to block destructive actions}
+            \resumeItem{Wired the e-ink display to the Raspberry Pi 5, wrote the rendering and display-refresh layer, and selected the hardware components for the build}
+          \resumeItemListEnd
+
+    \resumeSubHeadingListEnd
+
+%------------------------ TECHNICAL SKILLS ------------------------------------
+\section{Technical Skills}
+ \begin{itemize}[leftmargin=0.15in, label={}]
+    \small{\item{
+     \textbf{Languages}{: Java, Python, Dart, JavaScript, HTML/CSS} \\
+     \textbf{Technologies}{: PyTorch, OpenCV, XGBoost, NumPy, FastAPI, Flutter, MuJoCo, Azure AI Vision, Claude API, Ollama} \\
+     \textbf{Hardware}{: Soldering, Embedded Linux, Raspberry Pi, Sensor Fusion \& PIDF Control} \\
+     \textbf{Tools}{: Git/GitHub, Claude Code, Codex, Xcode, VS Code, IntelliJ} \\
+     \textbf{Honors}{: Eagle Scout; FTC World Championship Qualifier (8th Divisional Captain); T.R. Cook Award of Excellence in Technology (2025)}
+    }}
+ \end{itemize}
+
+\end{document}
