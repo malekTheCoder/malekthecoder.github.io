@@ -35,26 +35,26 @@
     {
       "href": "https://ocradar.com",
       "label": "ocradar.com",
-      "left": 85.185,
-      "top": 62.795,
-      "width": 9.804,
-      "height": 1.431
+      "left": 86.057,
+      "top": 62.879,
+      "width": 8.932,
+      "height": 1.263
     },
     {
       "href": "https://malekswilam.dev/projects/voice-robotics-agent/",
-      "label": "Project Walkthrough",
-      "left": 78.322,
-      "top": 69.192,
-      "width": 16.667,
-      "height": 1.431
+      "label": "malekswilam.dev/voice",
+      "left": 78.431,
+      "top": 69.276,
+      "width": 16.558,
+      "height": 1.263
     },
     {
       "href": "https://malekswilam.dev/projects/calendar-agent/",
-      "label": "Project Walkthrough",
-      "left": 78.322,
-      "top": 76.936,
-      "width": 16.667,
-      "height": 1.431
+      "label": "malekswilam.dev/calendar",
+      "left": 75.926,
+      "top": 77.02,
+      "width": 19.063,
+      "height": 1.263
     }
   ]
 }
