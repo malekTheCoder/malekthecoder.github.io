@@ -42,18 +42,18 @@
     },
     {
       "href": "https://malekswilam.dev/projects/voice-robotics-agent/",
-      "label": "malekswilam.dev/voice",
-      "left": 78.431,
+      "label": "malekswilam.dev/robot-agent",
+      "left": 73.747,
       "top": 69.276,
-      "width": 16.558,
+      "width": 21.351,
       "height": 1.263
     },
     {
       "href": "https://malekswilam.dev/projects/calendar-agent/",
-      "label": "malekswilam.dev/calendar",
-      "left": 75.926,
+      "label": "malekswilam.dev/calendar-agent",
+      "left": 71.569,
       "top": 77.02,
-      "width": 19.063,
+      "width": 23.42,
       "height": 1.263
     }
   ]
