@@ -701,10 +701,14 @@ html.is-dark .theme-menu {
 .hero-socials { display: flex; gap: 1.25rem; }
 
 .social-link {
+  display: inline-flex;
   color: var(--text-1);
-  transition: color var(--transition);
+  transition: color var(--transition), transform var(--transition);
 }
-.social-link:hover { color: var(--text-0); }
+.social-link svg { width: 22px; height: 22px; }
+/* These are the only unlabelled links on the page, so the hover has to carry the
+   whole affordance: accent plus a small lift, not a half-step in grey. */
+.social-link:hover { color: var(--accent); transform: translateY(-2px); }
 
 
 .scroll-indicator {
@@ -730,7 +734,6 @@ html.is-dark .theme-menu {
   width: 3px;
   height: 62px;
   border-radius: 2px;
-  background: var(--rule);
 }
 /* One cycle: the line grows down the track, the arrowhead strokes itself in at the
    bottom, both hold for a beat, then the whole thing fades and starts over. */
