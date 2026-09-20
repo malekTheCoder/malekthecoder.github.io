@@ -23,7 +23,7 @@
               <h4 class="timeline-project-name">Face Passive Liveness &amp; Anti-Spoofing</h4>
               <ul class="timeline-bullets">
                 <li>Built a face anti-spoofing ensemble combining a gradient-boosted model on 50+ engineered image cues with a CNN-based depth-predicting model, cutting error 72% versus the deployed rule-based system on unseen data</li>
-                <li>Designed a rank-based score fusion for models with incomparable output scales, improving over the strongest individual component and catching 100% of real attacks that had bypassed the production system</li>
+                <li>Designed a rank-based score fusion for models with incomparable output scales, adding 3.4 AUC points over the stronger component and catching 100% of real attacks that had bypassed the production system</li>
                 <li>Ran an ablation study that isolated a single feature family as the cause of a cross-dataset failure, correcting it in 8 of 8 model configurations</li>
                 <li>Developed a CNN-based depth model for face liveness detection, then ran a teacher-student distillation study that validated the architecture within 0.001 AUC of a research-only reference model</li>
                 <li>Built the evaluation harness reporting standard biometric metrics (APCER, BPCER, ACER, AUC) across in-domain and cross-domain test sets</li>
