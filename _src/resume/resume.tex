@@ -1,187 +1,22 @@
 %-------------------------------------------------------------------------------
-% Malek Swilam -- resume
+% Malek Swilam -- MAIN resume (public: website, general applications)
 %
-% Based on the widely used template by Jake Gutierrez (MIT licensed).
-% Compile with:  pdflatex resume.tex   (run it twice, so hyperref settles)
-%
-% pdflatex is the engine to use: it produces the Computer Modern Type 1 fonts the
-% original was built with. It also compiles under tectonic/XeTeX, which substitutes
-% Latin Modern -- near identical to look at, but a different file. The vertical
-% spacing below is tuned tightly enough that the page fits either way, though it is
-% worth checking it is still one page after any edit.
-%
-% Kept deliberately ATS-plain: no tables for layout beyond the two-column
-% headings, no images, no text in headers or footers, and glyphtounicode so
-% every character extracts as real text rather than a font-specific code.
+% Shares preamble.tex and body.tex with resume-freshman.tex. Only Education
+% differs between the two -- edit Experience/Projects/Skills in body.tex ONCE
+% and both variants pick it up. Compile: pdflatex resume.tex (twice).
 %-------------------------------------------------------------------------------
-\documentclass[letterpaper,11pt]{article}
+\input{preamble}
+\input{heading}
 
-\usepackage{latexsym}
-\usepackage[letterpaper,left=0.30in,right=0.30in,top=0.05in,bottom=0.05in]{geometry}
-\usepackage{titlesec}
-\usepackage[usenames,dvipsnames]{color}
-\usepackage{enumitem}
-\usepackage[hidelinks]{hyperref}
-\usepackage{fancyhdr}
-\usepackage[english]{babel}
-\usepackage{tabularx}
-\usepackage{textcomp}
-
-\pagestyle{fancy}
-\fancyhf{}
-\renewcommand{\headrulewidth}{0pt}
-\renewcommand{\footrulewidth}{0pt}
-
-\urlstyle{same}
-\raggedbottom
-\raggedright
-\setlength{\tabcolsep}{0in}
-
-% Section headings: small caps, followed by a full-width rule.
-\titleformat{\section}{
-  \vspace{-4pt}\scshape\raggedright\large
-}{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
-
-% Makes every glyph extract as proper Unicode. This is the single most important
-% line in the file for ATS parsing.
-\ifdefined\pdfgentounicode
-  \input{glyphtounicode}
-  \pdfgentounicode=1
-\fi
-
-%------------------------ CUSTOM COMMANDS -------------------------------------
-\newcommand{\resumeItem}[1]{
-  \item\small{
-    {#1\vspace{-2pt}}
-  }
-}
-
-\newcommand{\resumeSubheading}[4]{
-  \vspace{-2pt}\item
-    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
-      \textbf{#1} & #2 \\[-3pt]
-      \textit{\small#3} & \textit{\small #4} \\
-    \end{tabular*}\vspace{-7pt}
-}
-
-\newcommand{\resumeProjectHeading}[2]{
-    \item
-    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
-      \small#1 & \small#2 \\
-    \end{tabular*}\vspace{-2pt}
-}
-
-\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
-
-\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
-\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
-\newcommand{\resumeItemListStart}{\begin{itemize}[itemsep=0pt, parsep=0pt, topsep=2pt, partopsep=0pt, leftmargin=12pt]}
-\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-8pt}}
-
-%===============================================================================
-\begin{document}
-
-%------------------------ HEADING ---------------------------------------------
-\begin{center}
-    \textbf{\Huge Malek Swilam} \\ \vspace{2pt}
-    \small
-    (703) 832-1915 $|$
-    \href{mailto:malekgswilam@gmail.com}{\underline{malekgswilam@gmail.com}} $|$
-    \href{https://malekswilam.dev}{\underline{malekswilam.dev}} $|$
-    \href{https://linkedin.com/in/malek-swilam}{\underline{linkedin.com/in/malek-swilam}} $|$
-    \href{https://github.com/malekTheCoder}{\underline{github.com/malekTheCoder}}
-\end{center}
-\vspace{-12pt}
-
-%------------------------ EDUCATION -------------------------------------------
 \section{Education}
   \resumeSubHeadingListStart
     \resumeSubheading
       {George Mason University, Honors College}{Fairfax, VA}
       {B.S. Computer Engineering}{Aug. 2026 -- May 2030 (Expected)}
-    \resumeSubheading
-      {Oakton High School}{Vienna, VA}
-      {Advanced Studies Diploma $|$ SAT: 1510 (Math 780, EBRW 730)}{Aug. 2022 -- Jun. 2026}
       \resumeItemListStart
-        \resumeItem{\textbf{Relevant Coursework:} Advanced Data Structures \& Algorithms, AP Computer Science A, AP Physics C: Electricity \& Magnetism, AP Calculus BC, AP Physics C: Mechanics (exam only), AP Statistics, AP Physics 1}
+        \resumeItem{\textbf{Relevant Coursework:} Data Structures \& Algorithms, Introduction to Electrical \& Computer Engineering, Calculus 3, Physics 1 \& 2, Introduction to Engineering}
       \resumeItemListEnd
   \resumeSubHeadingListEnd
 
-%------------------------ EXPERIENCE ------------------------------------------
-\section{Experience}
-  \resumeSubHeadingListStart
-
-    \resumeSubheading
-      {Machine Learning Intern}{Jun. 2026 -- Present}
-      {Yanez.ai}{Remote}
-      \resumeItemListStart
-        \resumeItem{Built a computer vision ensemble for face anti-spoofing, combining a gradient-boosted model on \textbf{50+} engineered image cues with a CNN-based depth model, cutting error \textbf{72\%} versus the deployed rule-based system on unseen data}
-        \resumeItem{Designed a rank-based score fusion for models with incomparable output scales, catching \textbf{100\%} of real attacks that had bypassed the production system}
-        \resumeItem{Boosted throughput \textbf{500\%+} on an adversarial document tampering pipeline with multi-threading and a load-aware scheduler, and cut cost per image \textbf{85--93\%} by replacing general-purpose generative models with a dedicated face-swap model}
-      \resumeItemListEnd
-
-    \resumeSubheading
-      {Engineering Intern}{May 2026}
-      {Alarm.com}{Tysons Corner, VA}
-      \resumeItemListStart
-        \resumeItem{Co-built a Flask lab portal for the hardware QA team with QR-labeled inventory, equipment checkout, admin roles, and Jira-synced request queues, replacing manual tracking of lab equipment}
-        \resumeItem{Soldered buck converters and embedded boards, provisioned Raspberry Pi units, and integrated locks, sensors, cameras, and thermostats into automated hardware testing}
-      \resumeItemListEnd
-
-    \resumeSubheading
-      {Machine Learning Research Intern}{Jun. -- Sep. 2025}
-      {George Mason University, ASSIP}{Fairfax, VA (Hybrid)}
-      \resumeItemListStart
-        \resumeItem{Built an ML pipeline for short-term rainfall forecasting, training and comparing \textbf{LSTM}, \textbf{XGBoost}, and \textbf{ensemble} models on MAE, RMSE, and R\textsuperscript{2}; published in \textit{GMU Journal of Student-Scientists' Research}}
-        \resumeItem{Outperformed both LSTM and XGBoost on every metric by ensembling them, raising R\textsuperscript{2} \textbf{16--26\%} and landing \textbf{96\%+} of hourly predictions within $\pm$1mm of actual}
-      \resumeItemListEnd
-
-    \resumeSubheading
-      {Programming Lead}{2023 -- 2026}
-      {FTC Robotics, Team 369 (Oakton)}{Vienna, VA}
-      \resumeItemListStart
-        \resumeItem{Led all robot software development in Java across two varsity seasons; built an autonomous localization pipeline fusing wheel odometry with IMU, with AprilTag detection for field-relative pose correction and motion profiling, ranking in the \textbf{top 4\% of 7,000+ teams internationally} for autonomous scoring}
-        \resumeItem{Designed multi-subsystem PIDF control (turret, flywheel, pose stabilization) and a Limelight-based vision targeting system; reached \textbf{State Championship} playoffs both seasons and \textbf{captained a playoff alliance} at the international \textbf{World Championship}}
-      \resumeItemListEnd
-
-  \resumeSubHeadingListEnd
-
-%------------------------ PROJECTS --------------------------------------------
-\section{Projects}
-    \resumeSubHeadingListStart
-
-      \resumeProjectHeading
-          {\textbf{OCRadar: Oral Cancer Detection App} $|$ \emph{Python, Azure AI Vision, Flutter, Dart}}{\href{https://ocradar.com}{\underline{ocradar.com}}}
-          \resumeItemListStart
-            \resumeItem{As \textbf{COO and lead Android/Windows developer}, co-built a cross-platform app that screens for early signs of oral cancer using a CNN image classifier on Azure AI Custom Vision with \textbf{98\% accuracy}; featured by \textbf{WTOP~News}, \textbf{Korea~Times}, and Vision~Times~China}
-          \resumeItemListEnd
-
-      \resumeProjectHeading
-          {\textbf{Voice-Controlled Robotics Agent} $|$ \emph{Python, MuJoCo, Anthropic API, FastAPI, Whisper}}{\href{https://malekswilam.dev/projects/voice-robotics-agent/}{\underline{malekswilam.dev/robot-agent}}}
-          \resumeItemListStart
-            \resumeItem{Built a voice-controlled manipulation agent for a Franka Panda arm in MuJoCo where an LLM decomposes natural-language commands into sub-goals via chain-of-thought reasoning, detects mid-task failures, and replans autonomously}
-            \resumeItem{Solved robot motion via inverse kinematics and streamed the live simulation through a FastAPI WebSocket portal; cut LLM input cost per call \textbf{$\sim$99\%} with prompt caching}
-          \resumeItemListEnd
-
-      \resumeProjectHeading
-          {\textbf{Desk Calendar Agent} $|$ \emph{Python, Raspberry Pi 5, Local LLM, Google Calendar API}}{\href{https://malekswilam.dev/projects/calendar-agent/}{\underline{malekswilam.dev/calendar-agent}}}
-          \resumeItemListStart
-            \resumeItem{Built an agent that turns a texted or spoken instruction into a Google Calendar event using a 4-bit quantized 3B-parameter model (Qwen2.5) running \textbf{fully on-device} on a Raspberry Pi 5, with deterministic checks that blocked \textbf{100\%} of destructive actions the model proposed in testing}
-            \resumeItem{Cut on-device prompt processing time \textbf{94\%} ($\sim$100s to $\sim$6s) with prefix caching; wired the e-ink display to the Raspberry Pi 5, wrote the rendering and display-refresh layer, and selected the hardware components}
-          \resumeItemListEnd
-
-    \resumeSubHeadingListEnd
-
-%------------------------ TECHNICAL SKILLS ------------------------------------
-\section{Technical Skills}
- \begin{itemize}[leftmargin=0.15in, label={}]
-    \small{\item{
-     \textbf{Languages}{: Java, Python, Dart, JavaScript, HTML/CSS} \\
-     \textbf{Technologies}{: PyTorch, XGBoost, NumPy, FastAPI, Flask, Flutter, MuJoCo, Azure AI Vision, Anthropic API, Ollama} \\
-     \textbf{Hardware}{: Soldering, Embedded Linux, Raspberry Pi, Sensor Fusion \& PIDF Control} \\
-     \textbf{Tools}{: Git/GitHub, Android Studio, Claude Code, Codex} \\
-     \textbf{Honors}{: Eagle Scout; FTC World Championship Alliance Captain; T.R. Cook Award of Excellence in Technology (2025)}
-    }}
- \end{itemize}
-
+\input{body}
 \end{document}

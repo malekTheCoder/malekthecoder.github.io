@@ -1,0 +1,83 @@
+%-------------------------------------------------------------------------------
+% Malek Swilam -- resume
+%
+% Based on the widely used template by Jake Gutierrez (MIT licensed).
+% Compile with:  pdflatex resume.tex   (run it twice, so hyperref settles)
+%
+% pdflatex is the engine to use: it produces the Computer Modern Type 1 fonts the
+% original was built with. It also compiles under tectonic/XeTeX, which substitutes
+% Latin Modern -- near identical to look at, but a different file. The vertical
+% spacing below is tuned tightly enough that the page fits either way, though it is
+% worth checking it is still one page after any edit.
+%
+% Kept deliberately ATS-plain: no tables for layout beyond the two-column
+% headings, no images, no text in headers or footers, and glyphtounicode so
+% every character extracts as real text rather than a font-specific code.
+%-------------------------------------------------------------------------------
+\documentclass[letterpaper,11pt]{article}
+
+\usepackage{latexsym}
+\usepackage[letterpaper,left=0.30in,right=0.30in,top=0.05in,bottom=0.05in]{geometry}
+\usepackage{titlesec}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\usepackage{textcomp}
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\urlstyle{same}
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+% Section headings: small caps, followed by a full-width rule.
+\titleformat{\section}{
+  \vspace{-4pt}\scshape\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
+
+% Makes every glyph extract as proper Unicode. This is the single most important
+% line in the file for ATS parsing.
+\ifdefined\pdfgentounicode
+  \input{glyphtounicode}
+  \pdfgentounicode=1
+\fi
+
+%------------------------ CUSTOM COMMANDS -------------------------------------
+\newcommand{\resumeItem}[1]{
+  \item\small{
+    {#1\vspace{-2pt}}
+  }
+}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-2pt}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & #2 \\[-3pt]
+      \textit{\small#3} & \textit{\small #4} \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeProjectHeading}[2]{
+    \item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \small#1 & \small#2 \\
+    \end{tabular*}\vspace{-2pt}
+}
+
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}[itemsep=0pt, parsep=0pt, topsep=2pt, partopsep=0pt, leftmargin=12pt]}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-8pt}}
+
+%===============================================================================
+\begin{document}
+
