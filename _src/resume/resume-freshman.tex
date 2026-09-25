@@ -8,6 +8,13 @@
 % with resume.tex; only Education differs. Compile: pdflatex resume-freshman.tex (twice).
 %-------------------------------------------------------------------------------
 \input{preamble}
+
+% This variant carries a second Education entry the main resume doesn't, so it
+% needs a little more density to hold one page. Tightened here only -- resume.tex
+% keeps the roomier default from preamble.tex.
+\renewcommand{\resumeItemListEnd}{\end{itemize}\vspace{-11pt}}
+\newgeometry{left=0.30in,right=0.30in,top=0.03in,bottom=0.03in}
+
 \input{heading}
 
 \section{Education}
@@ -16,14 +23,11 @@
       {George Mason University, Honors College}{Fairfax, VA}
       {B.S. Computer Engineering}{Aug. 2026 -- May 2030 (Expected)}
       \resumeItemListStart
-        \resumeItem{\textbf{Relevant Coursework:} Data Structures \& Algorithms, Introduction to Electrical \& Computer Engineering, Calculus 3, Physics 1 \& 2, Introduction to Engineering}
+        \resumeItem{\textbf{Relevant Coursework:} Object-Oriented Programming, Data Structures \& Algorithms, Introduction to Electrical \& Computer Engineering, Calculus 3, Physics 1 \& 2, Introduction to Engineering}
       \resumeItemListEnd
     \resumeSubheading
       {Oakton High School}{Vienna, VA}
       {Advanced Studies Diploma $|$ SAT: 1510 (Math 780, EBRW 730)}{Aug. 2022 -- Jun. 2026}
-      \resumeItemListStart
-        \resumeItem{\textbf{Relevant Coursework:} Advanced Data Structures \& Algorithms, AP Computer Science A, AP Physics C: Electricity \& Magnetism, AP Calculus BC, AP Physics C: Mechanics (exam only), AP Statistics, AP Physics 1}
-      \resumeItemListEnd
   \resumeSubHeadingListEnd
 
 \input{body}
