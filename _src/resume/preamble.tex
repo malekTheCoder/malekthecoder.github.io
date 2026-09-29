@@ -17,7 +17,11 @@
 \documentclass[letterpaper,11pt]{article}
 
 \usepackage{latexsym}
-\usepackage[letterpaper,left=0.30in,right=0.30in,top=0.05in,bottom=0.05in]{geometry}
+% top/bottom of 0.05in measured at ~0.01in of actual clearance once the name's
+% ascenders and the section rule are accounted for -- below the ~0.15-0.2in
+% hardware minimum most consumer printers can put ink on. 0.18in/0.15in is the
+% same margin used by the original template and clears that safely.
+\usepackage[letterpaper,left=0.30in,right=0.30in,top=0.18in,bottom=0.15in]{geometry}
 \usepackage{titlesec}
 \usepackage[usenames,dvipsnames]{color}
 \usepackage{enumitem}
