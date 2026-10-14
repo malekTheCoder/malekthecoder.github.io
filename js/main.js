@@ -409,3 +409,77 @@ if (scrollCue) {
     requestAnimationFrame(syncCue);
   }, { passive: true });
 }
+
+
+
+// Projects as editor tabs.
+//
+// The four cards are ordinary markup that already works as a grid, so this only
+// reorganises them: a tab bar is built from the cards, and one card shows at a
+// time. With no script the grid below it is simply what loads. All four share
+// one grid cell, so the section is as tall as the tallest project and switching
+// tabs never shifts the page underneath the reader.
+(function () {
+  const grid = document.querySelector('.projects-grid');
+  if (!grid) return;
+  const cards = [...grid.querySelectorAll('.project-card')];
+  if (cards.length < 2) return;
+
+  const win = document.createElement('div');
+  win.className = 'proj-window';
+  const bar = document.createElement('div');
+  bar.className = 'proj-tabbar';
+  bar.setAttribute('role', 'tablist');
+  bar.setAttribute('aria-label', 'Projects');
+  const crumb = document.createElement('div');
+  crumb.className = 'proj-crumb';
+  crumb.setAttribute('aria-hidden', 'true');
+
+  grid.parentNode.insertBefore(win, grid);
+  win.append(bar, crumb, grid);
+  grid.classList.add('is-tabs');
+
+  const label = c => c.dataset.file || c.id.replace('project-', '');
+
+  const tabs = cards.map((card, i) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'proj-tab';
+    b.id = 'tab-' + card.id;
+    b.setAttribute('role', 'tab');
+    b.setAttribute('aria-controls', card.id);
+    b.innerHTML = '<span class="proj-tab-dot" aria-hidden="true"></span>';
+    b.append(label(card));
+    b.addEventListener('click', () => select(i));
+    bar.appendChild(b);
+    return b;
+  });
+
+  function select(i, focus) {
+    tabs.forEach((t, j) => {
+      const on = j === i;
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+      t.tabIndex = on ? 0 : -1;
+      cards[j].classList.toggle('is-active', on);
+    });
+    crumb.textContent = 'projects / ' + label(cards[i]);
+    if (focus) tabs[i].focus();
+    // keep the active tab in view when the bar scrolls (phones)
+    tabs[i].scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  }
+
+  bar.addEventListener('keydown', e => {
+    const cur = tabs.findIndex(t => t.getAttribute('aria-selected') === 'true');
+    const last = tabs.length - 1;
+    const next = { ArrowRight: cur === last ? 0 : cur + 1, ArrowLeft: cur === 0 ? last : cur - 1,
+                   Home: 0, End: last }[e.key];
+    if (next === undefined) return;
+    e.preventDefault();
+    select(next, true);
+  });
+
+  // Project pages link back to /#project-<name>; honour that by opening that tab.
+  const fromHash = () => cards.findIndex(c => '#' + c.id === location.hash);
+  window.addEventListener('hashchange', () => { const i = fromHash(); if (i > -1) select(i); });
+  select(Math.max(0, fromHash()));
+})();

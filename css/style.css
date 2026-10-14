@@ -997,6 +997,113 @@ h1, h2, h3, h4 { line-height: 1.25; }
   .projects-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
+
+/* Editor tabs: a tab bar over a single visible project. The cards keep their own
+   markup and links; this only changes how they are arranged once script has
+   added .is-tabs, so without script the grid above is what shows. */
+.proj-window {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-card);
+  overflow: hidden;
+  margin-bottom: 2.5rem;
+}
+.proj-tabbar {
+  display: flex;
+  background: var(--bg-alt);
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.proj-tabbar::-webkit-scrollbar { display: none; }
+.proj-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  flex: none;
+  padding: 0.75rem 1.15rem;
+  font: 500 0.8rem 'JetBrains Mono', monospace;
+  color: var(--text-2);
+  background: transparent;
+  border: 0;
+  border-right: 1px solid var(--border);
+  border-top: 2px solid transparent;
+  margin-bottom: -1px;
+  cursor: pointer;
+  transition: color var(--transition), background var(--transition);
+}
+.proj-tab:hover { color: var(--text-0); }
+.proj-tab:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.proj-tab-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--border-hover);
+  transition: background var(--transition);
+}
+.proj-tab[aria-selected="true"] {
+  color: var(--text-0);
+  background: var(--bg-card);
+  border-top-color: var(--accent);
+}
+.proj-tab[aria-selected="true"] .proj-tab-dot { background: var(--accent); }
+
+.proj-crumb {
+  padding: 0.55rem 1.15rem;
+  font: 400 0.72rem 'JetBrains Mono', monospace;
+  color: var(--text-2);
+  border-bottom: 1px solid var(--rule);
+}
+
+.projects-grid.is-tabs {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+  margin-bottom: 0;
+}
+.projects-grid.is-tabs .project-card {
+  grid-area: 1 / 1;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 1.75rem;
+}
+.projects-grid.is-tabs .project-card:not(.is-active) {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+.projects-grid.is-tabs .project-card.is-active { animation: proj-pane-in 0.22s ease-out; }
+@keyframes proj-pane-in { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .projects-grid.is-tabs .project-card.is-active { animation: none; }
+}
+.projects-grid.is-tabs .project-desc { max-width: none; flex: none; }
+
+/* Wide: the diagram takes the left column and the text the right, so the pane
+   stays short instead of stacking everything in one tall column. */
+@media (min-width: 760px) {
+  .projects-grid.is-tabs .project-card {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    grid-template-rows: repeat(4, auto) 1fr;
+    column-gap: 2rem;
+    align-content: start;
+  }
+  .projects-grid.is-tabs a.project-card > .project-banner {
+    grid-column: 1;
+    grid-row: 1 / -1;
+    margin: 0;
+    height: auto;
+    /* The diagrams are wide and short (about 4:1), so a box much taller than
+       they are just frames empty space. Centred against the text instead of
+       stretched to its full height. */
+    min-height: 11rem;
+    align-self: center;
+    border-radius: var(--radius-sm);
+  }
+  .projects-grid.is-tabs .project-card > :not(.project-banner) { grid-column: 2; }
+  .projects-grid.is-tabs .project-cta { align-self: end; justify-self: start; }
+}
+
 .project-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
