@@ -464,8 +464,14 @@ if (scrollCue) {
     });
     crumb.textContent = 'projects / ' + label(cards[i]);
     if (focus) tabs[i].focus();
-    // keep the active tab in view when the bar scrolls (phones)
-    tabs[i].scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    // Keep the active tab in view when the bar scrolls sideways (phones). Moves the
+    // bar itself and nothing else: scrollIntoView also scrolls the PAGE to reach the
+    // tab, and select() runs once on load, which dropped every visitor halfway down.
+    // Measured against the bar's own edges: offsetLeft is relative to the nearest
+    // positioned ancestor, which is not the bar, and left the first tab clipped.
+    const br = bar.getBoundingClientRect(), tr = tabs[i].getBoundingClientRect();
+    if (tr.left < br.left) bar.scrollLeft -= br.left - tr.left;
+    else if (tr.right > br.right) bar.scrollLeft += tr.right - br.right;
   }
 
   bar.addEventListener('keydown', e => {
