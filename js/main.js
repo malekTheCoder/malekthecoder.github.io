@@ -452,10 +452,16 @@ if (scrollCue) {
   // ---- Explorer: files grouped into folders, in the order the cards appear.
   const head = el('div', 'proj-side-head');
   head.textContent = 'Explorer';
-  const root = el('div', 'proj-root');
+  const root = el('button', 'proj-root', { type: 'button', 'aria-expanded': 'true' });
   root.innerHTML = chevron;
   root.append('projects');
-  side.append(head, root);
+  const tree = el('div', 'proj-tree');
+  root.addEventListener('click', () => {
+    const open = root.getAttribute('aria-expanded') !== 'true';
+    root.setAttribute('aria-expanded', open ? 'true' : 'false');
+    tree.hidden = !open;
+  });
+  side.append(head, root, tree);
 
   const fileBtn = new Map();     // card id -> explorer button
   const folderOf = new Map();    // card id -> { btn, list }
@@ -491,7 +497,7 @@ if (scrollCue) {
       fileBtn.set(c.id, b);
       if (folder) folderOf.set(c.id, folder);
     });
-    side.appendChild(ul);
+    tree.appendChild(ul);
   });
 
   // ---- Tabs, in card order. They can be dragged into a different order.
@@ -569,43 +575,88 @@ if (scrollCue) {
     select(cardOf(all[next].dataset.for), true);
   });
 
-  // Drag to reorder. Fine pointers only: on touch, HTML5 drag-and-drop competes with
-  // scrolling the bar, and the tabs there are a scroller first.
+  // Drag to reorder. The tab itself follows the pointer and the others slide aside to
+  // make room, the way an editor does it. (HTML5 drag-and-drop was tried first; its
+  // ghost is a snapshot of the element, and an inactive tab has no background of its
+  // own, so only the label appeared to move.) Fine pointers only: on touch the bar is
+  // a scroller first, and a horizontal drag would fight it.
   if (window.matchMedia('(pointer: fine)').matches) {
-    let dragging = null;
-    const clear = () => bar.querySelectorAll('.drop-before, .drop-after')
-      .forEach(n => n.classList.remove('drop-before', 'drop-after'));
-    const after = (over, x) => { const r = over.getBoundingClientRect(); return x > r.left + r.width / 2; };
+    let drag = null;
+    let swallowClick = false;
 
-    allTabs().forEach(t => { t.draggable = true; });
-    bar.addEventListener('dragstart', e => {
+    // Slide everything to match the lifted tab's position.
+    function move(dx) {
+      const { t, tabs, from, rects } = drag;
+      const w = rects[from].width;
+      const last = rects.length - 1;
+      dx = Math.max(rects[0].left - rects[from].left,
+           Math.min(rects[last].left + rects[last].width - (rects[from].left + w), dx));
+      const centre = rects[from].left + w / 2 + dx;
+      // its new slot = how many of the other tabs sit left of its centre
+      let to = 0;
+      tabs.forEach((o, j) => { if (j !== from && rects[j].left + rects[j].width / 2 < centre) to++; });
+      drag.to = to;
+      t.style.transform = 'translateX(' + dx + 'px)';
+      tabs.forEach((o, j) => {
+        if (j === from) return;
+        const k = j < from ? j : j - 1;           // its place among the other tabs
+        let shift = 0;
+        if (j < from && k >= to) shift = w;       // the lifted tab has passed in front of it
+        else if (j > from && k < to) shift = -w;  // or has moved back behind it
+        o.style.transform = shift ? 'translateX(' + shift + 'px)' : '';
+      });
+    }
+
+    bar.addEventListener('pointerdown', e => {
+      if (e.button !== 0) return;
       const t = e.target.closest('.proj-tab');
       if (!t) return;
-      dragging = t;
-      t.classList.add('is-dragging');
-      e.dataTransfer.effectAllowed = 'move';
-      e.dataTransfer.setData('text/plain', t.dataset.for);
+      const tabs = allTabs();
+      drag = { t, tabs, from: tabs.indexOf(t), to: tabs.indexOf(t), startX: e.clientX, id: e.pointerId, active: false };
     });
-    bar.addEventListener('dragover', e => {
-      if (!dragging) return;
-      e.preventDefault();
-      e.dataTransfer.dropEffect = 'move';
-      clear();
-      const over = e.target.closest('.proj-tab');
-      if (over && over !== dragging) over.classList.add(after(over, e.clientX) ? 'drop-after' : 'drop-before');
+
+    window.addEventListener('pointermove', e => {
+      if (!drag || e.pointerId !== drag.id) return;
+      const dx = e.clientX - drag.startX;
+      if (!drag.active) {
+        if (Math.abs(dx) < 5) return;               // a click, not a drag
+        drag.active = true;
+        select(cardOf(drag.t.dataset.for));         // the lifted tab is the open one
+        drag.rects = drag.tabs.map(o => { const r = o.getBoundingClientRect(); return { left: r.left, width: r.width }; });
+        bar.classList.add('is-reordering');
+        drag.t.classList.add('is-dragging');
+        try { drag.t.setPointerCapture(e.pointerId); } catch (_) { /* pointer already gone */ }
+      }
+      move(dx);
     });
-    bar.addEventListener('drop', e => {
-      if (!dragging) return;
-      e.preventDefault();
-      const over = e.target.closest('.proj-tab');
-      if (over && over !== dragging) bar.insertBefore(dragging, after(over, e.clientX) ? over.nextSibling : over);
-      else if (!over) bar.appendChild(dragging);   // dropped on the empty end of the bar
-    });
-    bar.addEventListener('dragend', () => {
-      if (dragging) dragging.classList.remove('is-dragging');
-      dragging = null;
-      clear();
-    });
+
+    const finish = e => {
+      if (!drag || e.pointerId !== drag.id) return;
+      const d = drag;
+      drag = null;
+      if (!d.active) return;
+      swallowClick = true;                          // the click that follows a drag is not a selection
+      setTimeout(() => { swallowClick = false; }, 0);
+      const { t, tabs, from, to, rects } = d;
+      const others = tabs.filter((_, j) => j !== from);
+      // slide into the slot it is being dropped on, then make the new order real
+      const slotLeft = rects[0].left + others.slice(0, to).reduce((sum, o) => sum + rects[tabs.indexOf(o)].width, 0);
+      t.classList.replace('is-dragging', 'is-settling');
+      t.style.transition = 'transform 0.16s ease';
+      t.style.transform = 'translateX(' + (slotLeft - rects[from].left) + 'px)';
+      setTimeout(() => {
+        if (to !== from) bar.insertBefore(t, others[to] || null);
+        tabs.forEach(o => { o.style.transform = ''; o.style.transition = ''; });
+        t.classList.remove('is-settling');
+        bar.classList.remove('is-reordering');
+        reveal(t);
+      }, 170);
+    };
+    window.addEventListener('pointerup', finish);
+    window.addEventListener('pointercancel', finish);
+    bar.addEventListener('click', e => {
+      if (swallowClick) { e.stopPropagation(); e.preventDefault(); }
+    }, true);
   }
 
   // Project pages link back to /#project-<name>; honour that by opening that file.
