@@ -987,6 +987,16 @@ h1, h2, h3, h4 { line-height: 1.25; }
   margin-bottom: 2.5rem;
 }
 
+/* Side by side once there is room for it. Two columns of a 1100px container
+   leave each card about 500px, which is the narrowest that still fits a banner
+   diagram and a wrapped tag list without crowding. minmax(0, 1fr) rather than
+   plain 1fr so a long tag can never widen its column past its share. Cards in
+   a row stretch to the same height, and the description (flex: 1) absorbs the
+   difference, so every "View project" lands on one line across the row. */
+@media (min-width: 960px) {
+  .projects-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
 .project-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
