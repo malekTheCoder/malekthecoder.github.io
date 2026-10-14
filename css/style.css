@@ -12,6 +12,8 @@
   --border:        #e3e0dc;
   --border-hover:  rgba(154, 52, 18, 0.3);
   --shadow:        0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.04);
+  --selection-bg:  #d6aea0;
+  --selection-fg:  #1a1815;
   /* Was Tailwind green-600, which only cleared 3.3:1 as 12px label text. */
   --status-live:   #17753e;
   --radius:        6px;
@@ -39,6 +41,8 @@
     --border:        #2b2622;
     --border-hover:  rgba(232, 130, 90, 0.4);
     --shadow:        0 1px 3px rgba(0, 0, 0, 0.5);
+  --selection-bg:  #71422f;
+  --selection-fg:  #f2efea;
   }
 }
 
@@ -62,6 +66,8 @@ html.is-dark { --status-live: #63c98d; }
   --border:        #2b2622;
   --border-hover:  rgba(232, 130, 90, 0.4);
   --shadow:        0 1px 3px rgba(0, 0, 0, 0.5);
+  --selection-bg:  #71422f;
+  --selection-fg:  #f2efea;
 }
 
 
@@ -81,6 +87,8 @@ html.is-dark { --status-live: #63c98d; }
   --border:        #3c3c3c;
   --border-hover:  rgba(86, 156, 214, 0.4);
   --shadow:        0 1px 3px rgba(0, 0, 0, 0.5);
+  --selection-bg:  #395a76;
+  --selection-fg:  #d7d7d7;
 }
 
 
@@ -98,6 +106,8 @@ html.is-dark { --status-live: #63c98d; }
   --border:        #4d4d4d;
   --border-hover:  rgba(255, 198, 109, 0.4);
   --shadow:        0 1px 3px rgba(0, 0, 0, 0.5);
+  --selection-bg:  #736041;
+  --selection-fg:  #e7ebef;
 }
 
 
@@ -115,6 +125,8 @@ html.is-dark { --status-live: #63c98d; }
   --border:        #292e42;
   --border-hover:  rgba(122, 162, 247, 0.4);
   --shadow:        0 1px 3px rgba(0, 0, 0, 0.5);
+  --selection-bg:  #435580;
+  --selection-fg:  #cbd4f7;
 }
 
 
@@ -132,6 +144,8 @@ html.is-dark { --status-live: #63c98d; }
   --border:        #44475a;
   --border-hover:  rgba(189, 147, 249, 0.4);
   --shadow:        0 1px 3px rgba(0, 0, 0, 0.5);
+  --selection-bg:  #6b598e;
+  --selection-fg:  #f8f8f2;
 }
 
 
@@ -151,6 +165,8 @@ html.is-dark { --status-live: #63c98d; }
   --border:        #434c5e;
   --border-hover:  rgba(136, 192, 208, 0.4);
   --shadow:        0 1px 3px rgba(0, 0, 0, 0.5);
+  --selection-bg:  #546f7c;
+  --selection-fg:  #f6f8fa;
 }
 
 
@@ -168,6 +184,8 @@ html.is-dark { --status-live: #63c98d; }
   --border:        #30363d;
   --border-hover:  rgba(88, 166, 255, 0.4);
   --shadow:        0 1px 3px rgba(0, 0, 0, 0.5);
+  --selection-bg:  #2d517b;
+  --selection-fg:  #e6edf3;
 }
 
 
@@ -185,6 +203,8 @@ html.is-dark { --status-live: #63c98d; }
   --border:        #3e4451;
   --border-hover:  rgba(198, 120, 221, 0.4);
   --shadow:        0 1px 3px rgba(0, 0, 0, 0.5);
+  --selection-bg:  #7a548c;
+  --selection-fg:  #e9ebee;
 }
 
 
@@ -202,7 +222,21 @@ html.is-dark { --status-live: #63c98d; }
   --border:        #d1d1d6;
   --border-hover:  rgba(155, 35, 147, 0.35);
   --shadow:        0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.04);
+  --selection-bg:  #d9abd6;
+  --selection-fg:  #000000;
 }
+
+
+/* Text selection.
+   Each theme gets its own highlight, tinted from its accent and solved for the
+   strongest band that still leaves the text at 5:1 or better, so a selection is
+   clearly visible without turning a calm page loud. Where a theme's own body
+   text cannot clear that against the band (Darcula, Nord, Atom One Dark have
+   mid-tone text), --selection-fg brightens it for the duration of the
+   selection only. Opaque colours on purpose: the contrast is then a fact
+   about two hex values rather than about whatever sits behind the text. */
+::selection      { background: var(--selection-bg); color: var(--selection-fg); }
+::-moz-selection { background: var(--selection-bg); color: var(--selection-fg); }
 
 
 /* Reset */
