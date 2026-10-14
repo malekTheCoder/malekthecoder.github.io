@@ -443,6 +443,10 @@ if (scrollCue) {
   const main  = el('div', 'proj-main');
   const bar   = el('div', 'proj-tabbar', { role: 'tablist', 'aria-label': 'Projects' });
   const crumb = el('div', 'proj-crumb', { 'aria-hidden': 'true' });
+  const stacked = window.matchMedia('(max-width: 760px)');
+  const orient = () => bar.setAttribute('aria-orientation', stacked.matches ? 'vertical' : 'horizontal');
+  orient();
+  if (stacked.addEventListener) stacked.addEventListener('change', orient);
 
   grid.parentNode.insertBefore(win, grid);
   main.append(bar, crumb, grid);
@@ -558,18 +562,21 @@ if (scrollCue) {
       select(cardOf(t.dataset.for));
       return;
     }
+    // On phones the tabs stack, and a vertical list answers to up and down.
+    const back = e.key === 'ArrowLeft' || e.key === 'ArrowUp';
+    const fwd  = e.key === 'ArrowRight' || e.key === 'ArrowDown';
     // Shift + arrow moves the tab itself, the keyboard form of dragging it.
-    if (e.shiftKey && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
+    if (e.shiftKey && (back || fwd)) {
       e.preventDefault();
-      const to = e.key === 'ArrowLeft' ? cur - 1 : cur + 1;
+      const to = back ? cur - 1 : cur + 1;
       if (to < 0 || to > last) return;
-      bar.insertBefore(t, e.key === 'ArrowLeft' ? all[to] : all[to].nextSibling);
+      bar.insertBefore(t, back ? all[to] : all[to].nextSibling);
       t.focus();
       reveal(t);
       return;
     }
-    const next = { ArrowRight: cur === last ? 0 : cur + 1, ArrowLeft: cur === 0 ? last : cur - 1,
-                   Home: 0, End: last }[e.key];
+    const next = fwd ? (cur === last ? 0 : cur + 1) : back ? (cur === 0 ? last : cur - 1)
+               : { Home: 0, End: last }[e.key];
     if (next === undefined) return;
     e.preventDefault();
     select(cardOf(all[next].dataset.for), true);
@@ -609,6 +616,7 @@ if (scrollCue) {
 
     bar.addEventListener('pointerdown', e => {
       if (e.button !== 0) return;
+      if (getComputedStyle(bar).flexDirection === 'column') return;   // stacked: nothing to slide
       const t = e.target.closest('.proj-tab');
       if (!t) return;
       const tabs = allTabs();

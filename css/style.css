@@ -1206,6 +1206,27 @@ h1, h2, h3, h4 { line-height: 1.25; }
   .projects-grid.is-tabs .project-cta { margin-top: 1.25rem; padding-top: 0; font-size: 0.85rem; }
 }
 
+/* Phones: four tabs side by side do not fit, and a bar that scrolls sideways shows two
+   of them and hides the rest of the work. Stacked, all four are visible at once and each
+   row is a full-width tap target. 760px is where the four tabs stop fitting in a row.
+   The active row takes the explorer's marker, a bar on its left edge. */
+@media (max-width: 760px) {
+  .proj-tabbar { flex-direction: column; overflow: visible; }
+  .proj-tab {
+    width: 100%;
+    padding: 0.85rem 1.1rem;
+    border-right: 0;
+    border-top: 0;
+    border-left: 3px solid transparent;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 0;
+  }
+  .proj-tab:last-child { border-bottom: 0; }
+  .proj-tab[aria-selected="true"] { border-left-color: var(--accent); }
+  /* the highlighted row already says which file is open */
+  .proj-crumb { display: none; }
+}
+
 .project-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
