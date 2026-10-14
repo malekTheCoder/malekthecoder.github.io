@@ -412,80 +412,204 @@ if (scrollCue) {
 
 
 
-// Projects as editor tabs.
+// Projects as an editor window.
 //
 // The four cards are ordinary markup that already works as a grid, so this only
-// reorganises them: a tab bar is built from the cards, and one card shows at a
-// time. With no script the grid below it is simply what loads. All four share
-// one grid cell, so the section is as tall as the tallest project and switching
-// tabs never shifts the page underneath the reader.
+// reorganises them: an explorer tree and a tab bar are built from the cards, and
+// one card shows at a time. With no script the grid is simply what loads. All four
+// share one grid cell, so the section is as tall as the tallest project and
+// switching never shifts the page underneath the reader.
 (function () {
   const grid = document.querySelector('.projects-grid');
   if (!grid) return;
   const cards = [...grid.querySelectorAll('.project-card')];
   if (cards.length < 2) return;
 
-  const win = document.createElement('div');
-  win.className = 'proj-window';
-  const bar = document.createElement('div');
-  bar.className = 'proj-tabbar';
-  bar.setAttribute('role', 'tablist');
-  bar.setAttribute('aria-label', 'Projects');
-  const crumb = document.createElement('div');
-  crumb.className = 'proj-crumb';
-  crumb.setAttribute('aria-hidden', 'true');
+  const el = (tag, cls, attrs) => {
+    const n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (attrs) for (const k in attrs) n.setAttribute(k, attrs[k]);
+    return n;
+  };
+  const fileOf  = c => c.dataset.file || c.id.replace('project-', '');
+  const groupOf = c => c.dataset.group || '';
+  const cardOf  = id => cards.find(c => c.id === id);
+
+  const chevron = '<svg class="proj-chev" viewBox="0 0 10 10" width="10" height="10" aria-hidden="true"><path d="M2 3.5 5 6.5 8 3.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const fileIcon = '<svg class="proj-ficon" viewBox="0 0 12 14" width="11" height="13" aria-hidden="true"><path d="M2 1h5l3 3v9H2zM7 1v3h3" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/></svg>';
+
+  const win   = el('div', 'proj-window');
+  const side  = el('aside', 'proj-side', { 'aria-label': 'Project files' });
+  const main  = el('div', 'proj-main');
+  const bar   = el('div', 'proj-tabbar', { role: 'tablist', 'aria-label': 'Projects' });
+  const crumb = el('div', 'proj-crumb', { 'aria-hidden': 'true' });
 
   grid.parentNode.insertBefore(win, grid);
-  win.append(bar, crumb, grid);
+  main.append(bar, crumb, grid);
+  win.append(side, main);
   grid.classList.add('is-tabs');
 
-  const label = c => c.dataset.file || c.id.replace('project-', '');
+  // ---- Explorer: files grouped into folders, in the order the cards appear.
+  const head = el('div', 'proj-side-head');
+  head.textContent = 'Explorer';
+  const root = el('div', 'proj-root');
+  root.innerHTML = chevron;
+  root.append('projects');
+  side.append(head, root);
 
-  const tabs = cards.map((card, i) => {
-    const b = document.createElement('button');
-    b.type = 'button';
-    b.className = 'proj-tab';
-    b.id = 'tab-' + card.id;
-    b.setAttribute('role', 'tab');
-    b.setAttribute('aria-controls', card.id);
-    b.innerHTML = '<span class="proj-tab-dot" aria-hidden="true"></span>';
-    b.append(label(card));
-    b.addEventListener('click', () => select(i));
-    bar.appendChild(b);
-    return b;
+  const fileBtn = new Map();     // card id -> explorer button
+  const folderOf = new Map();    // card id -> { btn, list }
+  const setOpen = (f, open) => {
+    f.btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    f.list.hidden = !open;
+  };
+
+  [...new Set(cards.map(groupOf))].forEach(g => {
+    const ul = el('ul', 'proj-list');
+    let into = ul;
+    let folder = null;
+    if (g) {
+      const btn = el('button', 'proj-folder', { type: 'button', 'aria-expanded': 'true' });
+      btn.innerHTML = chevron;
+      btn.append(g + '/');
+      const list = el('ul', 'proj-list');
+      folder = { btn, list };
+      btn.addEventListener('click', () => setOpen(folder, btn.getAttribute('aria-expanded') !== 'true'));
+      const li = el('li');
+      li.append(btn, list);
+      ul.appendChild(li);
+      into = list;
+    }
+    cards.filter(c => groupOf(c) === g).forEach(c => {
+      const b = el('button', 'proj-file', { type: 'button' });
+      b.innerHTML = fileIcon;
+      b.append(fileOf(c));
+      b.addEventListener('click', () => select(c));
+      const li = el('li');
+      li.appendChild(b);
+      into.appendChild(li);
+      fileBtn.set(c.id, b);
+      if (folder) folderOf.set(c.id, folder);
+    });
+    side.appendChild(ul);
   });
 
-  function select(i, focus) {
-    tabs.forEach((t, j) => {
-      const on = j === i;
-      t.setAttribute('aria-selected', on ? 'true' : 'false');
-      t.tabIndex = on ? 0 : -1;
-      cards[j].classList.toggle('is-active', on);
+  // ---- Tabs, in card order. They can be dragged into a different order.
+  const tabFor = new Map();
+  const allTabs = () => [...bar.querySelectorAll('.proj-tab')];
+
+  cards.forEach(card => {
+    const t = el('div', 'proj-tab', {
+      role: 'tab', tabindex: '-1', id: 'tab-' + card.id,
+      'aria-controls': card.id, 'aria-selected': 'false',
     });
-    crumb.textContent = 'projects / ' + label(cards[i]);
-    if (focus) tabs[i].focus();
-    // Keep the active tab in view when the bar scrolls sideways (phones). Moves the
-    // bar itself and nothing else: scrollIntoView also scrolls the PAGE to reach the
-    // tab, and select() runs once on load, which dropped every visitor halfway down.
-    // Measured against the bar's own edges: offsetLeft is relative to the nearest
-    // positioned ancestor, which is not the bar, and left the first tab clipped.
-    const br = bar.getBoundingClientRect(), tr = tabs[i].getBoundingClientRect();
+    t.dataset.for = card.id;
+    t.innerHTML = '<span class="proj-tab-dot" aria-hidden="true"></span>';
+    t.append(fileOf(card));
+    t.addEventListener('click', () => select(card));
+    bar.appendChild(t);
+    tabFor.set(card.id, t);
+  });
+
+  // Keep a tab inside the bar when the bar scrolls sideways (phones). Moves the bar
+  // itself and nothing else: scrollIntoView also scrolls the PAGE to reach the tab,
+  // and select() runs once on load, which dropped every visitor halfway down.
+  // Measured against the bar's own edges because offsetLeft is relative to the
+  // nearest positioned ancestor, not the bar, and left the first tab clipped.
+  function reveal(t) {
+    const br = bar.getBoundingClientRect(), tr = t.getBoundingClientRect();
     if (tr.left < br.left) bar.scrollLeft -= br.left - tr.left;
     else if (tr.right > br.right) bar.scrollLeft += tr.right - br.right;
   }
 
+  function select(card, focusTab) {
+    cards.forEach(c => c.classList.toggle('is-active', c === card));
+    tabFor.forEach((t, id) => {
+      const on = id === card.id;
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+      t.tabIndex = on ? 0 : -1;
+    });
+    fileBtn.forEach((b, id) => {
+      const on = id === card.id;
+      b.classList.toggle('is-active', on);
+      if (on) b.setAttribute('aria-current', 'true'); else b.removeAttribute('aria-current');
+    });
+    const f = folderOf.get(card.id);
+    if (f) setOpen(f, true);   // reveal the file in the explorer, as an editor does
+    const g = groupOf(card);
+    crumb.textContent = 'projects / ' + (g ? g + ' / ' : '') + fileOf(card);
+    const t = tabFor.get(card.id);
+    if (focusTab) t.focus();
+    reveal(t);
+  }
+
   bar.addEventListener('keydown', e => {
-    const cur = tabs.findIndex(t => t.getAttribute('aria-selected') === 'true');
-    const last = tabs.length - 1;
+    const t = e.target.closest('.proj-tab');
+    if (!t) return;
+    const all = allTabs(), cur = all.indexOf(t), last = all.length - 1;
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      select(cardOf(t.dataset.for));
+      return;
+    }
+    // Shift + arrow moves the tab itself, the keyboard form of dragging it.
+    if (e.shiftKey && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
+      e.preventDefault();
+      const to = e.key === 'ArrowLeft' ? cur - 1 : cur + 1;
+      if (to < 0 || to > last) return;
+      bar.insertBefore(t, e.key === 'ArrowLeft' ? all[to] : all[to].nextSibling);
+      t.focus();
+      reveal(t);
+      return;
+    }
     const next = { ArrowRight: cur === last ? 0 : cur + 1, ArrowLeft: cur === 0 ? last : cur - 1,
                    Home: 0, End: last }[e.key];
     if (next === undefined) return;
     e.preventDefault();
-    select(next, true);
+    select(cardOf(all[next].dataset.for), true);
   });
 
-  // Project pages link back to /#project-<name>; honour that by opening that tab.
-  const fromHash = () => cards.findIndex(c => '#' + c.id === location.hash);
-  window.addEventListener('hashchange', () => { const i = fromHash(); if (i > -1) select(i); });
-  select(Math.max(0, fromHash()));
+  // Drag to reorder. Fine pointers only: on touch, HTML5 drag-and-drop competes with
+  // scrolling the bar, and the tabs there are a scroller first.
+  if (window.matchMedia('(pointer: fine)').matches) {
+    let dragging = null;
+    const clear = () => bar.querySelectorAll('.drop-before, .drop-after')
+      .forEach(n => n.classList.remove('drop-before', 'drop-after'));
+    const after = (over, x) => { const r = over.getBoundingClientRect(); return x > r.left + r.width / 2; };
+
+    allTabs().forEach(t => { t.draggable = true; });
+    bar.addEventListener('dragstart', e => {
+      const t = e.target.closest('.proj-tab');
+      if (!t) return;
+      dragging = t;
+      t.classList.add('is-dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', t.dataset.for);
+    });
+    bar.addEventListener('dragover', e => {
+      if (!dragging) return;
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      clear();
+      const over = e.target.closest('.proj-tab');
+      if (over && over !== dragging) over.classList.add(after(over, e.clientX) ? 'drop-after' : 'drop-before');
+    });
+    bar.addEventListener('drop', e => {
+      if (!dragging) return;
+      e.preventDefault();
+      const over = e.target.closest('.proj-tab');
+      if (over && over !== dragging) bar.insertBefore(dragging, after(over, e.clientX) ? over.nextSibling : over);
+      else if (!over) bar.appendChild(dragging);   // dropped on the empty end of the bar
+    });
+    bar.addEventListener('dragend', () => {
+      if (dragging) dragging.classList.remove('is-dragging');
+      dragging = null;
+      clear();
+    });
+  }
+
+  // Project pages link back to /#project-<name>; honour that by opening that file.
+  const fromHash = () => cards.find(c => '#' + c.id === location.hash);
+  window.addEventListener('hashchange', () => { const c = fromHash(); if (c) select(c); });
+  select(fromHash() || cards[0]);
 })();

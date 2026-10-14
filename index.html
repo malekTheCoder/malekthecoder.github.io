@@ -59,7 +59,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/style.css?v=99" />
+  <link rel="stylesheet" href="/css/style.css?v=100" />
 
   <!-- ═══ STRUCTURED DATA ═══ -->
   <script type="application/ld+json">
@@ -412,8 +412,121 @@
       </div>
       <div class="projects-grid">
 
+        <!-- Voice-Controlled Robotics Agent -->
+        <a href="/projects/voice-robotics-agent/" id="project-voice-robotics-agent" class="project-card featured" data-file="voice-agent.py" data-group="agents">
+          <div class="project-banner">
+            <svg viewBox="0 0 290 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="project-banner-svg is-diagram" aria-hidden="true">
+                <!-- mic (STT) -->
+                <rect x="22" y="26" width="12" height="22" rx="6" fill="var(--accent)" fill-opacity="0.15" stroke="var(--accent)" stroke-width="1.75"/>
+                <path d="M18 42 a10 10 0 0 0 20 0" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round"/>
+                <line x1="28" y1="52" x2="28" y2="58" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round"/>
+                <line x1="21" y1="58" x2="35" y2="58" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round"/>
+                <text x="28" y="71" font-family="'JetBrains Mono', monospace" font-size="8.5" fill="var(--accent)" text-anchor="middle" opacity="0.7">STT</text>
+                <!-- sound waves in -->
+                <path d="M44 34 Q50 42 44 50" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" opacity="0.75"/>
+                <path d="M51 30 Q58 42 51 54" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" opacity="0.45"/>
+                <!-- arrow: voice → agent -->
+                <line x1="64" y1="42" x2="73" y2="42" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" opacity="0.55"/>
+                <path d="M70.5 38.5 L75 42 L70.5 45.5" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" opacity="0.55"/>
+                <!-- LLM agent: neural network -->
+                <text x="100" y="14" font-family="'JetBrains Mono', monospace" font-size="10.5" fill="var(--accent)" text-anchor="middle" opacity="0.85">LLM Agent</text>
+                <path d="M85 34 L100 26 M85 34 L100 42 M85 34 L100 58 M85 50 L100 26 M85 50 L100 42 M85 50 L100 58 M100 26 L115 34 M100 26 L115 50 M100 42 L115 34 M100 42 L115 50 M100 58 L115 34 M100 58 L115 50" stroke="var(--accent)" stroke-width="1.25" opacity="0.45"/>
+                <circle cx="85" cy="34" r="3.25" fill="var(--accent)" fill-opacity="0.15" stroke="var(--accent)" stroke-width="1.75"/>
+                <circle cx="85" cy="50" r="3.25" fill="var(--accent)" fill-opacity="0.15" stroke="var(--accent)" stroke-width="1.75"/>
+                <circle cx="100" cy="26" r="3.25" fill="var(--accent)" fill-opacity="0.15" stroke="var(--accent)" stroke-width="1.75"/>
+                <circle cx="100" cy="42" r="3.25" fill="var(--accent)" fill-opacity="0.15" stroke="var(--accent)" stroke-width="1.75"/>
+                <circle cx="100" cy="58" r="3.25" fill="var(--accent)" fill-opacity="0.15" stroke="var(--accent)" stroke-width="1.75"/>
+                <circle cx="115" cy="34" r="3.25" fill="var(--accent)" fill-opacity="0.15" stroke="var(--accent)" stroke-width="1.75"/>
+                <circle cx="115" cy="50" r="3.25" fill="var(--accent)" fill-opacity="0.15" stroke="var(--accent)" stroke-width="1.75"/>
+                <!-- arrow: agent → arm -->
+                <line x1="127" y1="42" x2="136" y2="42" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" opacity="0.55"/>
+                <path d="M133.5 38.5 L138 42 L133.5 45.5" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" opacity="0.55"/>
+                <!-- ground line -->
+                <line x1="150" y1="73" x2="230" y2="73" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" opacity="0.3"/>
+                <!-- robot arm: pedestal base -->
+                <path d="M158 73 L162 63 L178 63 L182 73 Z" fill="var(--accent)" fill-opacity="0.15" stroke="var(--accent)" stroke-width="1.75" stroke-linejoin="round"/>
+                <!-- links -->
+                <line x1="170" y1="59" x2="188" y2="33" stroke="var(--accent)" stroke-width="3.5" stroke-linecap="round"/>
+                <line x1="188" y1="33" x2="214" y2="45" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"/>
+                <!-- joints with pins -->
+                <circle cx="170" cy="59" r="5.5" fill="var(--bg-card)" stroke="var(--accent)" stroke-width="1.75"/>
+                <circle cx="170" cy="59" r="1.6" fill="var(--accent)"/>
+                <circle cx="188" cy="33" r="4.5" fill="var(--bg-card)" stroke="var(--accent)" stroke-width="1.75"/>
+                <circle cx="188" cy="33" r="1.4" fill="var(--accent)"/>
+                <circle cx="214" cy="45" r="3.5" fill="var(--bg-card)" stroke="var(--accent)" stroke-width="1.75"/>
+                <!-- gripper -->
+                <line x1="214" y1="48.5" x2="214" y2="51" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
+                <path d="M206 51 H222 M206 51 V62 M222 51 V62" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <!-- cube -->
+                <rect x="207.5" y="59" width="13" height="14" rx="2" fill="var(--accent)" fill-opacity="0.15" stroke="var(--accent)" stroke-width="1.75"/>
+                <!-- arrow: arm → TTS -->
+                <line x1="234" y1="42" x2="243" y2="42" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" opacity="0.55"/>
+                <path d="M240.5 38.5 L245 42 L240.5 45.5" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" opacity="0.55"/>
+                <!-- speaker (TTS) -->
+                <path d="M256 38 L260 38 L266 32 L266 52 L260 46 L256 46 Z" fill="var(--accent)" fill-opacity="0.15" stroke="var(--accent)" stroke-width="1.75" stroke-linejoin="round"/>
+                <path d="M271 36 Q275 42 271 48" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" opacity="0.75"/>
+                <path d="M277 32 Q282 42 277 52" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" opacity="0.45"/>
+                <text x="264" y="71" font-family="'JetBrains Mono', monospace" font-size="8.5" fill="var(--accent)" text-anchor="middle" opacity="0.7">TTS</text>
+                <!-- feedback: execution result → agent (verify), routed underneath -->
+                <path d="M214 79 Q160 100 106 64" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="4 3" stroke-linecap="round" opacity="0.5"/>
+                <path d="M111.9 64.9 L106 64 L109.1 69.1" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>
+                <text x="160" y="97" font-family="'JetBrains Mono', monospace" font-size="8.5" fill="var(--accent)" text-anchor="middle" opacity="0.6">verify</text>
+              </svg>
+          </div>
+          <div class="project-card-head">
+            <h3 class="project-name">Voice-Controlled Robotics Agent</h3>
+          </div>
+          <p class="project-desc">
+            You speak a command in plain English, like "stack the red cube on the blue cylinder." Claude Sonnet
+              breaks that into ordered steps and a Franka Panda arm works through them in a live physics
+              simulation. When a step goes wrong it reads the new scene and replans.
+          </p>
+          <div class="tag-group">
+            <span class="tag">Python</span>
+            <span class="tag">MuJoCo</span>
+            <span class="tag">Voice Control</span>
+            <span class="tag">Agentic AI</span>
+            <span class="tag">Embodied AI</span>
+            <span class="tag">Anthropic API</span>
+            <span class="tag">LLM Planning</span>
+            <span class="tag">FastAPI</span>
+          </div>
+          <span class="project-cta">
+            View project
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </span>
+        </a>
+
+        <!-- OCRadar -->
+        <a href="/projects/ocradar/" id="project-ocradar" class="project-card featured" data-file="ocradar.dart" data-group="apps">
+          <div class="project-banner">
+            <img src="https://github.com/OCRadar.png?size=120" alt="OCRadar logo" class="project-banner-img" />
+          </div>
+          <div class="project-card-head">
+            <h3 class="project-name">OCRadar</h3>
+          </div>
+          <p class="project-desc">
+            A cross-platform app that screens for early signs of oral cancer from a phone camera, using an Azure AI Custom
+              Vision model trained on thousands of labeled clinical samples. Built by a team. I joined in 2024 as COO and lead
+              developer for Android and Windows.
+          </p>
+          <div class="tag-group">
+            <span class="tag">Python</span>
+            <span class="tag">Computer Vision</span>
+            <span class="tag">Azure AI Custom Vision</span>
+            <span class="tag">Swift</span>
+            <span class="tag">SwiftUI</span>
+            <span class="tag">Flutter</span>
+            <span class="tag">Dart</span>
+          </div>
+          <span class="project-cta">
+            View project
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </span>
+        </a>
+
         <!-- Desk Calendar Agent -->
-        <a href="/projects/calendar-agent/" id="project-calendar-agent" class="project-card featured" data-file="calendar-agent.py">
+        <a href="/projects/calendar-agent/" id="project-calendar-agent" class="project-card featured" data-file="calendar-agent.py" data-group="agents">
           <div class="project-banner">
             <svg viewBox="0 0 400 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="project-banner-svg is-diagram" aria-hidden="true">
               <rect x="14" y="36" width="62" height="26" rx="6" fill="var(--accent)" fill-opacity="0.12" stroke="var(--accent)" stroke-width="1.6"/>
@@ -533,7 +646,7 @@
         </a>
 
         <!-- Sentry -->
-        <a href="https://github.com/malekTheCoder/Sentry" target="_blank" rel="noopener" id="project-sentry" class="project-card featured" data-file="sentry.swift">
+        <a href="https://github.com/malekTheCoder/Sentry" target="_blank" rel="noopener" id="project-sentry" class="project-card featured" data-file="sentry.swift" data-group="apps">
           <div class="project-banner">
             <img src="/assets/sentry-icon.png" alt="Sentry app icon" class="project-banner-img" />
           </div>
@@ -564,119 +677,6 @@
             <span class="project-cta-note">Coming soon</span>
             View on GitHub
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M7 17L17 7M7 7h10v10"/></svg>
-          </span>
-        </a>
-
-        <!-- Voice-Controlled Robotics Agent -->
-        <a href="/projects/voice-robotics-agent/" id="project-voice-robotics-agent" class="project-card featured" data-file="voice-agent.py">
-          <div class="project-banner">
-            <svg viewBox="0 0 290 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="project-banner-svg is-diagram" aria-hidden="true">
-                <!-- mic (STT) -->
-                <rect x="22" y="26" width="12" height="22" rx="6" fill="var(--accent)" fill-opacity="0.15" stroke="var(--accent)" stroke-width="1.75"/>
-                <path d="M18 42 a10 10 0 0 0 20 0" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round"/>
-                <line x1="28" y1="52" x2="28" y2="58" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round"/>
-                <line x1="21" y1="58" x2="35" y2="58" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round"/>
-                <text x="28" y="71" font-family="'JetBrains Mono', monospace" font-size="8.5" fill="var(--accent)" text-anchor="middle" opacity="0.7">STT</text>
-                <!-- sound waves in -->
-                <path d="M44 34 Q50 42 44 50" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" opacity="0.75"/>
-                <path d="M51 30 Q58 42 51 54" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" opacity="0.45"/>
-                <!-- arrow: voice → agent -->
-                <line x1="64" y1="42" x2="73" y2="42" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" opacity="0.55"/>
-                <path d="M70.5 38.5 L75 42 L70.5 45.5" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" opacity="0.55"/>
-                <!-- LLM agent: neural network -->
-                <text x="100" y="14" font-family="'JetBrains Mono', monospace" font-size="10.5" fill="var(--accent)" text-anchor="middle" opacity="0.85">LLM Agent</text>
-                <path d="M85 34 L100 26 M85 34 L100 42 M85 34 L100 58 M85 50 L100 26 M85 50 L100 42 M85 50 L100 58 M100 26 L115 34 M100 26 L115 50 M100 42 L115 34 M100 42 L115 50 M100 58 L115 34 M100 58 L115 50" stroke="var(--accent)" stroke-width="1.25" opacity="0.45"/>
-                <circle cx="85" cy="34" r="3.25" fill="var(--accent)" fill-opacity="0.15" stroke="var(--accent)" stroke-width="1.75"/>
-                <circle cx="85" cy="50" r="3.25" fill="var(--accent)" fill-opacity="0.15" stroke="var(--accent)" stroke-width="1.75"/>
-                <circle cx="100" cy="26" r="3.25" fill="var(--accent)" fill-opacity="0.15" stroke="var(--accent)" stroke-width="1.75"/>
-                <circle cx="100" cy="42" r="3.25" fill="var(--accent)" fill-opacity="0.15" stroke="var(--accent)" stroke-width="1.75"/>
-                <circle cx="100" cy="58" r="3.25" fill="var(--accent)" fill-opacity="0.15" stroke="var(--accent)" stroke-width="1.75"/>
-                <circle cx="115" cy="34" r="3.25" fill="var(--accent)" fill-opacity="0.15" stroke="var(--accent)" stroke-width="1.75"/>
-                <circle cx="115" cy="50" r="3.25" fill="var(--accent)" fill-opacity="0.15" stroke="var(--accent)" stroke-width="1.75"/>
-                <!-- arrow: agent → arm -->
-                <line x1="127" y1="42" x2="136" y2="42" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" opacity="0.55"/>
-                <path d="M133.5 38.5 L138 42 L133.5 45.5" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" opacity="0.55"/>
-                <!-- ground line -->
-                <line x1="150" y1="73" x2="230" y2="73" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" opacity="0.3"/>
-                <!-- robot arm: pedestal base -->
-                <path d="M158 73 L162 63 L178 63 L182 73 Z" fill="var(--accent)" fill-opacity="0.15" stroke="var(--accent)" stroke-width="1.75" stroke-linejoin="round"/>
-                <!-- links -->
-                <line x1="170" y1="59" x2="188" y2="33" stroke="var(--accent)" stroke-width="3.5" stroke-linecap="round"/>
-                <line x1="188" y1="33" x2="214" y2="45" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"/>
-                <!-- joints with pins -->
-                <circle cx="170" cy="59" r="5.5" fill="var(--bg-card)" stroke="var(--accent)" stroke-width="1.75"/>
-                <circle cx="170" cy="59" r="1.6" fill="var(--accent)"/>
-                <circle cx="188" cy="33" r="4.5" fill="var(--bg-card)" stroke="var(--accent)" stroke-width="1.75"/>
-                <circle cx="188" cy="33" r="1.4" fill="var(--accent)"/>
-                <circle cx="214" cy="45" r="3.5" fill="var(--bg-card)" stroke="var(--accent)" stroke-width="1.75"/>
-                <!-- gripper -->
-                <line x1="214" y1="48.5" x2="214" y2="51" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
-                <path d="M206 51 H222 M206 51 V62 M222 51 V62" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <!-- cube -->
-                <rect x="207.5" y="59" width="13" height="14" rx="2" fill="var(--accent)" fill-opacity="0.15" stroke="var(--accent)" stroke-width="1.75"/>
-                <!-- arrow: arm → TTS -->
-                <line x1="234" y1="42" x2="243" y2="42" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" opacity="0.55"/>
-                <path d="M240.5 38.5 L245 42 L240.5 45.5" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" opacity="0.55"/>
-                <!-- speaker (TTS) -->
-                <path d="M256 38 L260 38 L266 32 L266 52 L260 46 L256 46 Z" fill="var(--accent)" fill-opacity="0.15" stroke="var(--accent)" stroke-width="1.75" stroke-linejoin="round"/>
-                <path d="M271 36 Q275 42 271 48" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" opacity="0.75"/>
-                <path d="M277 32 Q282 42 277 52" stroke="var(--accent)" stroke-width="1.75" stroke-linecap="round" opacity="0.45"/>
-                <text x="264" y="71" font-family="'JetBrains Mono', monospace" font-size="8.5" fill="var(--accent)" text-anchor="middle" opacity="0.7">TTS</text>
-                <!-- feedback: execution result → agent (verify), routed underneath -->
-                <path d="M214 79 Q160 100 106 64" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="4 3" stroke-linecap="round" opacity="0.5"/>
-                <path d="M111.9 64.9 L106 64 L109.1 69.1" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>
-                <text x="160" y="97" font-family="'JetBrains Mono', monospace" font-size="8.5" fill="var(--accent)" text-anchor="middle" opacity="0.6">verify</text>
-              </svg>
-          </div>
-          <div class="project-card-head">
-            <h3 class="project-name">Voice-Controlled Robotics Agent</h3>
-          </div>
-          <p class="project-desc">
-            You speak a command in plain English, like "stack the red cube on the blue cylinder." Claude Sonnet
-              breaks that into ordered steps and a Franka Panda arm works through them in a live physics
-              simulation. When a step goes wrong it reads the new scene and replans.
-          </p>
-          <div class="tag-group">
-            <span class="tag">Python</span>
-            <span class="tag">MuJoCo</span>
-            <span class="tag">Voice Control</span>
-            <span class="tag">Agentic AI</span>
-            <span class="tag">Embodied AI</span>
-            <span class="tag">Anthropic API</span>
-            <span class="tag">LLM Planning</span>
-            <span class="tag">FastAPI</span>
-          </div>
-          <span class="project-cta">
-            View project
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </span>
-        </a>
-
-        <!-- OCRadar -->
-        <a href="/projects/ocradar/" id="project-ocradar" class="project-card featured" data-file="ocradar.dart">
-          <div class="project-banner">
-            <img src="https://github.com/OCRadar.png?size=120" alt="OCRadar logo" class="project-banner-img" />
-          </div>
-          <div class="project-card-head">
-            <h3 class="project-name">OCRadar</h3>
-          </div>
-          <p class="project-desc">
-            A cross-platform app that screens for early signs of oral cancer from a phone camera, using an Azure AI Custom
-              Vision model trained on thousands of labeled clinical samples. Built by a team. I joined in 2024 as COO and lead
-              developer for Android and Windows.
-          </p>
-          <div class="tag-group">
-            <span class="tag">Python</span>
-            <span class="tag">Computer Vision</span>
-            <span class="tag">Azure AI Custom Vision</span>
-            <span class="tag">Swift</span>
-            <span class="tag">SwiftUI</span>
-            <span class="tag">Flutter</span>
-            <span class="tag">Dart</span>
-          </div>
-          <span class="project-cta">
-            View project
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </span>
         </a>
 
@@ -938,6 +938,6 @@
   </div>
 
   <script src="/js/theme.js?v=6"></script>
-  <script src="/js/main.js?v=57"></script>
+  <script src="/js/main.js?v=58"></script>
 </body>
 </html>

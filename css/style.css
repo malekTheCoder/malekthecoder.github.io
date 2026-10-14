@@ -998,16 +998,79 @@ h1, h2, h3, h4 { line-height: 1.25; }
 }
 
 
-/* Editor tabs: a tab bar over a single visible project. The cards keep their own
-   markup and links; this only changes how they are arranged once script has
-   added .is-tabs, so without script the grid above is what shows. */
+/* The project window: an explorer, a tab bar and one open project, laid out like
+   an editor. The cards keep their own markup and links; this only changes how they
+   are arranged once script has added .is-tabs, so without script the grid above is
+   what shows. */
 .proj-window {
+  display: flex;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--bg-card);
   overflow: hidden;
   margin-bottom: 2.5rem;
 }
+.proj-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+
+/* Explorer */
+.proj-side {
+  flex: none;
+  width: 14.5rem;
+  padding: 1rem 0 1.25rem;
+  background: var(--bg-alt);
+  border-right: 1px solid var(--border);
+  font: 400 0.8rem 'JetBrains Mono', monospace;
+  color: var(--text-1);
+}
+.proj-side-head {
+  padding: 0 1.1rem 0.8rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+.proj-side ul { list-style: none; margin: 0; padding: 0; }
+.proj-list[hidden] { display: none; }
+.proj-root,
+.proj-folder {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.32rem 1.1rem;
+  font: inherit;
+  font-weight: 600;
+  color: var(--text-0);
+  background: none;
+  border: 0;
+  text-align: left;
+}
+.proj-folder { padding-left: 1.8rem; color: var(--text-1); cursor: pointer; transition: color var(--transition), background var(--transition); }
+.proj-folder:hover { color: var(--text-0); background: var(--accent-dim); }
+.proj-chev { flex: none; color: var(--text-2); transition: transform var(--transition); }
+.proj-folder[aria-expanded="false"] .proj-chev { transform: rotate(-90deg); }
+.proj-file {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  width: 100%;
+  padding: 0.36rem 1.1rem 0.36rem 3rem;
+  font: inherit;
+  color: var(--text-1);
+  background: none;
+  border: 0;
+  border-left: 2px solid transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: color var(--transition), background var(--transition);
+}
+.proj-file:hover { color: var(--text-0); background: var(--accent-dim); }
+.proj-file.is-active { color: var(--text-0); background: var(--accent-dim); border-left-color: var(--accent); }
+.proj-ficon { flex: none; color: var(--text-2); }
+.proj-file.is-active .proj-ficon { color: var(--accent); }
+.proj-folder:focus-visible, .proj-file:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+
+/* Tab bar */
 .proj-tabbar {
   display: flex;
   background: var(--bg-alt);
@@ -1021,15 +1084,15 @@ h1, h2, h3, h4 { line-height: 1.25; }
   align-items: center;
   gap: 0.55rem;
   flex: none;
-  padding: 0.75rem 1.15rem;
-  font: 500 0.8rem 'JetBrains Mono', monospace;
+  padding: 0.8rem 1.25rem;
+  font: 500 0.82rem 'JetBrains Mono', monospace;
   color: var(--text-2);
-  background: transparent;
-  border: 0;
   border-right: 1px solid var(--border);
   border-top: 2px solid transparent;
   margin-bottom: -1px;
   cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
   transition: color var(--transition), background var(--transition);
 }
 .proj-tab:hover { color: var(--text-0); }
@@ -1045,26 +1108,35 @@ h1, h2, h3, h4 { line-height: 1.25; }
   border-top-color: var(--accent);
 }
 .proj-tab[aria-selected="true"] .proj-tab-dot { background: var(--accent); }
+.proj-tab.is-dragging { opacity: 0.4; }
+.proj-tab.drop-before { box-shadow: inset 3px 0 0 var(--accent); }
+.proj-tab.drop-after  { box-shadow: inset -3px 0 0 var(--accent); }
 
 .proj-crumb {
-  padding: 0.55rem 1.15rem;
-  font: 400 0.72rem 'JetBrains Mono', monospace;
+  padding: 0.6rem 1.25rem;
+  font: 400 0.74rem 'JetBrains Mono', monospace;
   color: var(--text-2);
   border-bottom: 1px solid var(--rule);
 }
 
+/* The open project. Every pane sits in one grid cell, so the window is as tall as
+   the tallest project and never resizes when the tab changes; min-height keeps the
+   shorter ones from looking small next to it. */
 .projects-grid.is-tabs {
+  flex: 1;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: 1fr;
   gap: 0;
   margin-bottom: 0;
+  min-height: 32rem;
 }
 .projects-grid.is-tabs .project-card {
   grid-area: 1 / 1;
   border: 0;
   border-radius: 0;
   background: transparent;
-  padding: 1.75rem;
+  padding: 2.25rem;
 }
 .projects-grid.is-tabs .project-card:not(.is-active) {
   visibility: hidden;
@@ -1076,32 +1148,36 @@ h1, h2, h3, h4 { line-height: 1.25; }
 @media (prefers-reduced-motion: reduce) {
   .projects-grid.is-tabs .project-card.is-active { animation: none; }
 }
-.projects-grid.is-tabs .project-desc { max-width: none; flex: none; }
 
-/* Wide: the diagram takes the left column and the text the right, so the pane
-   stays short instead of stacking everything in one tall column. */
-@media (min-width: 760px) {
-  .projects-grid.is-tabs .project-card {
-    display: grid;
-    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
-    grid-template-rows: repeat(4, auto) 1fr;
-    column-gap: 2rem;
-    align-content: start;
-  }
-  .projects-grid.is-tabs a.project-card > .project-banner {
-    grid-column: 1;
-    grid-row: 1 / -1;
-    margin: 0;
-    height: auto;
-    /* The diagrams are wide and short (about 4:1), so a box much taller than
-       they are just frames empty space. Centred against the text instead of
-       stretched to its full height. */
-    min-height: 11rem;
-    align-self: center;
-    border-radius: var(--radius-sm);
-  }
-  .projects-grid.is-tabs .project-card > :not(.project-banner) { grid-column: 2; }
-  .projects-grid.is-tabs .project-cta { align-self: end; justify-self: start; }
+/* A full-width banner over the text. The diagrams are about 4:1, so a tall, wide
+   banner is what lets them render large instead of as a small island. */
+.projects-grid.is-tabs a.project-card > .project-banner {
+  margin: -2.25rem -2.25rem 1.75rem;
+  height: 15rem;
+  border-radius: 0;
+}
+.projects-grid.is-tabs .project-banner-img { max-height: 150px; max-width: 45%; }
+.projects-grid.is-tabs .project-banner-img--contain { max-height: 120px; max-width: 420px; }
+.projects-grid.is-tabs .project-card-head { margin-bottom: 0.9rem; }
+.projects-grid.is-tabs .project-name { font-size: 1.6rem; }
+.projects-grid.is-tabs .project-desc { font-size: 1.02rem; max-width: 62ch; flex: none; }
+.projects-grid.is-tabs .tag-group { margin-top: 1.4rem; gap: 0.5rem; }
+.projects-grid.is-tabs .tag { font-size: 0.8rem; padding: 0.28rem 0.75rem; }
+.projects-grid.is-tabs .project-cta { margin-top: 1.6rem; font-size: 0.95rem; }
+
+/* Without room for an explorer the tab bar does the job alone, and the pane drops
+   back to a compact card. */
+@media (max-width: 899px) {
+  .proj-side { display: none; }
+  .projects-grid.is-tabs { min-height: 0; }
+  .projects-grid.is-tabs .project-card { padding: 1.5rem; }
+  .projects-grid.is-tabs a.project-card > .project-banner { margin: -1.5rem -1.5rem 1.25rem; height: 9rem; }
+  .projects-grid.is-tabs .project-banner-img { max-height: 96px; }
+  .projects-grid.is-tabs .project-banner-img--contain { max-height: 78px; }
+  .projects-grid.is-tabs .project-name { font-size: 1.3rem; }
+  .projects-grid.is-tabs .project-desc { font-size: 0.95rem; }
+  .projects-grid.is-tabs .tag { font-size: 0.75rem; padding: 0.2rem 0.65rem; }
+  .projects-grid.is-tabs .project-cta { margin-top: 1.25rem; font-size: 0.85rem; }
 }
 
 .project-card {
