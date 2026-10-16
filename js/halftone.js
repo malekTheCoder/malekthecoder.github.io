@@ -28,7 +28,13 @@
     const BRUSH = 110;       // px radius the pointer paints
     const LEVELS = 6;        // alpha buckets, so each frame is a handful of strokes
     let gap, w = 0, h = 0, dpr = 1, cols = 0, rows = 0, ink = new Float32Array(0);
-    let visible = false, raf = 0, last = 0, t = 0, px = null, py = null, inkLive = false;
+    // The contact strip is a closing echo of the hero, so it runs well under it.
+    const STRENGTH = kind === 'band' ? 0.42 : 0.8;
+    let visible = false, raf = 0, last = 0, t = 0, inkLive = false;
+    let grow = 0;             // 0 to 1 as the shape swells in on first sight
+    let ghost = null;         // a self-drawn stroke: the intro, then again when the page sits idle
+    let idleAt = 0;           // time of the last real pointer or touch
+    const hand = { x: null, y: null };
 
     function size() {
       const r = host.getBoundingClientRect();
@@ -79,7 +85,7 @@
           v *= 0.72 + 0.28 * Math.sin(x * 0.011 - y * 0.007 + s * 0.7);
           // Ease the tails off to nothing so the shape has an edge instead of a haze.
           v = v < 0.22 ? 0 : v > 0.95 ? 1 : (v - 0.22) / 0.73;
-          v = v * v * (3 - 2 * v);
+          v = v * v * (3 - 2 * v) * grow;
           const k = j * cols + i, p = ink[k];
           if (p > 0.004) { v += p; inkLive = true; } else ink[k] = 0;
           if (v < 0.03) continue;
@@ -93,15 +99,16 @@
       ctx.strokeStyle = accent;
       ctx.lineWidth = 1;
       paths.forEach((path, l) => {
-        ctx.globalAlpha = 0.12 + 0.6 * ((l + 1) / LEVELS);
+        ctx.globalAlpha = (0.1 + 0.55 * ((l + 1) / LEVELS)) * STRENGTH;
         ctx.stroke(path);
       });
       ctx.globalAlpha = 1;
     }
 
     // Paint along the segment since the last event, so a fast flick leaves a full stroke.
-    function paint(x, y) {
+    function paint(x, y, from = hand, amt = 0.28) {
       if (reduce.matches) return;
+      const px = from.x, py = from.y;
       const steps = px === null ? 1 : Math.max(1, Math.ceil(Math.hypot(x - px, y - py) / (gap * 2)));
       for (let n = 1; n <= steps; n++) {
         const cx = px === null ? x : px + (x - px) * n / steps;
@@ -111,37 +118,67 @@
         for (let j = j0; j <= j1; j++) for (let i = i0; i <= i1; i++) {
           const d = Math.hypot(i * gap - cx, j * gap - cy) / BRUSH;
           if (d >= 1) continue;
-          const k = j * cols + i, a = (1 - d * d) * 0.28;
+          const k = j * cols + i, a = (1 - d * d) * amt;
           ink[k] = Math.min(1, ink[k] + a);
         }
       }
-      px = x; py = y;
+      from.x = x; from.y = y;
       kick();
     }
 
+    // The self-drawn stroke: in from the lower left on a wave, then once around the shape.
+    function ghostAt(u) {
+      const [bx, by] = blobs()[0], m = Math.min(w, h);
+      const cx = Math.min(bx, w * 0.84), cy = Math.min(by, h * 0.82), R = m * (w < 760 ? 0.22 : 0.2);
+      if (u < 0.5) {
+        const a = u / 0.5;
+        return [-0.05 * w + (cx - R + 0.05 * w) * a,
+                h * 0.84 + (cy - h * 0.84) * a + h * 0.07 * Math.sin(a * Math.PI * 3) * (1 - a)];
+      }
+      const th = Math.PI + ((u - 0.5) / 0.5) * Math.PI * 2;
+      return [cx + R * Math.cos(th), cy + R * Math.sin(th)];
+    }
+    function startGhost(amt) { ghost = { at: t, dur: 2600, amt, x: null, y: null }; idleAt = t; }
+
     function frame(now) {
-      raf = 0;
+      raf = -1;               // mid-frame: a paint from inside it must not schedule a second loop
       const dt = Math.min(64, now - (last || now));
       last = now;
       t += dt;
+      if (grow < 1) grow = Math.min(1, grow + dt / 1400);
+      if (kind === 'hero') {
+        if (!ghost && t - idleAt > 8000) startGhost(0.16);
+        if (ghost) {
+          const u = Math.min(1, (t - ghost.at) / ghost.dur), e = u * u * (3 - 2 * u);
+          paint(...ghostAt(e), ghost, ghost.amt);
+          if (u >= 1) ghost = null;
+        }
+      }
       const fade = Math.pow(0.975, dt / 16.7);
       for (let k = 0; k < ink.length; k++) if (ink[k]) ink[k] *= fade;
       draw();
-      if (visible && !document.hidden && !reduce.matches) raf = requestAnimationFrame(frame);
+      raf = visible && !document.hidden && !reduce.matches ? requestAnimationFrame(frame) : 0;
     }
     function kick() {
-      if (reduce.matches) { draw(); return; }
+      if (reduce.matches) { grow = 1; draw(); return; }
       if (!raf && visible) { last = 0; raf = requestAnimationFrame(frame); }
     }
 
     const local = (cx, cy) => { const r = host.getBoundingClientRect(); return [cx - r.left, cy - r.top]; };
-    host.addEventListener('pointermove', e => paint(...local(e.clientX, e.clientY)), { passive: true });
-    host.addEventListener('touchmove', e => { const p = e.touches[0]; paint(...local(p.clientX, p.clientY)); }, { passive: true });
-    const lift = () => { px = py = null; };
+    // A real hand takes over from the self-drawn stroke straight away.
+    const touch = (x, y) => { ghost = null; idleAt = t; paint(...local(x, y)); };
+    host.addEventListener('pointermove', e => touch(e.clientX, e.clientY), { passive: true });
+    host.addEventListener('touchmove', e => { const p = e.touches[0]; touch(p.clientX, p.clientY); }, { passive: true });
+    const lift = () => { hand.x = hand.y = null; };
     host.addEventListener('pointerleave', lift);
     host.addEventListener('touchend', lift, { passive: true });
 
-    new IntersectionObserver(([e]) => { visible = e.isIntersecting; if (visible) kick(); }).observe(host);
+    let seen = false;
+    new IntersectionObserver(([e]) => {
+      visible = e.isIntersecting;
+      if (visible && !seen) { seen = true; if (kind === 'hero') startGhost(0.3); }
+      if (visible) kick();
+    }).observe(host);
     new ResizeObserver(size).observe(host);
     document.addEventListener('visibilitychange', kick);
     reduce.addEventListener('change', kick);
