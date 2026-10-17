@@ -1989,4 +1989,12 @@ a, button, .skill-pill, .tag {
             mask-image: linear-gradient(to bottom, rgba(0,0,0,0.1) 55%, #000 82%);
   }
 }
+/* Buttons over the field stay solid, so the rings never read as part of something clickable.
+   The hover tint is layered on the page colour rather than replacing it. */
+[data-halftone] .btn-outline { background: var(--bg); }
+[data-halftone] .btn-outline:hover,
+[data-halftone] .contact-social-link:hover {
+  background: linear-gradient(var(--accent-dim), var(--accent-dim)), var(--bg);
+}
+[data-halftone] .contact-social-link { background: linear-gradient(var(--bg-card), var(--bg-card)), var(--bg); }
 @media print { .halftone { display: none; } }
