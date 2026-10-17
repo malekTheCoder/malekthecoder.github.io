@@ -12,7 +12,7 @@
       maroon: 0.3, silver: 0.8, grey: 0.55, dark: 0.18, black: 0.06, blue: 0.22, white: 1, tube: 0.78, steel: 0.62,
     };
     const TZ = 1.0;          // turret axis
-    const IN = { y: 2.35, z: -8.05 }; // intake shaft, low across the front
+    const IN = { y: 4.55, z: -8.0 };  // intake shaft, high across the front: balls go in under it
     const TR = { y: 5.6, z: -3.3 };   // transfer shaft, under the front of the turret
     const TT = 7.9;          // top of the turntable
 
@@ -167,18 +167,19 @@
       for (const x of [-4.55, 4.55]) plateX(x, [[-5.4, 3.5], [-1.2, 3.5], [-1.2, 7.4], [-4.6, 7.4], [-5.4, 6.2]], A.grey);   // its side guides
 
       // ── intake ─────────────────────────────────────────────────────────────────────────────
-      // Surgical tubing stretched lengthwise between hubs on a shaft: a cage roller across the
-      // front. On the robot it spins fast enough to look like a solid gold cylinder; here it turns
-      // slowly enough to see the tubes (part 3).
+      // Surgical tubing stretched the full width between a hub at each end of a shaft: a cage
+      // roller across the front, high enough that balls are pulled in underneath it. On the robot
+      // it spins fast enough to look like a solid gold cylinder; here it turns slowly enough to see
+      // the tubes (part 3).
       tube([-8.7, IN.y, IN.z], [8.7, IN.y, IN.z], 0.25, A.steel, 3, true);
-      for (const x of [-8.35, -2.9, 2.9, 8.35]) tube([x - 0.16, IN.y, IN.z], [x + 0.16, IN.y, IN.z], 1.22, A.grey, 3, true, A.grey);
+      for (const x of [-8.35, 8.35]) tube([x - 0.16, IN.y, IN.z], [x + 0.16, IN.y, IN.z], 1.22, A.grey, 3, true, A.grey);
       for (let k = 0; k < 10; k++) {
         const a = k / 10 * Math.PI * 2, dy = Math.cos(a) * 1.05, dz = Math.sin(a) * 1.05;
         tube([-8.35, IN.y + dy, IN.z + dz], [8.35, IN.y + dy, IN.z + dz], 0.17, A.tube, 3);
       }
       // bearing plates holding the intake shaft, and a ramp from the intake up to the transfer
-      for (const sx of [-1, 1]) plateX(8.7 * sx, [[-9.1, 1.0], [-5.6, 1.0], [-5.6, 5.4], [-8.2, 5.4], [-9.1, 4.2]], A.silver, 0,
-        (z, y) => (z - IN.z) ** 2 + (y - IN.y) ** 2 < 0.25 || ((z + 6.6) ** 2 + (y - 3.9) ** 2 < 0.2));
+      for (const sx of [-1, 1]) plateX(8.7 * sx, [[-9.1, 2.9], [-6.0, 2.9], [-6.0, 6.0], [-9.1, 6.0]], A.silver, 0,
+        (z, y) => (z - IN.z) ** 2 + (y - IN.y) ** 2 < 0.25 || ((z + 6.8) ** 2 + (y - 3.7) ** 2 < 0.15));
       rect([-8.6, 1.0, -5.4], [17.2, 0, 0], [0, 3.3, 3.0], [0, 0.67, -0.74], A.grey);
       // the perforated channel across the top of the front, with a white label on it
       {
