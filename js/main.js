@@ -45,6 +45,9 @@ function loadingIntro() {
   for (let i = 1; i <= word.length; i++) frames.push([word.slice(0, i), 80]);
   for (let round = 0; round < 2; round++) for (const d of ['.', '..', '...', '']) frames.push([word + d, 230]);
   for (let i = word.length - 1; i >= 0; i--) frames.push([word.slice(0, i), 45]);
+  // The hero's dot spinner keys off these, so it only ever plays alongside this text.
+  typedEl.dataset.loadingStart = performance.now();
+  typedEl.dataset.loadingMs = frames.reduce((sum, f) => sum + f[1], 0) + 250;
   let n = 0;
   (function step() {
     if (n === frames.length) { setTimeout(typeLoop, 250); return; }
@@ -58,7 +61,7 @@ loadingIntro();
 
 
 
-// Navbar — scroll state, active link, name reveal
+// Navbar: scroll state, active link, name reveal
 const navbar   = document.getElementById('navbar');
 const navLinks = document.querySelectorAll('.nav-link');
 const sections = document.querySelectorAll('section[id]');
@@ -161,7 +164,7 @@ navLinksEl.querySelectorAll('a').forEach(link => {
 });
 
 
-// Scroll reveal — only section headers carry [data-animate] now, so there are
+// Scroll reveal: only section headers carry [data-animate] now, so there are
 // no sibling groups left to stagger. Reveal on sight, no queued delay.
 const animatedEls = document.querySelectorAll('[data-animate]');
 

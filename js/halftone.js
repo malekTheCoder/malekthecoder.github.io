@@ -494,7 +494,9 @@
         // With pictures on, they are the motion; the idle stroke would only crowd them.
         if (!ghost && !box && t - idleAt > 8000) startGhost(0.16);
         if (ghost) {
-          const u = Math.min(1, (t - ghost.at) / ghost.dur);
+          // The loading spinner runs on the subtitle's clock (real time, not this loop's, which
+          // stops while the hero is off screen), so it ends exactly when "Loading" does.
+          const u = Math.min(1, ghost.sync ? (performance.now() - ghost.sync[0]) / ghost.sync[1] : (t - ghost.at) / ghost.dur);
           // The spinner keeps an even pace; the plain stroke eases in and out.
           const e = box ? u : u * u * (3 - 2 * u);
           paint(...ghostAt(e), ghost, box ? 0.42 : ghost.amt, glow, box ? 54 : BRUSH);
@@ -533,10 +535,21 @@
     host.addEventListener('pointerleave', lift);
     host.addEventListener('touchend', lift, { passive: true });
 
+    // The intro stroke on first sight. With pictures on it is the loading spinner and belongs to
+    // the subtitle's "Loading": it plays only while that text is showing, so a hero first seen
+    // later (after a reload half way down the page, say) never gets a spinner over a picture.
+    function intro() {
+      if (pic >= 0) return;
+      if (!box) { startGhost(0.3); return; }
+      const d = (document.getElementById('typed-text') || {}).dataset || {};
+      const start = +d.loadingStart, total = +d.loadingMs;
+      if (!total || performance.now() - start > total - 250) return;
+      startGhost(0.3); ghost.sync = [start, total];
+    }
     let seen = false;
     new IntersectionObserver(([e]) => {
       visible = e.isIntersecting;
-      if (visible && !seen) { seen = true; if (kind === 'hero') startGhost(0.3); }
+      if (visible && !seen) { seen = true; if (kind === 'hero') intro(); }
       if (visible) kick();
     }).observe(host);
     new ResizeObserver(size).observe(host);

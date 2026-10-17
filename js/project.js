@@ -1,6 +1,6 @@
-// Project page behavior — shared by every page under /projects/
+// Project page behavior: shared by every page under /projects/
 
-// Navbar — scroll state, reading progress on its bottom edge, and a breadcrumb
+// Navbar: scroll state, reading progress on its bottom edge, and a breadcrumb
 // that reveals the project name once the title scrolls out of sight
 const navbar     = document.getElementById('navbar');
 const navContext = document.getElementById('navContext');
@@ -30,7 +30,7 @@ function projectMark(className) {
 }
 
 // The sidebar heading says which project you're reading rather than a generic
-// "on this page" — the page title is already out of view by the time it matters
+// "on this page": the page title is already out of view by the time it matters
 const tocTitle = document.querySelector('.proj-toc-title');
 if (tocTitle && projTitle) {
   tocTitle.textContent = projTitle.textContent.trim();
@@ -86,7 +86,7 @@ if (navbar) {
     }
   }, { passive: true });
 
-  // Sync once on load — a page opened on a #section anchor lands mid-document
+  // Sync once on load: a page opened on a #section anchor lands mid-document
   // without ever firing a scroll event, and would otherwise show the wrong state
   window.dispatchEvent(new Event('scroll'));
 }
@@ -137,7 +137,7 @@ if (animatedEls.length) {
 }
 
 
-// Floating table of contents — highlight the section currently in view
+// Floating table of contents: highlight the section currently in view
 const tocLinks = document.querySelectorAll('.proj-toc a');
 const tocTargets = [...tocLinks]
   .map(a => document.querySelector(a.getAttribute('href')))
@@ -187,7 +187,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 });
 
 
-// Click-to-play video facade — the YouTube iframe is only built on click, so
+// Click-to-play video facade: the YouTube iframe is only built on click, so
 // the page never loads their player (or their cookies) unless asked. A facade
 // with no video ID yet (the demo hasn't been filmed) hides its whole section
 // instead of showing a dead play button, the same way the photo carousel
@@ -200,7 +200,7 @@ document.querySelectorAll('[data-video-id]').forEach(facade => {
     facade.classList.add('is-placeholder');
     facade.removeAttribute('role');
     facade.removeAttribute('tabindex');
-    facade.setAttribute('aria-label', `${facade.dataset.videoTitle || 'Demo video'} — not published yet`);
+    facade.setAttribute('aria-label', `${facade.dataset.videoTitle || 'Demo video'}, not published yet`);
     const box = document.createElement('div');
     box.className = 'proj-video-placeholder';
     box.innerHTML = `
@@ -232,7 +232,7 @@ document.querySelectorAll('[data-video-id]').forEach(facade => {
 
 // Demo videos play when scrolled into view and pause when they leave, so the
 // clip reads like a GIF without burning cycles off-screen. Skipped entirely
-// when the visitor has asked for reduced motion — they can still hit play.
+// when the visitor has asked for reduced motion: they can still hit play.
 const demoVideos = document.querySelectorAll('.device--phone video, .proj-phone video');
 const wantsReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -256,7 +256,7 @@ if (demoVideos.length && !wantsReducedMotion) {
 }
 
 
-// Device photo carousel — crossfades through real photos of the hardware, and
+// Device photo carousel: crossfades through real photos of the hardware, and
 // hides its whole section until at least one photo actually exists, so the
 // page never shows an empty frame while the photos are still being taken.
 const carousel = document.querySelector('.proj-carousel');
@@ -306,12 +306,12 @@ if (carousel) {
     }
 
     // The bar drains on the same clock as the timer. Restarting it means
-    // clearing the transition, forcing a reflow, then re-arming — otherwise
+    // clearing the transition, forcing a reflow, then re-arming: otherwise
     // the browser coalesces the reset and the replay into no visible change.
     const restartProgress = () => {
       if (!progress || reduced) return;
       progress.classList.add('visible');
-      // Reset, force a reflow, then re-arm — otherwise the browser coalesces
+      // Reset, force a reflow, then re-arm: otherwise the browser coalesces
       // the reset and the replay into no visible change at all.
       progressFill.style.transition = 'none';
       progressFill.style.transform = 'scaleX(0)';
@@ -348,7 +348,7 @@ if (carousel) {
     const pause = () => { clearInterval(timer); timer = null; stopProgress(); };
 
     // Any manual move stops the auto-advance, then hands control back once the
-    // reader has been idle for a while — so it never fights the person using it.
+    // reader has been idle for a while: so it never fights the person using it.
     const goTo = i => {
       pause();
       clearTimeout(resumeTimer);

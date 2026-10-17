@@ -412,7 +412,10 @@
 
   // ── motion ───────────────────────────────────────────────────────────────────────────────
   // The first time the card is on screen the canvas is empty, and the robot assembles: every dot
-  // of its first frame flows in from outside on a curve, the base first and the Limelight last.
+  // of its first frame flows in on a curve, the base first and the Limelight last. Where the
+  // practice clip sits right above, a dotted arrow first draws itself out of the clip, the dots
+  // pour from its tip, and once the robot is whole the arrow dissolves into it. Elsewhere (on
+  // phones the model sits after the bullets) the dots swirl in from all round instead.
   // Then it comes alive. The base turns slowly (or follows a drag); the turret holds its aim on a
   // fixed "goal" direction, the way the robot's vision tracking does, and when it runs out of
   // travel it swings round the other way; the transfer and the intake spin.
@@ -430,7 +433,7 @@
   const PITCH = 0.3, AUTO = 0.32, REACH = 2.7, BUILD = 3.0, FLIGHT = 0.95;
   let model = null, fitBox = null, W = 0, H = 0, dpr = 1, gap = 2;
   let visible = false, raf = 0, last = 0, t = 0;
-  let stage = 'wait', flock = null, bt = 0;
+  let stage = 'wait', flock = null, bt = 0, arrow = null;
   let yaw = Math.PI - 0.7, vel = 0, tyaw = 0.4, tvel = 0, spin = 0, ispin = 0;
   let drag = null, slow = 0;
 
@@ -441,7 +444,7 @@
     gap = dpr >= 2 ? 2.3 : 2.7;
     canvas.width = W * dpr; canvas.height = H * dpr;
     canvas.style.height = H + 'px';
-    if (stage === 'build') flock = makeFlock();
+    if (stage === 'build') { dropArrow(); flock = makeFlock(null); }
     if (stage === 'live') paint();
   }
   function paint() {
@@ -449,19 +452,27 @@
     render(ctx, W, H, model, opts());
   }
 
-  // The dots of the first frame, each given a start outside the frame and a moment to set off:
-  // lower parts first, with some scatter, so it fills in like a crowd rather than a scan line.
-  function makeFlock() {
+  // The dots of the first frame, each given a start, a bend and a moment to set off: lower parts
+  // first, with some scatter, so it fills in like a crowd rather than a scan line. From the arrow
+  // they leave its tip and fan out to their places; otherwise they start outside the frame and
+  // all come in on the same swirl.
+  const POUR = 0.62;                                // the arrow has drawn itself by then
+  function makeFlock(tip) {
     const dots = render(null, W, H, model, opts({ collect: true }));
     let y0 = 1e9, y1 = -1e9;
     for (const d of dots) { y0 = Math.min(y0, d[4]); y1 = Math.max(y1, d[4]); }
     const cx = W / 2, cy = H / 2, R = Math.hypot(W, H) * 0.6;
     return dots.map(([x, y, r, l, my]) => {
+      const at = (my - y0) / (y1 - y0 || 1) * (BUILD - FLIGHT - 0.3) + Math.random() * 0.3;
+      if (tip) {
+        const dx = x - tip[0], dy = y - tip[1], len = Math.hypot(dx, dy) || 1, bend = (Math.random() - 0.5) * 0.8 * len;
+        return { x, y, r, l, sx: tip[0] + (Math.random() - 0.5) * 3, sy: tip[1] + (Math.random() - 0.5) * 3,
+          qx: tip[0] + dx * 0.45 - dy / len * bend, qy: tip[1] + dy * 0.45 + dx / len * bend, at: POUR + at };
+      }
       const a = Math.random() * Math.PI * 2, rr = R * (0.9 + Math.random() * 0.45);
-      const b = a + 1.25, cr = rr * 0.5;          // swung round, so they all arrive on a swirl
+      const b = a + 1.25, cr = rr * 0.5;
       return { x, y, r, l, sx: cx + Math.cos(a) * rr, sy: cy + Math.sin(a) * rr,
-        qx: cx + Math.cos(b) * cr, qy: cy + Math.sin(b) * cr,
-        at: (my - y0) / (y1 - y0 || 1) * (BUILD - FLIGHT - 0.3) + Math.random() * 0.3 };
+        qx: cx + Math.cos(b) * cr, qy: cy + Math.sin(b) * cr, at };
     });
   }
   function drawFlock() {
@@ -476,14 +487,76 @@
       u = Math.min(1, u);
       const e = 1 - Math.pow(1 - u, 3), m = 1 - e;
       const x = m * m * d.sx + 2 * e * m * d.qx + e * e * d.x, y = m * m * d.sy + 2 * e * m * d.qy + e * e * d.y;
-      const r = d.r * (0.6 + 0.4 * e);
+      const r = d.r * (0.45 + 0.55 * e);
       paths[d.l].moveTo(x + r, y); paths[d.l].arc(x, y, r, 0, Math.PI * 2);
     }
     ctx.fillStyle = color;
-    paths.forEach((p, l) => { ctx.globalAlpha = 0.5 + 0.5 * (l + 1) / LV; ctx.fill(p); });
+    paths.forEach((p, l) => { ctx.globalAlpha = 0.28 + 0.72 * ((l + 1) / LV) ** 1.3; ctx.fill(p); });
     ctx.globalAlpha = 1;
     return done;
   }
+
+  // ── the arrow ──────────────────────────────────────────────────────────────────────────
+  // Dots along a hooked curve from just under the clip's right corner down into the top of the
+  // drawing, a chevron of dots for the head. It draws on like a pen (the leading dot a little
+  // bigger), pulses from clip to tip while the dots pour, and dissolves from the clip end.
+  const body = host.parentElement, clip = body.querySelector('.timeline-video-wrap');
+  function makeArrow() {
+    if (!clip) return null;
+    const b = body.getBoundingClientRect(), c = clip.getBoundingClientRect(), m = canvas.getBoundingClientRect();
+    const across = Math.min(c.right, m.right) - Math.max(c.left, m.left);
+    if (m.top - c.bottom < 0 || m.top - c.bottom > 160 || across < m.width * 0.5) return null;
+    const left = Math.min(c.left, m.left), top = c.bottom - 2;
+    const w = Math.max(c.right, m.right) - left, h = m.top - top + H * 0.13;
+    const ov = document.createElement('canvas');
+    ov.className = 'robot3d-arrow';
+    ov.setAttribute('aria-hidden', 'true');
+    ov.style.cssText = `left:${left - b.left}px;top:${top - b.top}px;width:${w}px;height:${h}px`;
+    ov.width = Math.ceil(w * dpr); ov.height = Math.ceil(h * dpr);
+    body.append(ov);
+    const P0 = [w * 0.86, 7], P3 = [m.left - left + W * 0.5, h - 4];
+    const P1 = [w * 1.0, P0[1] + (P3[1] - P0[1]) * 0.75], P2 = [P3[0] + w * 0.16, P3[1] - (P3[1] - P0[1]) * 0.7];
+    const at = (u) => { const v = 1 - u; return [0, 1].map(k => v * v * v * P0[k] + 3 * v * v * u * P1[k] + 3 * v * u * u * P2[k] + u * u * u * P3[k]); };
+    const pts = []; let prev = at(0), run = 0;
+    pts.push([...prev, 0]);
+    for (let i = 1; i <= 240; i++) {
+      const p = at(i / 240); run += Math.hypot(p[0] - prev[0], p[1] - prev[1]); prev = p;
+      if (run >= 6.5) { pts.push([...p, 0]); run = 0; }
+    }
+    pts.forEach((p, i) => { p[2] = i / (pts.length - 1); });           // 0 at the clip, 1 at the tip
+    const d = [P3[0] - P2[0], P3[1] - P2[1]], dl = Math.hypot(...d), ux = d[0] / dl, uy = d[1] / dl;
+    for (const sg of [-1, 1]) {
+      const a = Math.atan2(-uy, -ux) + sg * 0.6;
+      for (const L of [4.5, 9, 13.5]) pts.push([P3[0] + Math.cos(a) * L, P3[1] + Math.sin(a) * L, 1]);
+    }
+    return { ov, g: ov.getContext('2d'), pts, w, h, gone: null,
+      tip: [left + P3[0] - m.left + ux * 3, top + P3[1] - m.top + uy * 3] };
+  }
+  function drawArrow() {
+    const a = arrow, g = a.g, path = new Path2D(), lead = new Path2D();
+    g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    g.clearRect(0, 0, a.w, a.h);
+    const wave = (bt - POUR) * 1.15 % 1.25 - 0.12;                     // where the pulse is, 0..1
+    let alive = false, front = 0;
+    for (const [x, y, f] of a.pts) {
+      let s = Math.max(0, Math.min(1, (bt - f * 0.5) / 0.1));          // drawn on in order
+      if (s > 0 && s < 1) front = Math.max(front, f);
+      if (bt > POUR && a.gone == null) s *= 1 + 0.7 * Math.max(0, 1 - Math.abs(f - wave) * 7);
+      if (a.gone != null) s *= Math.max(0, 1 - (a.gone - f * 0.45) / 0.22);
+      if (s <= 0.02) continue;
+      alive = true;
+      const r = (1.15 + 0.6 * f) * s;
+      path.moveTo(x + r, y); path.arc(x, y, r, 0, Math.PI * 2);
+    }
+    // the pen: one bigger dot riding the front while it draws
+    if (bt < 0.6) {
+      const k = a.pts.findIndex(p => p[2] >= front);
+      if (k >= 0) { const [x, y] = a.pts[k]; lead.arc(x, y, 2.6, 0, Math.PI * 2); }
+    }
+    g.fillStyle = color; g.globalAlpha = 0.9; g.fill(path); g.fill(lead); g.globalAlpha = 1;
+    return alive || a.gone == null;
+  }
+  function dropArrow() { if (arrow) { arrow.ov.remove(); arrow = null; } }
 
   const wrap = a => Math.atan2(Math.sin(a), Math.cos(a));
   function frame(now) {
@@ -493,9 +566,11 @@
     const t0 = performance.now();
     if (stage === 'build') {
       bt += dt;
+      if (arrow) drawArrow();
       // the last dot lands on exactly the frame the live view starts from, so nothing jumps
-      if (drawFlock()) { stage = 'live'; flock = null; paint(); }
+      if (drawFlock()) { stage = 'live'; flock = null; paint(); if (arrow) arrow.gone = 0; }
     } else {
+      if (arrow) { arrow.gone += dt; if (!drawArrow()) dropArrow(); }
       t += dt;
       if (!drag) { vel += (AUTO - vel) * Math.min(1, dt * 1.2); yaw += vel * dt; }
       // the goal drifts a little, as if the robot were moving about the field
@@ -516,7 +591,7 @@
   }
   function kick() {
     if (!model || stage === 'wait') return;
-    if (reduce.matches) { if (stage === 'build') { stage = 'live'; flock = null; } paint(); return; }
+    if (reduce.matches) { if (stage === 'build') { stage = 'live'; flock = null; dropArrow(); } paint(); return; }
     if (!raf && visible) { last = 0; raf = requestAnimationFrame(frame); }
   }
 
@@ -556,7 +631,7 @@
   function maybeStart() {
     if (stage !== 'wait' || !model || ratio < 0.45) return;
     if (reduce.matches) stage = 'live';
-    else { stage = 'build'; flock = makeFlock(); bt = 0; }
+    else { stage = 'build'; arrow = makeArrow(); flock = makeFlock(arrow && arrow.tip); bt = 0; }
     kick();
   }
   new IntersectionObserver(([e]) => {

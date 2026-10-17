@@ -18,7 +18,7 @@
   --status-live:   #17753e;
   --radius:        6px;
   --radius-sm:     3px;
-  /* Hairline for rules *inside* a surface — lighter than the surface's own
+  /* Hairline for rules *inside* a surface: lighter than the surface's own
      border so a card edge and a row divider don't read as the same weight. */
   --rule:          color-mix(in srgb, var(--border) 55%, transparent);
   --nav-h:         64px;
@@ -51,7 +51,7 @@
 html.is-dark { --status-live: #63c98d; }
 
 
-/* Dark — must stay byte-identical to the system-dark block above, or the
+/* Dark: must stay byte-identical to the system-dark block above, or the
    same person sees two different palettes depending on how they got here. */
 :root[data-theme="dark"] {
   --bg:            #100e0c;
@@ -259,7 +259,7 @@ body {
   overflow-x: hidden;
 }
 
-/* Graph paper background — IDE themes only; basic modes stay solid */
+/* Graph paper background: IDE themes only; basic modes stay solid */
 :root[data-theme="one-dark"] body,
 :root[data-theme="vscode"] body,
 :root[data-theme="darcula"] body,
@@ -354,7 +354,7 @@ img { display: block; max-width: 100%; }
 .tag-group { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1rem; }
 
 
-/* Scroll reveal — section headers only. Short and shallow on purpose: it
+/* Scroll reveal: section headers only. Short and shallow on purpose: it
    should read as the page settling, not as each block making an entrance. */
 [data-animate] {
   opacity: 0;
@@ -404,7 +404,7 @@ html.is-dark .nav.scrolled {
   gap: 1rem;
 }
 
-/* Nav logo — hidden at top, fades in on scroll */
+/* Nav logo: hidden at top, fades in on scroll */
 /* Breadcrumb beside the name: "Malek Swilam / Experience · Education".
    Mirrors what the project pages already do, so the two halves of the site
    tell you where you are the same way. */
@@ -665,13 +665,13 @@ html.is-dark .theme-menu {
   line-height: 1.1;
   margin-bottom: 0.75rem;
   color: var(--text-0);
-  /* Inter is no longer loaded — naming it here silently dropped the name into
+  /* Inter is no longer loaded: naming it here silently dropped the name into
      system-ui while the rest of the page ran in Plex. */
   font-family: inherit;
   transition: font-family 0s;
 }
 
-/* IDE themes — render the name in a monospace editor font */
+/* IDE themes: render the name in a monospace editor font */
 :root[data-theme="vscode"]      .hero-name,
 :root[data-theme="one-dark"]    .hero-name,
 :root[data-theme="darcula"]     .hero-name,
@@ -824,7 +824,7 @@ html.is-dark .theme-menu {
 .section#about   { padding-top: 7rem; }
 .section#contact { padding: 6rem 0 7rem; }
 
-/* Headings inherited the body's 1.7 — far too airy once a title wraps. */
+/* Headings inherited the body's 1.7: far too airy once a title wraps. */
 h1, h2, h3, h4 { line-height: 1.25; }
 
 .section-title {
@@ -1243,8 +1243,8 @@ h1, h2, h3, h4 { line-height: 1.25; }
 
 /* Cards that are themselves links to a project page */
 a.project-card { text-decoration: none; color: inherit; cursor: pointer; }
-/* Hover reads through the card's own parts — the edge, the title and the
-   arrow — rather than the generic lift-and-glow every surface used to share. */
+/* Hover reads through the card's own parts: the edge, the title and the
+   arrow: rather than the generic lift-and-glow every surface used to share. */
 a.project-card:hover { border-color: var(--accent); }
 
 /* The banner sits edge-to-edge, cancelling the card's padding */
@@ -1283,7 +1283,7 @@ a.project-card:hover .project-name { color: var(--accent); }
 .project-cta svg { transition: transform var(--transition); }
 a.project-card:hover .project-cta svg { transform: translateX(4px); }
 
-/* Project banner — edge-to-edge image at top of card */
+/* Project banner: edge-to-edge image at top of card */
 .project-banner-link {
   display: block;
   margin: -1.75rem -1.75rem 1.25rem;
@@ -1324,7 +1324,7 @@ a.project-card:hover .project-cta svg { transform: translateX(4px); }
 }
 .project-banner-svg { display: block; }
 
-/* Fills the banner, capped by its own 2.9:1 aspect — on a wide card it renders
+/* Fills the banner, capped by its own 2.9:1 aspect: on a wide card it renders
    about 520x180, and it scales down by width on narrow screens. */
 .project-banner-svg.is-diagram {
   width: 100%;
@@ -1380,7 +1380,7 @@ a.project-card:hover .project-cta svg { transform: translateX(4px); }
   border-color: var(--accent);
   transform: translateY(1px);
 }
-/* Pulsing dot + label — marks a project as actively worked on */
+/* Pulsing dot + label: marks a project as actively worked on */
 .project-status {
   display: inline-flex;
   align-items: center;
@@ -1667,7 +1667,7 @@ a.project-card:hover .project-cta svg { transform: translateX(4px); }
   border: 1px solid var(--accent-border);
   border-radius: var(--radius-sm); font-family: 'JetBrains Mono', monospace; white-space: nowrap;
 }
-/* Was exactly the base body size — a card title separated from its own body
+/* Was exactly the base body size: a card title separated from its own body
    copy by weight alone. */
 .edu-school { font-size: 1.15rem; font-weight: 600; color: var(--text-0); margin-bottom: 0.25rem; }
 .edu-school-link { color: inherit; text-decoration: none; transition: color var(--transition); }
@@ -1860,13 +1860,13 @@ a.project-card:hover .project-cta svg { transform: translateX(4px); }
 /* Landing from a project page scrolls to that project's card, clear of the nav */
 .project-card { scroll-margin-top: calc(var(--nav-h) + 2rem); }
 
-/* Named workstreams inside one role — a quiet label above each bullet group */
+/* Named workstreams inside one role: a quiet label above each bullet group */
 .timeline-project + .timeline-project { margin-top: 1rem; }
 
 .timeline-project-name {
   /* Sits third in the hierarchy: role, company, workstream, bullets. Mono at
      600 reads much heavier than sans at the same size, so this stays numerically
-     below the 0.9rem bullets while still clearly out-ranking them — the weight,
+     below the 0.9rem bullets while still clearly out-ranking them: the weight,
      the full-contrast colour and the accent rule do that work, not the size. */
   font-size: 0.86rem;
   font-weight: 600;
@@ -2072,6 +2072,8 @@ a, button, .skill-pill, .tag {
 .timeline-video-replay:active { transform: translate(-50%, -50%) scale(0.96); }
 .timeline-video-replay:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 /* The robot in dots (js/robot3d.js), under the clip */
+.timeline-body.has-media { position: relative; }
+.robot3d-arrow { position: absolute; z-index: 2; pointer-events: none; }
 .timeline-model { margin: 1.1rem 0 0; }
 .robot3d-canvas { display: block; width: 100%; cursor: grab; touch-action: pan-y; }
 .robot3d-canvas.is-dragging { cursor: grabbing; }
