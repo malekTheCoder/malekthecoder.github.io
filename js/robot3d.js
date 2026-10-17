@@ -341,7 +341,7 @@
     const { yaw, pitch, tyaw, spin = 0, ispin = spin, gap, color, zoom = 1 } = o;
     const cols = Math.ceil(W / gap) + 1, rows = Math.ceil(H / gap) + 1, n = cols * rows;
     const depth = new Float32Array(n).fill(-1e9), tone = new Float32Array(n);
-    const NX = new Float32Array(n), NY = new Float32Array(n), NZ = new Float32Array(n), AL = new Float32Array(n);
+    const NX = new Float32Array(n), NY = new Float32Array(n), NZ = new Float32Array(n), AL = new Float32Array(n), MY = new Float32Array(n);
     const fit = o.fit || (o.fit = fitRobot(model, pitch));
     const f = 60, scale = Math.min(W / fit.w, H / fit.h) * zoom, cx = W / 2 - fit.mx * scale, cy = H / 2 - fit.my * scale;
     const cyw = Math.cos(yaw), syw = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
@@ -371,7 +371,7 @@
       if (gx < 0 || gy < 0 || gx >= cols || gy >= rows) continue;
       const c = gy * cols + gx;
       if (z2 <= depth[c]) continue;
-      depth[c] = z2; NX[c] = mx; NY[c] = my; NZ[c] = mz2; AL[c] = P[i + 6];
+      depth[c] = z2; NX[c] = mx; NY[c] = my; NZ[c] = mz2; AL[c] = P[i + 6]; MY[c] = P[i + 1];
       const b = Math.max(0, mx * L[0] + my * L[1] + mz2 * L[2]);
       tone[c] = 0.08 + 0.5 * (1 - P[i + 6]) * (0.6 + 0.4 * (1 - b)) + 0.14 * (1 - b);
     }
@@ -388,22 +388,29 @@
       }
       if (e) out[c] = Math.max(out[c], e);
     }
-    ctx.clearRect(0, 0, W, H);
-    const LV = 5, paths = Array.from({ length: LV }, () => new Path2D());
+    // Dots never touch (radius tops out short of half the spacing), so it always reads as dots.
+    // With o.collect it hands back the dots, each with the height of the part it shows, instead
+    // of drawing them.
+    const LV = 5, list = o.collect ? [] : null, paths = list ? null : Array.from({ length: LV }, () => new Path2D());
     for (let gy = 0; gy < rows; gy++) for (let gx = 0; gx < cols; gx++) {
-      const v = out[gy * cols + gx]; if (v < 0.06) continue;
-      const r = gap * 0.5 * Math.sqrt(Math.min(1, v)), x = gx * gap, y = gy * gap;
-      const p = paths[Math.min(LV - 1, (v * LV) | 0)]; p.moveTo(x + r, y); p.arc(x, y, r, 0, Math.PI * 2);
+      const c = gy * cols + gx, v = out[c]; if (v < 0.07) continue;
+      const r = gap * 0.4 * Math.sqrt(Math.min(1, v)), x = gx * gap, y = gy * gap, l = Math.min(LV - 1, (v * LV) | 0);
+      if (list) { list.push([x, y, r, l, MY[c]]); continue; }
+      paths[l].moveTo(x + r, y); paths[l].arc(x, y, r, 0, Math.PI * 2);
     }
+    if (list) return list;
+    ctx.clearRect(0, 0, W, H);
     ctx.fillStyle = color;
     paths.forEach((p, l) => { ctx.globalAlpha = 0.5 + 0.5 * (l + 1) / LV; ctx.fill(p); });
     ctx.globalAlpha = 1;
   }
 
   // ── motion ───────────────────────────────────────────────────────────────────────────────
-  // The base turns slowly (or follows a drag). The turret holds its aim on a fixed "goal"
-  // direction, the way the robot's vision tracking does, and when it runs out of travel it
-  // swings round the other way. The transfer and the intake spin.
+  // The first time the card is on screen the canvas is empty, and the robot assembles: every dot
+  // of its first frame flows in from outside on a curve, the base first and the Limelight last.
+  // Then it comes alive. The base turns slowly (or follows a drag); the turret holds its aim on a
+  // fixed "goal" direction, the way the robot's vision tracking does, and when it runs out of
+  // travel it swings round the other way; the transfer and the intake spin.
   const reduce = matchMedia('(prefers-reduced-motion: reduce)');
   const canvas = document.createElement('canvas');
   canvas.className = 'robot3d-canvas';
@@ -415,54 +422,102 @@
   const readColor = () => { color = getComputedStyle(root).getPropertyValue('--accent').trim() || '#888'; };
   readColor();
 
-  const PITCH = 0.3, AUTO = 0.32, REACH = 2.7;
+  const PITCH = 0.3, AUTO = 0.32, REACH = 2.7, BUILD = 3.0, FLIGHT = 0.95;
   let model = null, fitBox = null, W = 0, H = 0, dpr = 1, gap = 2;
   let visible = false, raf = 0, last = 0, t = 0;
-  let yaw = Math.PI - 0.7, vel = AUTO, tyaw = 0.4, tvel = 0, spin = 0, ispin = 0;
+  let stage = 'wait', flock = null, bt = 0;
+  let yaw = Math.PI - 0.7, vel = 0, tyaw = 0.4, tvel = 0, spin = 0, ispin = 0;
   let drag = null, slow = 0;
 
+  const opts = (extra) => ({ yaw, pitch: PITCH, tyaw, spin, ispin, gap, color, fit: fitBox, ...extra });
   function size() {
     W = Math.round(host.clientWidth); H = Math.round(W * 0.84);
     dpr = Math.min(window.devicePixelRatio || 1, 2);
-    gap = dpr >= 2 ? 1.8 : 2.3;
+    gap = dpr >= 2 ? 2.3 : 2.7;
     canvas.width = W * dpr; canvas.height = H * dpr;
     canvas.style.height = H + 'px';
-    if (model) paint();
+    if (stage === 'build') flock = makeFlock();
+    if (stage === 'live') paint();
   }
   function paint() {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    render(ctx, W, H, model, { yaw, pitch: PITCH, tyaw, spin, ispin, gap, color, fit: fitBox });
+    render(ctx, W, H, model, opts());
   }
+
+  // The dots of the first frame, each given a start outside the frame and a moment to set off:
+  // lower parts first, with some scatter, so it fills in like a crowd rather than a scan line.
+  function makeFlock() {
+    const dots = render(null, W, H, model, opts({ collect: true }));
+    let y0 = 1e9, y1 = -1e9;
+    for (const d of dots) { y0 = Math.min(y0, d[4]); y1 = Math.max(y1, d[4]); }
+    const cx = W / 2, cy = H / 2, R = Math.hypot(W, H) * 0.6;
+    return dots.map(([x, y, r, l, my]) => {
+      const a = Math.random() * Math.PI * 2, rr = R * (0.9 + Math.random() * 0.45);
+      const b = a + 1.25, cr = rr * 0.5;          // swung round, so they all arrive on a swirl
+      return { x, y, r, l, sx: cx + Math.cos(a) * rr, sy: cy + Math.sin(a) * rr,
+        qx: cx + Math.cos(b) * cr, qy: cy + Math.sin(b) * cr,
+        at: (my - y0) / (y1 - y0 || 1) * (BUILD - FLIGHT - 0.3) + Math.random() * 0.3 };
+    });
+  }
+  function drawFlock() {
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+    const LV = 5, paths = Array.from({ length: LV }, () => new Path2D());
+    let done = true;
+    for (const d of flock) {
+      let u = (bt - d.at) / FLIGHT;
+      if (u < 1) done = false;
+      if (u <= 0) continue;
+      u = Math.min(1, u);
+      const e = 1 - Math.pow(1 - u, 3), m = 1 - e;
+      const x = m * m * d.sx + 2 * e * m * d.qx + e * e * d.x, y = m * m * d.sy + 2 * e * m * d.qy + e * e * d.y;
+      const r = d.r * (0.6 + 0.4 * e);
+      paths[d.l].moveTo(x + r, y); paths[d.l].arc(x, y, r, 0, Math.PI * 2);
+    }
+    ctx.fillStyle = color;
+    paths.forEach((p, l) => { ctx.globalAlpha = 0.5 + 0.5 * (l + 1) / LV; ctx.fill(p); });
+    ctx.globalAlpha = 1;
+    return done;
+  }
+
   const wrap = a => Math.atan2(Math.sin(a), Math.cos(a));
   function frame(now) {
     raf = 0;
     const dt = Math.min(0.05, (now - (last || now)) / 1000);
-    last = now; t += dt;
-    if (!drag) { vel += (AUTO - vel) * Math.min(1, dt * 1.5); yaw += vel * dt; }
-    // the goal drifts a little, as if the robot were moving about the field
-    const goal = Math.PI - 0.55 + 0.45 * Math.sin(t * 0.37);
-    let want = wrap(goal - yaw);
-    if (Math.abs(want) > REACH) want = Math.sign(want) * REACH;
-    // a critically damped spring toward the aim, so moves start and settle smoothly
-    const k = 26, c = 2 * Math.sqrt(k);
-    tvel += (k * (want - tyaw) - c * tvel) * dt; tyaw += tvel * dt;
-    spin += dt * 6; ispin += dt * 3.2;
+    last = now;
     const t0 = performance.now();
-    paint();
+    if (stage === 'build') {
+      bt += dt;
+      // the last dot lands on exactly the frame the live view starts from, so nothing jumps
+      if (drawFlock()) { stage = 'live'; flock = null; paint(); }
+    } else {
+      t += dt;
+      if (!drag) { vel += (AUTO - vel) * Math.min(1, dt * 1.2); yaw += vel * dt; }
+      // the goal drifts a little, as if the robot were moving about the field
+      const goal = Math.PI - 0.55 + 0.45 * Math.sin(t * 0.37);
+      let want = wrap(goal - yaw);
+      if (Math.abs(want) > REACH) want = Math.sign(want) * REACH;
+      // a critically damped spring toward the aim, so moves start and settle smoothly
+      const k = 26, c = 2 * Math.sqrt(k);
+      tvel += (k * (want - tyaw) - c * tvel) * dt; tyaw += tvel * dt;
+      spin += dt * 6; ispin += dt * 3.2;
+      paint();
+    }
     // on slow devices, drop to every other frame
     slow = slow * 0.9 + (performance.now() - t0) * 0.1;
     if (visible && !document.hidden && !reduce.matches) {
-      raf = requestAnimationFrame(slow > 14 ? n => { raf = requestAnimationFrame(frame); } : frame);
+      raf = requestAnimationFrame(slow > 14 ? () => { raf = requestAnimationFrame(frame); } : frame);
     }
   }
   function kick() {
-    if (!model) return;
-    if (reduce.matches) { paint(); return; }
+    if (!model || stage === 'wait') return;
+    if (reduce.matches) { if (stage === 'build') { stage = 'live'; flock = null; } paint(); return; }
     if (!raf && visible) { last = 0; raf = requestAnimationFrame(frame); }
   }
 
-  // drag to turn; vertical swipes still scroll the page on touch screens
+  // drag to turn, once it is built; vertical swipes still scroll the page on touch screens
   canvas.addEventListener('pointerdown', e => {
+    if (stage !== 'live') return;
     drag = { x: e.clientX, t: performance.now() };
     canvas.setPointerCapture(e.pointerId);
     canvas.classList.add('is-dragging');
@@ -475,24 +530,37 @@
     drag.x = e.clientX; drag.t = now;
     if (reduce.matches || !raf) paint();
   });
-  const release = () => { drag = null; canvas.classList.remove('is-dragging'); vel = Math.max(-4, Math.min(4, vel)); kick(); };
+  const release = () => {
+    if (!drag) return;
+    drag = null; canvas.classList.remove('is-dragging'); vel = Math.max(-4, Math.min(4, vel)); kick();
+  };
   canvas.addEventListener('pointerup', release);
   canvas.addEventListener('pointercancel', release);
 
+  // Build the point cloud while the card is still a little way off, so it is ready in time.
   new IntersectionObserver(([e]) => {
-    visible = e.isIntersecting;
-    // build the model the first time the card comes near the screen
-    if (visible && !model) {
-      const lean = W < 340 || (navigator.hardwareConcurrency || 8) <= 4;
-      model = Robot3D.build(lean ? 0.12 : 0.1);
-      fitBox = fitRobot(model, PITCH);
-      paint();
-    }
+    if (!e.isIntersecting || model) return;
+    const lean = W < 340 || (navigator.hardwareConcurrency || 8) <= 4;
+    model = Robot3D.build(lean ? 0.12 : 0.1);
+    fitBox = fitRobot(model, PITCH);
+    maybeStart();
+  }, { rootMargin: '400px 0px' }).observe(host);
+  // Start the assembly once a good part of it is actually on screen.
+  let ratio = 0;
+  function maybeStart() {
+    if (stage !== 'wait' || !model || ratio < 0.45) return;
+    if (reduce.matches) stage = 'live';
+    else { stage = 'build'; flock = makeFlock(); bt = 0; }
+    kick();
+  }
+  new IntersectionObserver(([e]) => {
+    visible = e.isIntersecting; ratio = e.intersectionRatio;
+    maybeStart();
     if (visible) kick();
-  }, { rootMargin: '200px 0px' }).observe(host);
+  }, { threshold: [0, 0.45, 1] }).observe(canvas);
   new ResizeObserver(size).observe(host);
   document.addEventListener('visibilitychange', kick);
   reduce.addEventListener('change', kick);
-  new MutationObserver(() => { readColor(); if (model) paint(); })
+  new MutationObserver(() => { readColor(); if (stage === 'live') paint(); })
     .observe(root, { attributes: true, attributeFilter: ['data-theme', 'class'] });
 })();
