@@ -62,7 +62,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/style.css?v=113" />
+  <link rel="stylesheet" href="/css/style.css?v=114" />
 
   <!-- ═══ STRUCTURED DATA ═══ -->
   <script type="application/ld+json">
@@ -498,9 +498,10 @@
             <h3 class="project-name">Voice-Controlled Robotics Agent</h3>
           </div>
           <p class="project-desc">
-            You speak a command in plain English, like "stack the red cube on the blue cylinder." Claude Sonnet
-              breaks that into ordered steps and a Franka Panda arm works through them in a live physics
-              simulation. When a step goes wrong it reads the new scene and replans.
+            A robot arm you give orders out loud. Say “stack the red cube on the blue cylinder,” and Claude Sonnet breaks it into steps that a Franka Panda arm carries out one at a time in a MuJoCo simulation, with gravity and collisions live.
+          </p>
+          <p class="project-desc">
+            When a grip slips or a stack tips, it reads the new scene and replans. It never takes its own word for success: a second check compares the scene to the goal first.
           </p>
           <div class="tag-group">
             <span class="tag">Python</span>
@@ -527,9 +528,10 @@
             <h3 class="project-name">OCRadar</h3>
           </div>
           <p class="project-desc">
-            A cross-platform app that screens for early signs of oral cancer from a phone camera, using an Azure AI Custom
-              Vision model trained on thousands of labeled clinical samples. Built by a team. I joined in 2024 as COO and lead
-              developer for Android and Windows.
+            A phone app that looks for early signs of oral cancer in a photo of your mouth. A CNN on Azure AI Custom Vision classifies the image, and the app says in plain language whether it’s worth getting checked by a dentist.
+          </p>
+          <p class="project-desc">
+            A team project, featured by WTOP News and the Korea Times. I joined in 2024 as COO and lead developer for Android and Windows.
           </p>
           <div class="tag-group">
             <span class="tag">Python</span>
@@ -643,9 +645,10 @@
             <h3 class="project-name">Desk Calendar Agent</h3>
           </div>
           <p class="project-desc">
-            You text it "lunch with John Appleseed on Friday at noon." A 3B model running on the Raspberry Pi
-              creates the event through the Google Calendar API, and deterministic checks stop anything
-              destructive before it lands.
+            A desk calendar you can text. Send “lunch with John Appleseed on Friday at noon” and a 3B model on a Raspberry Pi 5 turns it into a Google Calendar event, then the e-ink screen redraws.
+          </p>
+          <p class="project-desc">
+            The model and the voice transcription both run on the Pi, so only the calendar call leaves the device. Deterministic checks review every change first, and blocked every destructive action the model tried in testing.
           </p>
           <div class="tag-group">
             <span class="tag">Local LLM</span>
@@ -679,9 +682,10 @@
             </span>
           </div>
           <p class="project-desc">
-            It sits in the macOS menu bar and reports what the machine is actually doing, with iPhone and Apple
-              Watch companions. An MCP layer lets coding agents check the Mac has capacity before they start
-              something heavy.
+            A system monitor for macOS with iPhone and Apple Watch companions. It shows live CPU, GPU and memory in the menu bar, battery health over time, and thermals with fan control on Apple Silicon.
+          </p>
+          <p class="project-desc">
+            An MCP server and CLI let coding agents check the Mac has room before starting something heavy. Nothing leaves the machine: no cloud, no telemetry.
           </p>
           <div class="tag-group">
             <span class="tag">Systems Programming</span>

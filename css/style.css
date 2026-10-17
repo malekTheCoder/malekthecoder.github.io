@@ -1431,6 +1431,8 @@ a.project-card:hover .project-cta svg { transform: translateX(4px); }
 }
 .project-name-link:hover { color: var(--accent); }
 .project-desc { font-size: 0.9rem; color: var(--text-1); line-height: 1.75; flex: 1; max-width: 70ch; }
+/* A description can run to a second short paragraph; only the last one stretches to fill the card. */
+.project-desc:has(+ .project-desc) { flex: none; margin-bottom: 0.55rem; }
 .projects-cta { text-align: center; }
 
 
