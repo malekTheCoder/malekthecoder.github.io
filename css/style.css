@@ -1505,15 +1505,28 @@ a.project-card:hover .project-cta svg { transform: translateX(4px); }
 }
 .honors-list { list-style: none; margin: 0; padding: 0; }
 .honor-item {
-  display: flex; align-items: flex-start; gap: 2rem;
+  display: flex; align-items: center; gap: 1.25rem;
   padding: 1rem 1.5rem; border-bottom: 1px solid var(--rule);
 }
 .honor-item:last-child { border-bottom: none; }
-.honor-item .skill-row-label { padding-top: 0.2rem; }
 .honor-body { display: flex; flex-direction: column; gap: 0.2rem; min-width: 0; }
 .honor-body strong { font-size: 0.92rem; font-weight: 600; color: var(--text-0); }
 .honor-sub { font-size: 0.82rem; color: var(--text-1); }
 .honor-sub a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+.honor-link {
+  align-self: flex-start;
+  margin-top: 0.35rem;
+  font: 0.74rem 'JetBrains Mono', monospace;
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid var(--accent-border);
+  transition: border-color var(--transition);
+}
+.honor-link:hover { border-bottom-color: var(--accent); }
+/* The emblem to the left of each honor */
+.honor-media { flex: 0 0 44px; height: 44px; display: grid; place-items: center; }
+.honor-media img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.honor-glyph { font-size: 1.75rem; line-height: 1; }
 
 
 /* Education */
@@ -1746,7 +1759,7 @@ a.project-card:hover .project-cta svg { transform: translateX(4px); }
   .nav-links .btn { margin: 0.5rem 2rem; }
   .hamburger { display: flex; }
 
-  .skill-row, .honor-item { flex-direction: column; gap: 0.6rem; }
+  .skill-row { flex-direction: column; gap: 0.6rem; }
   .skill-row-label { flex: 0 0 auto; }
 
   .timeline { padding-left: 1.5rem; }
