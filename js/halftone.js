@@ -386,9 +386,9 @@
           R[k] += (target - R[k]) * ease;
         }
       }
-      // The blob gives way while the spinner runs and while a phrase is up, and comes back
-      // in the pause between phrases.
-      const want = ghost || (S && typed > 0) ? 1 : 0;
+      // The blob gives way while the spinner runs and stays away for the whole cycle of phrases,
+      // so the gap between two pictures is clean paper rather than a smudge swelling back in.
+      const want = ghost || pic >= 0 ? 1 : 0;
       shown += (want - shown) * (1 - Math.pow(want ? 0.9 : 0.96, dt / 16.7));
     }
 
