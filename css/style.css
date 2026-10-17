@@ -251,28 +251,11 @@ html {
 
 body {
   background-color: var(--bg);
-  background-size: 28px 28px;
   color: var(--text-0);
   font-family: 'IBM Plex Sans', system-ui, sans-serif;
   line-height: 1.7;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
-}
-
-/* Graph paper background: IDE themes only; basic modes stay solid */
-:root[data-theme="one-dark"] body,
-:root[data-theme="vscode"] body,
-:root[data-theme="darcula"] body,
-:root[data-theme="tokyo"] body,
-:root[data-theme="dracula"] body,
-:root[data-theme="monokai"] body,
-:root[data-theme="nord"] body,
-:root[data-theme="github-dark"] body,
-:root[data-theme="atom-one-dark"] body,
-:root[data-theme="xcode"] body {
-  background-image:
-    linear-gradient(color-mix(in srgb, var(--accent) 7%, transparent) 1px, transparent 1px),
-    linear-gradient(90deg, color-mix(in srgb, var(--accent) 7%, transparent) 1px, transparent 1px);
 }
 
 a { color: inherit; text-decoration: none; }
@@ -656,6 +639,11 @@ html.is-dark .theme-menu {
   width: 100%;
   max-width: 820px;
   margin-top: auto;
+}
+/* Wide enough for a picture beside the words (js/halftone.js): the text moves left so it and the
+   picture balance as a pair instead of the words sitting centred with the picture crammed right. */
+@media (min-width: 1000px) {
+  .hero-inner { max-width: 1120px; }
 }
 
 .hero-name {
@@ -1999,6 +1987,13 @@ a, button, .skill-pill, .tag {
   -webkit-mask-image: radial-gradient(ellipse 42% 38% at 36% 50%, rgba(0,0,0,0.12), #000 100%);
           mask-image: radial-gradient(ellipse 42% 38% at 36% 50%, rgba(0,0,0,0.12), #000 100%);
 }
+@media (min-width: 1000px) {
+  /* the words sit further left here, so the quiet patch follows them and clears the picture */
+  .halftone-hero {
+    -webkit-mask-image: radial-gradient(ellipse 34% 38% at 27% 50%, rgba(0,0,0,0.12), #000 100%);
+            mask-image: radial-gradient(ellipse 34% 38% at 27% 50%, rgba(0,0,0,0.12), #000 100%);
+  }
+}
 .halftone-band {
   -webkit-mask-image: radial-gradient(ellipse 30% 45% at 50% 50%, rgba(0,0,0,0.15), #000 100%);
           mask-image: radial-gradient(ellipse 30% 45% at 50% 50%, rgba(0,0,0,0.15), #000 100%);
@@ -2074,8 +2069,6 @@ a, button, .skill-pill, .tag {
 .timeline-video-replay:active { transform: translate(-50%, -50%) scale(0.96); }
 .timeline-video-replay:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 /* The robot in dots (js/robot3d.js), under the clip */
-.timeline-body.has-media { position: relative; }
-.robot3d-arrow { position: absolute; z-index: 2; pointer-events: none; }
 .timeline-model { margin: 1.1rem 0 0; }
 .robot3d-canvas { display: block; width: 100%; cursor: grab; touch-action: pan-y; }
 .robot3d-canvas.is-dragging { cursor: grabbing; }

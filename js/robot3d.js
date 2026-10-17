@@ -329,40 +329,68 @@
   // Turn the point cloud, keep the nearest point per dot cell, then print: a light halftone tone
   // for each surface and strong dots at silhouettes, creases and material changes.
   // The model's projected extent over a full turn, so it is framed once and never jumps.
-  // A miniature DECODE goal in front of the robot, fixed to the view rather than the robot, so
-  // the turret has something to lock onto while the robot turns. A blue wedge, its sloped face
-  // toward the robot carrying an AprilTag, a dark basket opening on top. Points: x, y, z in view
-  // space before the tilt, then the normal, then albedo.
-  const GOAL = { x: 8.5, z: 13.5 };
+  // The blue alliance DECODE goal, after the 2025-26 game manual (section 9.7), at 0.4 scale and
+  // fixed to the view rather than the robot, so the turret has something to lock onto while the
+  // robot turns. It stands to the robot's right, its front turned partly toward the viewer. Built
+  // in inches in its own frame: a across the front face, b back into the opening, y up.
+  //  - front face 27 in wide, its top lip 38.75 in up
+  //  - behind it, two back panels meeting 18.3 in back; they step up to the 54 in peak, so from the
+  //    front the backboard reads as a stepped gable over the top of the face
+  //  - the open top: a triangle 26.5 in across and 18.3 in deep
+  //  - on the face, a gold panel and AprilTag 20 (36h11, 6.5 in black square), centred 9.25 in
+  //    below the lip
+  // Points: x, y, z in view space before the tilt, the normal, then the albedo.
+  const GOAL = { x: 18, z: -5, face: [-0.55, 0.84], scale: 0.45 };
+  const TAG20 = ['101000', '101100', '101010', '111100', '100010', '011100'];
   function buildGoal(step) {
-    const P = [], add = (x, y, z, nx, ny, nz, a) => P.push(x, y, z, nx, ny, nz, a);
-    const ux = -GOAL.x, uz = -GOAL.z, ul = Math.hypot(ux, uz), u = [ux / ul, uz / ul], r = [-u[1], u[0]];
-    const W = 7, D = 5, Hh = 7.5, SL = 1.6;                      // across, deep, tall, how far the face leans
-    const at = (a, b, y) => [GOAL.x + r[0] * a - u[0] * b, y, GOAL.z + r[1] * a - u[1] * b];
-    const blue = 0.24, black = 0.05, white = 1;
-    const tag = ['10110100', '01001101', '11010010', '00101101', '10110010', '01101001'];   // 6 x 6 inner bits, padded
-    // sloped front face, with the tag on its upper half
-    const fl = Math.hypot(SL, Hh), fn = [u[0] * Hh / fl, SL / fl, u[1] * Hh / fl];
-    for (let a = -W / 2; a <= W / 2 + 1e-6; a += step) for (let q = 0; q <= 1 + 1e-6; q += step / fl) {
+    const P = [], S = GOAL.scale, st = step / S;
+    const fl = Math.hypot(...GOAL.face), u = [GOAL.face[0] / fl, GOAL.face[1] / fl], r = [-u[1], u[0]];
+    const pos = (a, b, y) => [GOAL.x + (r[0] * a - u[0] * b) * S, y * S, GOAL.z + (r[1] * a - u[1] * b) * S];
+    const nrm = (na, nb, ny) => [r[0] * na - u[0] * nb, ny, r[1] * na - u[1] * nb];
+    const add = (a, b, y, n, al) => P.push(...pos(a, b, y), ...n, al);
+    const blue = 0.24, dark = 0.07, black = -1, white = 1, gold = 0.72;
+    const LIP = 38.75, PEAK = 54, HW = 13.5, DEPTH = 18.3;
+    // the front face: blue, a gold panel, the tag with its white margin
+    const front = nrm(0, -1, 0), back = nrm(0, 1, 0);
+    // the tag is drawn at twice its real size, so its pattern survives at this scale
+    const TAGC = LIP - 13.5, TAGH = 3.25 * 2, MARGIN = 1.1;
+    for (let a = -HW; a <= HW + 1e-6; a += st) for (let y = 0; y <= LIP + 1e-6; y += st) {
       let al = blue;
-      const ta = (a + 1.7) / 3.4, tq = (q - 0.42) / (3.4 / fl);
-      if (ta >= 0 && ta < 1 && tq >= 0 && tq < 1) {
-        const ci = Math.floor(ta * 8), cj = 7 - Math.floor(tq * 8);
-        al = ci === 0 || cj === 0 || ci === 7 || cj === 7 ? black : tag[cj - 1][ci - 1] === '1' ? white : black;
+      const gw = 10.6 - (y - 4) * 0.06;                          // the gold panel narrows to the top
+      if (y > 4 && y < LIP - 1.2 && Math.abs(a) < gw) al = gold;
+      if (y > LIP - 4.6 && y < LIP - 2.4 && Math.abs(a) < 5.5) al = dark;                   // the DECODE wordmark
+      if (Math.abs(a) < TAGH + MARGIN && Math.abs(y - TAGC) < TAGH + MARGIN) al = white;
+      if (Math.abs(a) < TAGH && Math.abs(y - TAGC) < TAGH) {
+        const ci = Math.min(7, Math.floor((a + TAGH) / (2 * TAGH) * 8)), cj = Math.min(7, Math.floor((TAGC + TAGH - y) / (2 * TAGH) * 8));
+        al = ci === 0 || cj === 0 || ci === 7 || cj === 7 ? black : TAG20[cj - 1][ci - 1] === '1' ? white : black;
       }
-      add(...at(a, q * SL, q * Hh), ...fn, al);
+      add(a, 0, y, front, al);
+      add(a, 0.4, y, back, blue);
     }
-    // top, with the basket opening
-    for (let a = -W / 2; a <= W / 2 + 1e-6; a += step) for (let b = SL; b <= D + 1e-6; b += step)
-      add(...at(a, b, Hh), 0, 1, 0, Math.abs(a) < W / 2 - 0.8 && b > SL + 0.6 && b < D - 0.6 ? black : blue);
-    // the two sides, and the back
-    for (const sg of [-1, 1]) for (let b = 0; b <= D + 1e-6; b += step) for (let y = 0; y <= Hh + 1e-6; y += step) {
-      if (b < y / Hh * SL) continue;
-      add(...at(sg * W / 2, b, y), r[0] * sg, 0, r[1] * sg, blue);
+    // the two back panels, front corner to the apex, stepping up to the peak
+    const STEPS = 6;
+    for (const sg of [-1, 1]) {
+      const n = nrm(sg * DEPTH, HW * 0.98, 0), nl = Math.hypot(n[0], n[2]), no = [n[0] / nl, 0, n[2] / nl];
+      const len = Math.hypot(HW, DEPTH);
+      for (let q = 0; q <= len + 1e-6; q += st) {
+        const f = q / len, a = sg * HW * (1 - f), b = DEPTH * f;
+        const top = LIP + (PEAK - LIP) * Math.min(1, Math.ceil(f * STEPS) / STEPS);
+        for (let y = 0; y <= top + 1e-6; y += st) {
+          add(a, b, y, no, blue);
+          add(a, b, y, [-no[0], 0, -no[2]], blue);
+        }
+        // the step treads, so the stepped edge reads from above
+        for (let y = top - 0.6; y <= top + 1e-6; y += st) add(a, b, y, [0, 1, 0], blue);
+      }
     }
-    for (let a = -W / 2; a <= W / 2 + 1e-6; a += step) for (let y = 0; y <= Hh + 1e-6; y += step)
-      add(...at(a, D, y), -u[0], 0, -u[1], blue);
-    return { pts: new Float32Array(P), aim: at(0, (SL + D) / 2, Hh) };
+    // the FIRST Tech Challenge logo: a white plate on the peak, facing the field
+    for (let a = -2.4; a <= 2.4 + 1e-6; a += st) for (let y = PEAK - 9; y <= PEAK - 3.5; y += st) add(a, DEPTH - Math.abs(a) * DEPTH / HW - 0.5, y, front, white);
+    // the open top: a dark triangle just under the lip
+    for (let b = 0.3; b <= DEPTH - 0.3; b += st) {
+      const half = HW * (1 - b / DEPTH) - 0.4;
+      for (let a = -half; a <= half + 1e-6; a += st) add(a, b, LIP - 0.5, [0, 1, 0], black);
+    }
+    return { pts: new Float32Array(P), aim: pos(0, DEPTH * 0.33, LIP) };
   }
 
   function fitRobot(model, pitch, f = 60) {
@@ -404,7 +432,8 @@
       if (z2 <= depth[c]) return;
       depth[c] = z2; NX[c] = mx; NY[c] = my; NZ[c] = mz2; AL[c] = albedo; MY[c] = height;
       const b = Math.max(0, mx * L[0] + my * L[1] + mz2 * L[2]);
-      tone[c] = 0.04 + 0.3 * (1 - albedo) * (0.6 + 0.4 * (1 - b)) + 0.08 * (1 - b);
+      // An albedo below zero is printed ink (the AprilTag's black cells): solid, whatever the light.
+      tone[c] = albedo < 0 ? 0.95 : 0.04 + 0.3 * (1 - albedo) * (0.6 + 0.4 * (1 - b)) + 0.08 * (1 - b);
     }
     const P = model.pts;
     for (let i = 0; i < P.length; i += 8) {
@@ -433,7 +462,7 @@
         if (depth[c] - depth[q] > 0.7) { e = Math.max(e, 0.95); continue; }
         if (Math.abs(depth[c] - depth[q]) > 0.7) continue;
         if (NX[c] * NX[q] + NY[c] * NY[q] + NZ[c] * NZ[q] < 0.8) e = Math.max(e, 0.82);
-        if (Math.abs(AL[c] - AL[q]) > 0.15) e = Math.max(e, 0.72);
+        if (Math.abs(AL[c] - AL[q]) > 0.15 && AL[c] >= 0 && AL[q] >= 0) e = Math.max(e, 0.72);
       }
       if (e) out[c] = Math.max(out[c], e);
     }
@@ -456,10 +485,7 @@
 
   // ── motion ───────────────────────────────────────────────────────────────────────────────
   // The first time the card is on screen the canvas is empty, and the robot assembles: every dot
-  // of its first frame flows in on a curve, the base first and the Limelight last. Where the
-  // practice clip sits right above, a dotted arrow first draws itself out of the clip, the dots
-  // pour from its tip, and once the robot is whole the arrow dissolves into it. Elsewhere (on
-  // phones the model sits after the bullets) the dots swirl in from all round instead.
+  // of its first frame swirls in from outside on a curve, the base first and the Limelight last.
   // Then it comes alive. The base turns slowly (or follows a drag); the turret holds its aim on a
   // fixed "goal" direction, the way the robot's vision tracking does, and when it runs out of
   // travel it swings round the other way; the transfer and the intake spin.
@@ -471,8 +497,7 @@
   const ctx = canvas.getContext('2d');
   const root = document.documentElement;
   let color = '';
-  let paper = '#fff';
-  const readColor = () => { const cs = getComputedStyle(root); color = cs.getPropertyValue('--accent').trim() || '#888'; paper = cs.getPropertyValue('--bg').trim() || '#fff'; };
+  const readColor = () => { color = getComputedStyle(root).getPropertyValue('--accent').trim() || '#888'; };
   readColor();
 
   const PITCH = 0.3, AUTO = 0.32, BUILD = 3.0, FLIGHT = 0.95;
@@ -485,7 +510,7 @@
   const FACE = Math.PI - 0.42;
   let model = null, fitBox = null, W = 0, H = 0, dpr = 1, gap = 2;
   let visible = false, raf = 0, last = 0, t = 0;
-  let stage = 'wait', flock = null, bt = 0, arrow = null;
+  let stage = 'wait', flock = null, bt = 0;
   let yaw = Math.PI - 0.7, vel = 0, tyaw = 0, tvel = 0, spin = 0, ispin = 0;
   let drag = null, slow = 0;
 
@@ -496,7 +521,7 @@
     gap = dpr >= 2 ? 2.3 : 2.7;
     canvas.width = W * dpr; canvas.height = H * dpr;
     canvas.style.height = H + 'px';
-    if (stage === 'build') { dropArrow(); flock = makeFlock(null); }
+    if (stage === 'build') flock = makeFlock();
     if (stage === 'live') paint();
   }
   function paint() {
@@ -504,24 +529,16 @@
     render(ctx, W, H, model, opts());
   }
 
-  // The dots of the first frame, each given a start, a bend and a moment to set off: lower parts
-  // first, with some scatter, so it fills in like a crowd rather than a scan line. From the arrow
-  // they leave its tip and fan out to their places; otherwise they start outside the frame and
-  // all come in on the same swirl.
-  const POUR = 0.55;                                // the arrow has drawn itself by then
-  const ARROW_UNTIL = 1.5;                          // and starts dissolving here, mid-build
-  function makeFlock(tip) {
+  // The dots of the first frame, each given a start outside the frame, a bend, and a moment to
+  // set off: lower parts first, with some scatter, so it fills in like a crowd rather than a scan
+  // line, and all of them come in on the same swirl.
+  function makeFlock() {
     const dots = render(null, W, H, model, opts({ collect: true }));
     let y0 = 1e9, y1 = -1e9;
     for (const d of dots) { y0 = Math.min(y0, d[4]); y1 = Math.max(y1, d[4]); }
     const cx = W / 2, cy = H / 2, R = Math.hypot(W, H) * 0.6;
     return dots.map(([x, y, r, l, my]) => {
       const at = (my - y0) / (y1 - y0 || 1) * (BUILD - FLIGHT - 0.3) + Math.random() * 0.3;
-      if (tip) {
-        const dx = x - tip[0], dy = y - tip[1], len = Math.hypot(dx, dy) || 1, bend = (Math.random() - 0.5) * 0.8 * len;
-        return { x, y, r, l, sx: tip[0] + (Math.random() - 0.5) * 3, sy: tip[1] + (Math.random() - 0.5) * 3,
-          qx: tip[0] + dx * 0.45 - dy / len * bend, qy: tip[1] + dy * 0.45 + dx / len * bend, at: POUR + at };
-      }
       const a = Math.random() * Math.PI * 2, rr = R * (0.9 + Math.random() * 0.45);
       const b = a + 1.25, cr = rr * 0.5;
       return { x, y, r, l, sx: cx + Math.cos(a) * rr, sy: cy + Math.sin(a) * rr,
@@ -549,71 +566,6 @@
     return done;
   }
 
-  // ── the arrow ──────────────────────────────────────────────────────────────────────────
-  // A dotted arrow that never crosses the clip: it starts at the clip's left edge level with the
-  // robot (which sits shooting on the left), runs down the gutter beside the clip and the caption,
-  // and sweeps into the drawing. It draws on like a pen, pulses while the dots pour, and dissolves
-  // from the robot end soon after, without waiting for the drawing to finish.
-  const START_Y = 0.6;                    // the robot's height in the clip frame
-  const body = host.parentElement, clip = body.querySelector('.timeline-video-wrap');
-  function makeArrow() {
-    if (!clip) return null;
-    const b = body.getBoundingClientRect(), c = clip.getBoundingClientRect(), m = canvas.getBoundingClientRect();
-    const across = Math.min(c.right, m.right) - Math.max(c.left, m.left);
-    // only where the drawing sits right under the clip, with a gutter to its left to run down
-    if (m.top - c.bottom < 0 || m.top - c.bottom > 160 || across < m.width * 0.5 || c.left - b.left < 30) return null;
-    const left = Math.min(c.left, m.left) - 34, top = c.top;
-    const w = Math.max(c.right, m.right) + 8 - left, h = m.top - top + H * 0.13;
-    const ov = document.createElement('canvas');
-    ov.className = 'robot3d-arrow';
-    ov.setAttribute('aria-hidden', 'true');
-    ov.style.cssText = `left:${left - b.left}px;top:${top - b.top}px;width:${w}px;height:${h}px`;
-    ov.width = Math.ceil(w * dpr); ov.height = Math.ceil(h * dpr);
-    body.append(ov);
-    const cx0 = c.left - left, cy0 = c.top - top, ch = c.height, cb = cy0 + ch;
-    const capB = (body.querySelector('.timeline-media figcaption') || clip).getBoundingClientRect().bottom - top;
-    // two joined curves: down the gutter left of the clip and its caption, then into the drawing
-    const P0 = [cx0 - 6, cy0 + START_Y * ch], Q = [cx0 - 18, Math.max(cb, capB) + 14], P3 = [m.left - left + W * 0.5, h - 4];
-    const segs = [
-      [P0, [cx0 - 20, P0[1] + 12], [cx0 - 20, cb - 10], Q],
-      [Q, [cx0 - 18, Q[1] + (P3[1] - Q[1]) * 0.7], [P3[0] - W * 0.22, P3[1] - 6], P3],
-    ];
-    const bez = ([a, b, c2, d], u) => { const v = 1 - u; return [0, 1].map(k => v * v * v * a[k] + 3 * v * v * u * b[k] + 3 * v * u * u * c2[k] + u * u * u * d[k]); };
-    const P2 = segs[1][2];
-    const pts = [[...P0, 0]]; let prev = P0, run = 0, len = 0;
-    const raw = [];
-    for (const sg of segs) for (let i = 1; i <= 160; i++) { const p = bez(sg, i / 160); const d = Math.hypot(p[0] - prev[0], p[1] - prev[1]); len += d; run += d; prev = p; if (run >= 6.5) { raw.push([...p, len]); run = 0; } }
-    for (const [x, y, l] of raw) pts.push([x, y, l / len]);
-    const d = [P3[0] - P2[0], P3[1] - P2[1]], dl = Math.hypot(...d), ux = d[0] / dl, uy = d[1] / dl;
-    for (const sg of [-1, 1]) {
-      const an = Math.atan2(-uy, -ux) + sg * 0.6;
-      for (const L of [4.5, 9, 13.5]) pts.push([P3[0] + Math.cos(an) * L, P3[1] + Math.sin(an) * L, 1]);
-    }
-    return { ov, g: ov.getContext('2d'), w, h, pts, gone: null, tip: [P3[0] + left - m.left, P3[1] + top - m.top + 3] };
-  }
-  function drawArrow() {
-    const a = arrow, g = a.g, dots = new Path2D(), halo = new Path2D();
-    g.setTransform(dpr, 0, 0, dpr, 0, 0);
-    g.clearRect(0, 0, a.w, a.h);
-    const wave = (bt - POUR) * 1.15 % 1.25 - 0.12;                     // where the pulse is, 0..1
-    let alive = false, front = -1, lead = null;
-    for (const [x, y, f] of a.pts) {
-      let s = Math.max(0, Math.min(1, (bt - f * 0.5) / 0.1));          // drawn on in order
-      if (s > 0 && s < 1 && f > front) { front = f; lead = [x, y]; }
-      if (bt > POUR && a.gone == null) s *= 1 + 0.7 * Math.max(0, 1 - Math.abs(f - wave) * 7);
-      if (a.gone != null) s *= Math.max(0, 1 - (a.gone - f * 0.3) / 0.18);
-      if (s <= 0.02) continue;
-      alive = true;
-      const r = (1.25 + 0.6 * f) * s;
-      dots.moveTo(x + r, y); dots.arc(x, y, r, 0, Math.PI * 2);
-      halo.moveTo(x + r + 1.6, y); halo.arc(x, y, r + 1.6, 0, Math.PI * 2);
-    }
-    if (lead && bt < 0.65) { dots.moveTo(lead[0] + 2.8, lead[1]); dots.arc(lead[0], lead[1], 2.8, 0, Math.PI * 2); }
-    g.fillStyle = paper; g.globalAlpha = 0.85; g.fill(halo);
-    g.fillStyle = color; g.globalAlpha = 0.95; g.fill(dots); g.globalAlpha = 1;
-    return alive || a.gone == null;
-  }
-  function dropArrow() { if (arrow) { arrow.ov.remove(); arrow = null; } }
 
   const wrap = a => Math.atan2(Math.sin(a), Math.cos(a));
   // The turret angle (relative to the robot) that points the shooter at the target for this yaw.
@@ -633,11 +585,9 @@
     const t0 = performance.now();
     if (stage === 'build') {
       bt += dt;
-      if (arrow) { if (arrow.gone == null && bt > ARROW_UNTIL) arrow.gone = 0; else if (arrow.gone != null) arrow.gone += dt; if (!drawArrow()) dropArrow(); }
       // the last dot lands on exactly the frame the live view starts from, so nothing jumps
-      if (drawFlock()) { stage = 'live'; flock = null; paint(); if (arrow && arrow.gone == null) arrow.gone = 0; }
+      if (drawFlock()) { stage = 'live'; flock = null; paint(); }
     } else {
-      if (arrow) { arrow.gone += dt; if (!drawArrow()) dropArrow(); }
       t += dt;
       if (!drag) { vel += (AUTO - vel) * Math.min(1, dt * 1.2); yaw += vel * dt; }
       // Hold the aim. While the target is inside the turret's travel it tracks it exactly; when the
@@ -660,7 +610,7 @@
   }
   function kick() {
     if (!model || stage === 'wait') return;
-    if (reduce.matches) { if (stage === 'build') { stage = 'live'; flock = null; dropArrow(); } paint(); return; }
+    if (reduce.matches) { if (stage === 'build') { stage = 'live'; flock = null; } paint(); return; }
     if (!raf && visible) { last = 0; raf = requestAnimationFrame(frame); }
   }
 
@@ -702,7 +652,7 @@
   function maybeStart() {
     if (stage !== 'wait' || !model || ratio < 0.45) return;
     if (reduce.matches) stage = 'live';
-    else { stage = 'build'; arrow = makeArrow(); flock = makeFlock(arrow && arrow.tip); bt = 0; }
+    else { stage = 'build'; flock = makeFlock(); bt = 0; }
     kick();
   }
   new IntersectionObserver(([e]) => {
