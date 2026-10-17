@@ -2035,7 +2035,8 @@ a, button, .skill-pill, .tag {
   align-items: start;
 }
 .timeline-body.has-media .timeline-media { grid-column: 2; grid-row: 1; }
-.timeline-body.has-media .timeline-bullets { grid-column: 1; grid-row: 1; }
+.timeline-body.has-media .timeline-bullets { grid-column: 1; grid-row: 1 / span 2; }
+.timeline-body.has-media .timeline-model { grid-column: 2; grid-row: 2; }
 .timeline-media { margin: 0.25rem 0 0; }
 .timeline-video {
   display: block;
@@ -2070,6 +2071,11 @@ a, button, .skill-pill, .tag {
 .timeline-video-replay:hover { color: var(--accent); border-color: var(--accent-border); }
 .timeline-video-replay:active { transform: translate(-50%, -50%) scale(0.96); }
 .timeline-video-replay:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* The robot in dots (js/robot3d.js), under the clip */
+.timeline-model { margin: 1.1rem 0 0; }
+.robot3d-canvas { display: block; width: 100%; cursor: grab; touch-action: pan-y; }
+.robot3d-canvas.is-dragging { cursor: grabbing; }
+.timeline-model figcaption { margin-top: 0.35rem; font-size: 0.72rem; color: var(--text-2); }
 .timeline-media figcaption {
   margin-top: 0.5rem;
   font-size: 0.72rem;
@@ -2078,4 +2084,5 @@ a, button, .skill-pill, .tag {
 @media (max-width: 999px) {
   .timeline-body.has-media { display: block; }
   .timeline-media { margin: 0 0 1.25rem; max-width: 420px; }
+  .timeline-model { margin: 0.5rem 0 1.25rem; max-width: 420px; }
 }
