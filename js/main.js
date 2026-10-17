@@ -18,6 +18,10 @@ function typeLoop() {
   typedEl.textContent = isDeleting
     ? current.slice(0, --charIndex)
     : current.slice(0, ++charIndex);
+  // The hero's dot field draws a matching shape as the phrase types out (js/halftone.js).
+  document.dispatchEvent(new CustomEvent('hero:typing', {
+    detail: { index: phraseIndex, progress: charIndex / current.length },
+  }));
 
   let delay = isDeleting ? 45 : 80;
 
