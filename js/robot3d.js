@@ -457,7 +457,8 @@
   // first, with some scatter, so it fills in like a crowd rather than a scan line. From the arrow
   // they leave its tip and fan out to their places; otherwise they start outside the frame and
   // all come in on the same swirl.
-  const POUR = 0.62;                                // the arrow has drawn itself by then
+  const POUR = 0.55;                                // the arrow has drawn itself by then
+  const ARROW_UNTIL = 1.5;                          // and starts dissolving here, mid-build
   function makeFlock(tip) {
     const dots = render(null, W, H, model, opts({ collect: true }));
     let y0 = 1e9, y1 = -1e9;
@@ -498,19 +499,12 @@
   }
 
   // ── the arrow ──────────────────────────────────────────────────────────────────────────
-  // A dotted ring round the robot in the clip, then a dotted arrow from the ring down into the
-  // drawing, the dots haloed in the page colour so they read over the video. The robot drives
-  // during the clip, so the ring follows it: TRACK is where it is (fractions of the frame) every
-  // 0.2 s, measured from the clip. The arrow draws on like a pen, pulses from the robot to the tip
-  // while the dots pour, and dissolves from the robot end once the drawing is whole.
-  const TRACK = [[0,0.194,0.615],[0.2,0.165,0.617],[0.4,0.126,0.616],[0.6,0.098,0.612],[0.8,0.083,0.6],[1,0.088,0.6],[1.2,0.082,0.598],[1.4,0.084,0.594],[1.6,0.081,0.594],[1.8,0.074,0.593],[2,0.076,0.593],[2.2,0.076,0.593],[2.4,0.085,0.6],[2.6,0.107,0.616],[2.8,0.139,0.63],[3,0.158,0.635],[3.2,0.182,0.636],[3.4,0.219,0.643],[3.6,0.259,0.641],[3.8,0.296,0.631],[4,0.332,0.623],[4.2,0.364,0.607],[4.4,0.39,0.583],[4.6,0.405,0.561],[4.8,0.407,0.55]];
+  // A dotted arrow from just right of the robot in the clip, where it sits shooting on the left,
+  // curving out past the caption and down into the drawing, the dots haloed in the page colour so
+  // they read over the video. It draws on like a pen, pulses while the dots pour, and dissolves
+  // from the robot end soon after, without waiting for the drawing to finish.
+  const START = [0.15, 0.6];              // just right of the robot, as fractions of the clip frame
   const body = host.parentElement, clip = body.querySelector('.timeline-video-wrap');
-  const video = clip && clip.querySelector('video');
-  function robotAt() {
-    const t = video && video.currentTime || 0, k = Math.min(TRACK.length - 2, Math.floor(t / 0.2));
-    const [t0, x0, y0] = TRACK[k], [t1, x1, y1] = TRACK[k + 1], u = Math.max(0, Math.min(1, (t - t0) / (t1 - t0)));
-    return [x0 + (x1 - x0) * u, y0 + (y1 - y0) * u];
-  }
   function makeArrow() {
     if (!clip) return null;
     const b = body.getBoundingClientRect(), c = clip.getBoundingClientRect(), m = canvas.getBoundingClientRect();
@@ -524,35 +518,21 @@
     ov.style.cssText = `left:${left - b.left}px;top:${top - b.top}px;width:${w}px;height:${h}px`;
     ov.width = Math.ceil(w * dpr); ov.height = Math.ceil(h * dpr);
     body.append(ov);
-    const clipBox = [c.left - left, c.top - top, c.width, c.height];
-    const tip = [m.left - left + W * 0.5, h - 4];
-    return { ov, g: ov.getContext('2d'), w, h, clipBox, end: tip, gone: null,
-      tip: [tip[0] + left - m.left, tip[1] + top - m.top + 3] };
-  }
-  // The arrow's dots for where the robot is now: f runs 0 at the ring's start to 1 at the tip.
-  function arrowDots(a) {
-    const [cx0, cy0, cw, ch] = a.clipBox, [rx, ry] = robotAt();
-    const R = [cx0 + rx * cw, cy0 + ry * ch], rr = Math.max(14, cw * 0.065), pts = [];
-    const ringN = Math.round(2 * Math.PI * rr / 5.5);
-    for (let i = 0; i < ringN; i++) {
-      const th = -0.35 + i / ringN * Math.PI * 2;
-      pts.push([R[0] + Math.cos(th) * rr, R[1] + Math.sin(th) * rr * 0.8, 0.2 * i / ringN]);
-    }
-    // out of the ring to the right, past the end of the caption, then down into the drawing
-    const P0 = [R[0] + Math.cos(-0.35) * rr, R[1] + Math.sin(-0.35) * rr * 0.8], P3 = a.end;
-    const xr = Math.max(P0[0] + 40, cx0 + cw * 0.8), cb = cy0 + ch;
-    const P1 = [xr, P0[1] + (cb - P0[1]) * 0.35], P2 = [xr, P3[1] - (P3[1] - cb) * 0.55];
+    const cx0 = c.left - left, cy0 = c.top - top, cw = c.width, ch = c.height;
+    const P0 = [cx0 + START[0] * cw, cy0 + START[1] * ch], P3 = [m.left - left + W * 0.5, h - 4];
+    const xr = cx0 + cw * 0.8, cb = cy0 + ch;
+    const P1 = [xr, P0[1] + (cb - P0[1]) * 0.2], P2 = [xr, P3[1] - (P3[1] - cb) * 0.55];
     const at = (u) => { const v = 1 - u; return [0, 1].map(k => v * v * v * P0[k] + 3 * v * v * u * P1[k] + 3 * v * u * u * P2[k] + u * u * u * P3[k]); };
-    let prev = P0, run = 0, len = 0;
-    const path = [];
-    for (let i = 1; i <= 260; i++) { const p = at(i / 260); const d = Math.hypot(p[0] - prev[0], p[1] - prev[1]); len += d; run += d; prev = p; if (run >= 6.5) { path.push([...p, len]); run = 0; } }
-    for (const [x, y, l] of path) pts.push([x, y, 0.2 + 0.8 * l / len]);
+    const pts = [[...P0, 0]]; let prev = P0, run = 0, len = 0;
+    const raw = [];
+    for (let i = 1; i <= 260; i++) { const p = at(i / 260); const d = Math.hypot(p[0] - prev[0], p[1] - prev[1]); len += d; run += d; prev = p; if (run >= 6.5) { raw.push([...p, len]); run = 0; } }
+    for (const [x, y, l] of raw) pts.push([x, y, l / len]);
     const d = [P3[0] - P2[0], P3[1] - P2[1]], dl = Math.hypot(...d), ux = d[0] / dl, uy = d[1] / dl;
     for (const sg of [-1, 1]) {
       const an = Math.atan2(-uy, -ux) + sg * 0.6;
       for (const L of [4.5, 9, 13.5]) pts.push([P3[0] + Math.cos(an) * L, P3[1] + Math.sin(an) * L, 1]);
     }
-    return pts;
+    return { ov, g: ov.getContext('2d'), w, h, pts, gone: null, tip: [P3[0] + left - m.left, P3[1] + top - m.top + 3] };
   }
   function drawArrow() {
     const a = arrow, g = a.g, dots = new Path2D(), halo = new Path2D();
@@ -560,18 +540,18 @@
     g.clearRect(0, 0, a.w, a.h);
     const wave = (bt - POUR) * 1.15 % 1.25 - 0.12;                     // where the pulse is, 0..1
     let alive = false, front = -1, lead = null;
-    for (const [x, y, f] of arrowDots(a)) {
-      let s = Math.max(0, Math.min(1, (bt - f * 0.6) / 0.1));          // drawn on in order
+    for (const [x, y, f] of a.pts) {
+      let s = Math.max(0, Math.min(1, (bt - f * 0.5) / 0.1));          // drawn on in order
       if (s > 0 && s < 1 && f > front) { front = f; lead = [x, y]; }
       if (bt > POUR && a.gone == null) s *= 1 + 0.7 * Math.max(0, 1 - Math.abs(f - wave) * 7);
-      if (a.gone != null) s *= Math.max(0, 1 - (a.gone - f * 0.45) / 0.22);
+      if (a.gone != null) s *= Math.max(0, 1 - (a.gone - f * 0.3) / 0.18);
       if (s <= 0.02) continue;
       alive = true;
       const r = (1.25 + 0.6 * f) * s;
       dots.moveTo(x + r, y); dots.arc(x, y, r, 0, Math.PI * 2);
       halo.moveTo(x + r + 1.6, y); halo.arc(x, y, r + 1.6, 0, Math.PI * 2);
     }
-    if (lead && bt < 0.75) { dots.moveTo(lead[0] + 2.8, lead[1]); dots.arc(lead[0], lead[1], 2.8, 0, Math.PI * 2); }
+    if (lead && bt < 0.65) { dots.moveTo(lead[0] + 2.8, lead[1]); dots.arc(lead[0], lead[1], 2.8, 0, Math.PI * 2); }
     g.fillStyle = paper; g.globalAlpha = 0.85; g.fill(halo);
     g.fillStyle = color; g.globalAlpha = 0.95; g.fill(dots); g.globalAlpha = 1;
     return alive || a.gone == null;
@@ -586,9 +566,9 @@
     const t0 = performance.now();
     if (stage === 'build') {
       bt += dt;
-      if (arrow) drawArrow();
+      if (arrow) { if (arrow.gone == null && bt > ARROW_UNTIL) arrow.gone = 0; else if (arrow.gone != null) arrow.gone += dt; if (!drawArrow()) dropArrow(); }
       // the last dot lands on exactly the frame the live view starts from, so nothing jumps
-      if (drawFlock()) { stage = 'live'; flock = null; paint(); if (arrow) arrow.gone = 0; }
+      if (drawFlock()) { stage = 'live'; flock = null; paint(); if (arrow && arrow.gone == null) arrow.gone = 0; }
     } else {
       if (arrow) { arrow.gone += dt; if (!drawArrow()) dropArrow(); }
       t += dt;
