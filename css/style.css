@@ -1996,5 +1996,13 @@ a, button, .skill-pill, .tag {
 [data-halftone] .contact-social-link:hover {
   background: linear-gradient(var(--accent-dim), var(--accent-dim)), var(--bg);
 }
+/* The icon links get a small page-coloured patch, so the rings stop short of each glyph.
+   The negative margin hands the padding back, so nothing moves; it also widens the tap area. */
+[data-halftone] .social-link {
+  padding: 8px;
+  margin: -8px;
+  border-radius: 10px;
+  background: var(--bg);
+}
 [data-halftone] .contact-social-link { background: linear-gradient(var(--bg-card), var(--bg-card)), var(--bg); }
 @media print { .halftone { display: none; } }
