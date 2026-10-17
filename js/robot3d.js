@@ -525,8 +525,9 @@
   canvas.addEventListener('pointermove', e => {
     if (!drag) return;
     const now = performance.now(), dx = e.clientX - drag.x;
-    yaw += dx * 0.011;
-    vel = dx * 0.011 / Math.max(0.016, (now - drag.t) / 1000);
+    // the near side follows the pointer
+    yaw -= dx * 0.011;
+    vel = -dx * 0.011 / Math.max(0.016, (now - drag.t) / 1000);
     drag.x = e.clientX; drag.t = now;
     if (reduce.matches || !raf) paint();
   });
