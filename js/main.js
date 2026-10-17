@@ -37,7 +37,24 @@ function typeLoop() {
   setTimeout(typeLoop, delay);
 }
 
-typeLoop();
+// Before the first phrase the subtitle reads as loading, for as long as the hero's dot field
+// takes to sweep in and circle where the first picture will draw. Then the real phrases start.
+function loadingIntro() {
+  if (!typedEl) return;
+  const word = 'Loading', frames = [];
+  for (let i = 1; i <= word.length; i++) frames.push([word.slice(0, i), 80]);
+  for (let round = 0; round < 2; round++) for (const d of ['.', '..', '...', '']) frames.push([word + d, 230]);
+  for (let i = word.length - 1; i >= 0; i--) frames.push([word.slice(0, i), 45]);
+  let n = 0;
+  (function step() {
+    if (n === frames.length) { setTimeout(typeLoop, 250); return; }
+    const [text, delay] = frames[n++];
+    typedEl.textContent = text;
+    setTimeout(step, delay);
+  })();
+}
+
+loadingIntro();
 
 
 

@@ -102,6 +102,8 @@
     const BRUSH = 110;       // px radius the pointer paints
     const LEVELS = 6;        // alpha buckets, so each frame is a handful of strokes
     let gap, w = 0, h = 0, dpr = 1, cols = 0, rows = 0, ink = new Float32Array(0);
+    // The self-drawn stroke paints into its own layer: it glows, where a hand scratches a picture.
+    let glow = new Float32Array(0);
     // The contact strip is a closing echo of the hero, so it runs well under it.
     const STRENGTH = kind === 'band' ? 0.42 : 0.8;
     let visible = false, raf = 0, last = 0, t = 0, inkLive = false;
@@ -123,7 +125,8 @@
       dpr = Math.min(window.devicePixelRatio || 1, 2);
       canvas.width = w * dpr; canvas.height = h * dpr;
       cols = Math.ceil(w / gap) + 1; rows = Math.ceil(h / gap) + 1;
-      ink = new Float32Array(cols * rows);
+      ink = new Float32Array(cols * rows); glow = new Float32Array(cols * rows);
+      clearing();
       buildPicture();
       draw();
     }
@@ -146,14 +149,27 @@
       }
       const left = right + 56, avail = w - 40 - left;
       const s = Math.min(avail, h * 0.62, 560);
-      if (s < 300) return null;
+      if (s < 250) return null;
       const cx = left + avail / 2;
       const cy = Math.max(140 + s / 2, Math.min((top + bottom) / 2, h - 90 - s / 2));
       return { x: cx - s / 2, y: cy - s / 2, s };
     }
 
+    // How far the drifting blob gives way around the picture spot, so the spinner and the
+    // pictures read on clean paper.
+    function clearing() {
+      W = null;
+      if (!box) return;
+      W = new Float32Array(cols * rows);
+      const ccx = box.x + box.s / 2, ccy = box.y + box.s / 2;
+      for (let j = 0; j < rows; j++) for (let i = 0; i < cols; i++) {
+        const d = Math.hypot(i * gap - ccx, j * gap - ccy) / box.s;
+        W[j * cols + i] = d < 0.55 ? 1 : d > 0.95 ? 0 : 1 - (d - 0.55) / 0.4;
+      }
+    }
+
     function buildPicture() {
-      S = O = R = W = null;
+      S = O = R = null;
       if (!box || pic < 0) return;
       const shape = PICTURES[pic], n = cols * rows;
       // Coverage per grid cell, sampled 4 x 4 inside it, so edges come out as smaller rings.
@@ -164,15 +180,11 @@
       g.fillStyle = g.strokeStyle = '#000';
       shape.draw(g);
       const img = g.getImageData(0, 0, m, m).data;
-      S = new Float32Array(n); O = new Float32Array(n).fill(2); R = new Float32Array(n); W = new Float32Array(n);
+      S = new Float32Array(n); O = new Float32Array(n).fill(2); R = new Float32Array(n);
       const sx0 = box.x + shape.seed[0] / 100 * box.s, sy0 = box.y + shape.seed[1] / 100 * box.s;
-      const ccx = box.x + box.s / 2, ccy = box.y + box.s / 2;
       let maxd = 1;
       for (let j = 0; j < rows; j++) for (let i = 0; i < cols; i++) {
         const k = j * cols + i, x = i * gap, y = j * gap;
-        // Hold the drifting blob back around the picture so the picture reads on its own.
-        const d = Math.hypot(x - ccx, y - ccy) / box.s;
-        W[k] = d < 0.55 ? 1 : d > 0.95 ? 0 : 1 - (d - 0.55) / 0.4;
         const px = Math.round((x - box.x) / sub) + 4, py = Math.round((y - box.y) / sub) + 4;
         if (px < 2 || py < 2 || px > m - 3 || py > m - 3) continue;
         let a = 0;
@@ -217,7 +229,7 @@
       const paths = Array.from({ length: LEVELS }, () => new Path2D());
       const picPaths = Array.from({ length: LEVELS }, () => new Path2D());
       const maxR = gap * 0.46;
-      const hold = S ? shown : 0;
+      const hold = W ? shown : 0;
       // A pulse runs out from the middle once the phrase finishes typing.
       const since = t - doneAt, pulseR = since * 0.42, pulseOn = since < 1600;
       const ccx = box ? box.x + box.s / 2 : 0, ccy = box ? box.y + box.s / 2 : 0;
@@ -239,7 +251,7 @@
           let pv = 0;
           if (hold) {
             v *= 1 - 0.92 * hold * W[k];
-            if (R[k] > 0.002) {
+            if (S && R[k] > 0.002) {
               // Lit a touch more toward the bottom right, and a slow sheen crosses it once drawn.
               const shade = 0.84 + 0.16 * ((x - box.x) + (y - box.y)) / (2 * box.s);
               const sheen = 0.9 + 0.1 * Math.sin((x + y) * 0.018 - s * 2.4);
@@ -250,16 +262,18 @@
               }
             }
           }
-          const p = ink[k];
+          const p = ink[k], q = glow[k];
           if (p > 0.004) inkLive = true; else ink[k] = 0;
+          if (q > 0.004) inkLive = true; else glow[k] = 0;
           // Over the picture the pointer scratches it away and it heals; elsewhere it paints.
           const onPic = pv > 0.04;
-          if (onPic) { v = pv * (1 - 0.8 * Math.min(1, p * 1.6)); }
-          else { v = Math.max(v, pv) + p * (hold ? 1 - 0.85 * hold * W[k] : 1); }
+          if (onPic) { v = Math.max(pv * (1 - 0.8 * Math.min(1, p * 1.6)), q); }
+          else { v = Math.max(v, pv) + p * (hold ? 1 - 0.85 * hold * W[k] : 1) + q; }
           if (v < 0.03) continue;
           v = Math.min(v, 1);
           const r = 0.6 + (maxR - 0.6) * v;
-          const path = (onPic ? picPaths : paths)[Math.min(LEVELS - 1, (v * LEVELS) | 0)];
+          // The picture and the spinner are the subject, so they take the heavier ink.
+          const path = (onPic || (box && q > 0.25) ? picPaths : paths)[Math.min(LEVELS - 1, (v * LEVELS) | 0)];
           path.moveTo(x + r, y);
           path.arc(x, y, r, 0, Math.PI * 2);
         }
@@ -282,33 +296,36 @@
 
     // Each cell eases toward how revealed it should be for the text typed so far.
     function stepPicture(dt) {
-      if (!S) return;
-      const P = typed * 1.12, ease = 1 - Math.pow(0.78, dt / 16.7);
-      for (let k = 0; k < S.length; k++) {
-        if (!S[k]) continue;
-        const target = Math.max(0, Math.min(1, (P - O[k]) / 0.12));
-        R[k] += (target - R[k]) * ease;
+      if (!W) return;
+      if (S) {
+        const P = typed * 1.12, ease = 1 - Math.pow(0.78, dt / 16.7);
+        for (let k = 0; k < S.length; k++) {
+          if (!S[k]) continue;
+          const target = Math.max(0, Math.min(1, (P - O[k]) / 0.12));
+          R[k] += (target - R[k]) * ease;
+        }
       }
-      // The blob gives way as soon as typing starts and comes back once the phrase is gone.
-      const want = typed > 0 ? 1 : 0;
+      // The blob gives way while the spinner runs and while a phrase is up, and comes back
+      // in the pause between phrases.
+      const want = ghost || (S && typed > 0) ? 1 : 0;
       shown += (want - shown) * (1 - Math.pow(want ? 0.9 : 0.96, dt / 16.7));
     }
 
     // Paint along the segment since the last event, so a fast flick leaves a full stroke.
-    function paint(x, y, from = hand, amt = 0.28) {
+    function paint(x, y, from = hand, amt = 0.28, layer = ink, brush = BRUSH) {
       if (reduce.matches) return;
       const px = from.x, py = from.y;
       const steps = px === null ? 1 : Math.max(1, Math.ceil(Math.hypot(x - px, y - py) / (gap * 2)));
       for (let n = 1; n <= steps; n++) {
         const cx = px === null ? x : px + (x - px) * n / steps;
         const cy = px === null ? y : py + (y - py) * n / steps;
-        const i0 = Math.max(0, Math.floor((cx - BRUSH) / gap)), i1 = Math.min(cols - 1, Math.ceil((cx + BRUSH) / gap));
-        const j0 = Math.max(0, Math.floor((cy - BRUSH) / gap)), j1 = Math.min(rows - 1, Math.ceil((cy + BRUSH) / gap));
+        const i0 = Math.max(0, Math.floor((cx - brush) / gap)), i1 = Math.min(cols - 1, Math.ceil((cx + brush) / gap));
+        const j0 = Math.max(0, Math.floor((cy - brush) / gap)), j1 = Math.min(rows - 1, Math.ceil((cy + brush) / gap));
         for (let j = j0; j <= j1; j++) for (let i = i0; i <= i1; i++) {
-          const d = Math.hypot(i * gap - cx, j * gap - cy) / BRUSH;
+          const d = Math.hypot(i * gap - cx, j * gap - cy) / brush;
           if (d >= 1) continue;
           const k = j * cols + i, a = (1 - d * d) * amt;
-          ink[k] = Math.min(1, ink[k] + a);
+          layer[k] = Math.min(1, layer[k] + a);
         }
       }
       from.x = x; from.y = y;
@@ -316,8 +333,23 @@
     }
 
     // The self-drawn stroke: in from the lower left on a wave, then once around the shape.
+    // With pictures on, the stroke is a loading spinner: in on a wave, a turn and a half around
+    // the spot the first picture will draw in, then a spiral into its middle, where the picture
+    // starts. It runs as long as the subtitle reads Loading.
     function ghostAt(u) {
       const [bx, by] = blobs()[0], m = Math.min(w, h);
+      if (box) {
+        const cx = box.x + box.s / 2, cy = box.y + box.s / 2, R0 = box.s * 0.34;
+        if (u < 0.3) {
+          const a = u / 0.3, e = a * a * (3 - 2 * a);
+          return [-0.05 * w + (cx - R0 + 0.05 * w) * e,
+                  h * 0.86 + (cy - h * 0.86) * e + h * 0.08 * Math.sin(a * Math.PI * 3) * (1 - a)];
+        }
+        const a = (u - 0.3) / 0.7;
+        const th = Math.PI + a * Math.PI * 2 * 1.85;
+        const r = a < 0.72 ? R0 : R0 * (1 - 0.9 * ((a - 0.72) / 0.28) ** 1.4);
+        return [cx + r * Math.cos(th), cy + r * Math.sin(th)];
+      }
       const cx = Math.min(bx, w * 0.84), cy = Math.min(by, h * 0.82), R0 = m * (w < 760 ? 0.22 : 0.2);
       if (u < 0.5) {
         const a = u / 0.5;
@@ -327,7 +359,7 @@
       const th = Math.PI + ((u - 0.5) / 0.5) * Math.PI * 2;
       return [cx + R0 * Math.cos(th), cy + R0 * Math.sin(th)];
     }
-    function startGhost(amt) { ghost = { at: t, dur: 2600, amt, x: null, y: null }; idleAt = t; }
+    function startGhost(amt) { ghost = { at: t, dur: box ? 2850 : 2600, amt, x: null, y: null }; idleAt = t; }
 
     function frame(now) {
       raf = -1;               // mid-frame: a paint from inside it must not schedule a second loop
@@ -339,14 +371,17 @@
         // With pictures on, they are the motion; the idle stroke would only crowd them.
         if (!ghost && !box && t - idleAt > 8000) startGhost(0.16);
         if (ghost) {
-          const u = Math.min(1, (t - ghost.at) / ghost.dur), e = u * u * (3 - 2 * u);
-          paint(...ghostAt(e), ghost, ghost.amt);
+          const u = Math.min(1, (t - ghost.at) / ghost.dur);
+          // The spinner keeps an even pace; the plain stroke eases in and out.
+          const e = box ? u : u * u * (3 - 2 * u);
+          paint(...ghostAt(e), ghost, box ? 0.42 : ghost.amt, glow, box ? 54 : BRUSH);
           if (u >= 1) ghost = null;
         }
         stepPicture(dt);
       }
-      const fade = Math.pow(0.975, dt / 16.7);
-      for (let k = 0; k < ink.length; k++) if (ink[k]) ink[k] *= fade;
+      // The spinner's tail is short so it reads as a moving head, not a smear.
+      const fade = Math.pow(0.975, dt / 16.7), gfade = Math.pow(box ? 0.95 : 0.975, dt / 16.7);
+      for (let k = 0; k < ink.length; k++) { if (ink[k]) ink[k] *= fade; if (glow[k]) glow[k] *= gfade; }
       draw();
       raf = visible && !document.hidden && !reduce.matches ? requestAnimationFrame(frame) : 0;
     }
@@ -378,8 +413,7 @@
     let seen = false;
     new IntersectionObserver(([e]) => {
       visible = e.isIntersecting;
-      // With pictures on, the first picture is the intro; the stroke would scribble through it.
-      if (visible && !seen) { seen = true; if (kind === 'hero' && !box) startGhost(0.3); }
+      if (visible && !seen) { seen = true; if (kind === 'hero') startGhost(0.3); }
       if (visible) kick();
     }).observe(host);
     new ResizeObserver(size).observe(host);
