@@ -9,10 +9,10 @@
 
   const Robot3D = (() => {
     const A = {              // albedo: how much light each material sends back (0 black .. 1 white)
-      maroon: 0.3, silver: 0.8, grey: 0.55, dark: 0.18, black: 0.06, blue: 0.22, white: 1, tube: 0.78, steel: 0.62,
+      maroon: 0.3, silver: 0.8, grey: 0.55, dark: 0.18, black: 0.06, blue: 0.22, white: 1, tube: 0.78, amber: 0.74, steel: 0.62,
     };
     const TZ = 1.0;          // turret axis
-    const IN = { y: 4.55, z: -8.0 };  // intake shaft, high across the front: balls go in under it
+    const IN = { y: 4.45, z: -9.1 };  // intake shaft, high across the front: balls go in under it
     const TR = { y: 5.6, z: -3.3 };   // transfer shaft, under the front of the turret
     const TT = 7.9;          // top of the turntable
 
@@ -172,14 +172,19 @@
       // it spins fast enough to look like a solid gold cylinder; here it turns slowly enough to see
       // the tubes (part 3).
       tube([-8.7, IN.y, IN.z], [8.7, IN.y, IN.z], 0.25, A.steel, 3, true);
-      for (const x of [-8.35, 8.35]) tube([x - 0.16, IN.y, IN.z], [x + 0.16, IN.y, IN.z], 1.22, A.grey, 3, true, A.grey);
-      for (let k = 0; k < 10; k++) {
-        const a = k / 10 * Math.PI * 2, dy = Math.cos(a) * 1.05, dz = Math.sin(a) * 1.05;
-        tube([-8.35, IN.y + dy, IN.z + dz], [8.35, IN.y + dy, IN.z + dz], 0.17, A.tube, 3);
+      for (const x of [-8.35, 8.35]) tube([x - 0.2, IN.y, IN.z], [x + 0.2, IN.y, IN.z], 1.3, A.dark, 3, true, A.dark);
+      // the tubing as it looks running: a smooth amber cylinder, each tube a darker stripe on it
+      {
+        const R = 1.15, n = Math.ceil(2 * Math.PI * R / step);
+        for (let i = 0; i < n; i++) {
+          const a = i / n * Math.PI * 2, c = Math.cos(a), sn = Math.sin(a);
+          const stripe = Math.abs(((a / (Math.PI * 2 / 10)) % 1) - 0.5) > 0.37;
+          for (let x = -8.15; x <= 8.15; x += step) add(x, IN.y + c * R, IN.z + sn * R, 0, c, sn, stripe ? A.black : A.amber, 3);
+        }
       }
       // bearing plates holding the intake shaft, and a ramp from the intake up to the transfer
-      for (const sx of [-1, 1]) plateX(8.7 * sx, [[-9.1, 2.9], [-6.0, 2.9], [-6.0, 6.0], [-9.1, 6.0]], A.silver, 0,
-        (z, y) => (z - IN.z) ** 2 + (y - IN.y) ** 2 < 0.25 || ((z + 6.8) ** 2 + (y - 3.7) ** 2 < 0.15));
+      for (const sx of [-1, 1]) plateX(8.75 * sx, [[-10.3, 3.2], [-6.0, 3.2], [-6.0, 6.0], [-9.6, 6.0], [-10.3, 5.3]], A.silver, 0,
+        (z, y) => (z - IN.z) ** 2 + (y - IN.y) ** 2 < 0.25 || ((z + 7.0) ** 2 + (y - 4.0) ** 2 < 0.15));
       rect([-8.6, 1.0, -5.4], [17.2, 0, 0], [0, 3.3, 3.0], [0, 0.67, -0.74], A.grey);
       // the perforated channel across the top of the front, with a white label on it
       {
@@ -373,7 +378,7 @@
       if (z2 <= depth[c]) continue;
       depth[c] = z2; NX[c] = mx; NY[c] = my; NZ[c] = mz2; AL[c] = P[i + 6]; MY[c] = P[i + 1];
       const b = Math.max(0, mx * L[0] + my * L[1] + mz2 * L[2]);
-      tone[c] = 0.08 + 0.5 * (1 - P[i + 6]) * (0.6 + 0.4 * (1 - b)) + 0.14 * (1 - b);
+      tone[c] = 0.04 + 0.3 * (1 - P[i + 6]) * (0.6 + 0.4 * (1 - b)) + 0.08 * (1 - b);
     }
     const out = new Float32Array(tone);
     for (let gy = 1; gy < rows - 1; gy++) for (let gx = 1; gx < cols - 1; gx++) {
@@ -401,7 +406,7 @@
     if (list) return list;
     ctx.clearRect(0, 0, W, H);
     ctx.fillStyle = color;
-    paths.forEach((p, l) => { ctx.globalAlpha = 0.5 + 0.5 * (l + 1) / LV; ctx.fill(p); });
+    paths.forEach((p, l) => { ctx.globalAlpha = 0.28 + 0.72 * ((l + 1) / LV) ** 1.3; ctx.fill(p); });
     ctx.globalAlpha = 1;
   }
 
