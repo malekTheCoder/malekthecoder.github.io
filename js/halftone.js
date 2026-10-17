@@ -30,9 +30,31 @@
   function line(g, p) { g.beginPath(); g.moveTo(p[0], p[1]); for (let i = 2; i < p.length; i += 2) g.lineTo(p[i], p[i + 1]); g.stroke(); }
   function poly(g, p) { g.beginPath(); g.moveTo(p[0], p[1]); for (let i = 2; i < p.length; i += 2) g.lineTo(p[i], p[i + 1]); g.closePath(); g.fill(); }
   function cut(g, alpha, fn) { g.save(); g.globalCompositeOperation = 'destination-out'; g.globalAlpha = alpha; fn(); g.restore(); }
+  // Path builders, for pictures assembled from separately outlined parts.
+  function capsule(p, x0, y0, x1, y1, w0, w1) {
+    const dx = x1 - x0, dy = y1 - y0, L = Math.hypot(dx, dy), nx = -dy / L, ny = dx / L, a = Math.atan2(dy, dx);
+    p.moveTo(x0 + nx * w0 / 2, y0 + ny * w0 / 2); p.lineTo(x1 + nx * w1 / 2, y1 + ny * w1 / 2);
+    p.arc(x1, y1, w1 / 2, a + Math.PI / 2, a - Math.PI / 2, true);
+    p.lineTo(x0 - nx * w0 / 2, y0 - ny * w0 / 2); p.arc(x0, y0, w0 / 2, a - Math.PI / 2, a + Math.PI / 2, true);
+    p.closePath();
+  }
+  function rrect(p, x, y, w, h, r) {
+    p.moveTo(x + r, y); p.arcTo(x + w, y, x + w, y + h, r); p.arcTo(x + w, y + h, x, y + h, r);
+    p.arcTo(x, y + h, x, y, r); p.arcTo(x, y, x + w, y, r); p.closePath();
+  }
+  function ell(p, x, y, rx, ry, rot = 0) { p.moveTo(x + rx * Math.cos(rot), y + rx * Math.sin(rot)); p.ellipse(x, y, rx, ry, rot, 0, Math.PI * 2); p.closePath(); }
+  // A stroke that tapers from r0 to r1 along a cubic curve.
+  function taper(g, p0, p1, p2, p3, r0, r1) {
+    for (let i = 0; i <= 60; i++) {
+      const t = i / 60, u = 1 - t;
+      dot(g, u * u * u * p0[0] + 3 * u * u * t * p1[0] + 3 * u * t * t * p2[0] + t * t * t * p3[0],
+             u * u * u * p0[1] + 3 * u * u * t * p1[1] + 3 * u * t * t * p2[1] + t * t * t * p3[1], r0 + (r1 - r0) * t);
+    }
+  }
 
   // In phrase order: Computer Engineering, Machine Learning, Robotics, Eagle Scout.
-  // seed is where the drawing starts; outlineFirst traces the edge before filling it in.
+  // w and h are the drawing's own units (square unless given); seed is where the drawing
+  // starts; outlineFirst traces the edge before filling it in.
   const PICTURES = [
     { // a chip, its die knocked back so the package reads as two layers
       seed: [50, 50], outlineFirst: true,
@@ -59,34 +81,75 @@
         cut(g, 0.6, () => pos.flat().forEach(([x, y]) => dot(g, x, y, 2.4)));
       },
     },
-    { // a robot arm, built up from its base
-      seed: [40, 100], outlineFirst: false,
+    { // a humanoid modelled on the Unitree G1, drawn like an engineering drawing: light fill,
+      // every part outlined, joint motors as rings with a hub, push-rods, and a height dimension
+      w: 64, h: 100, seed: [30, 38], outlineFirst: true,
       draw(g) {
-        g.lineCap = 'round'; g.lineJoin = 'round';
-        rr(g, 16, 86, 46, 9, 2.5); g.fill();
-        poly(g, [27, 86, 51, 86, 47, 72, 31, 72]);
-        g.lineWidth = 12; line(g, [39, 70, 54, 34]);
-        g.lineWidth = 9.5; line(g, [54, 34, 78, 44]);
-        dot(g, 39, 70, 9); dot(g, 54, 34, 7.5); dot(g, 78, 44, 6);
-        cut(g, 0.6, () => { dot(g, 39, 70, 3.6); dot(g, 54, 34, 3); });
-        g.lineWidth = 6; line(g, [78, 44, 82, 54]);
-        line(g, [72, 56, 92, 53]);
-        line(g, [73, 56, 71, 70]); line(g, [91, 53, 93, 67]);
+        const parts = [], motors = [];
+        const part = fn => { const p = new Path2D(); fn(p); parts.push(p); };
+        const motor = (x, y, r) => { motors.push([x, y, r]); part(p => ell(p, x, y, r, r)); };
+        const sides = fn => [x => x, x => 60 - x].forEach(fn);
+        part(p => ell(p, 30, 3.4, 2.5, 1.7));                                   // LiDAR dome
+        part(p => ell(p, 30, 9.8, 4.7, 5.8));                                   // head
+        part(p => rrect(p, 28.3, 15, 3.4, 3, 0.8));                             // neck
+        part(p => { p.moveTo(22.2, 17.8); p.lineTo(37.8, 17.8); p.bezierCurveTo(40.4, 19, 40.6, 24, 38.8, 29);
+          p.bezierCurveTo(37.8, 32.2, 36, 34.4, 34.6, 35.4); p.lineTo(25.4, 35.4); p.bezierCurveTo(24, 34.4, 22.2, 32.2, 21.2, 29);
+          p.bezierCurveTo(19.4, 24, 19.6, 19, 22.2, 17.8); p.closePath(); });   // torso
+        motor(30, 38.6, 3.4);                                                   // waist
+        part(p => { p.moveTo(24.6, 41.4); p.lineTo(35.4, 41.4); p.lineTo(36.6, 46.2); p.lineTo(32.4, 49.4);
+          p.lineTo(27.6, 49.4); p.lineTo(23.4, 46.2); p.closePath(); });        // pelvis
+        sides(X => {
+          motor(X(19.4), 20.8, 3.3);                                            // shoulder
+          part(p => capsule(p, X(18.6), 24, X(16.4), 35, 3.6, 3.2));            // upper arm
+          motor(X(16.2), 37, 2.5);                                              // elbow
+          part(p => capsule(p, X(16), 39.4, X(14.8), 49.2, 3.5, 2.7));          // forearm
+          motor(X(14.7), 50.6, 1.6);                                            // wrist
+          part(p => rrect(p, Math.min(X(12.9), X(16.5)), 51.8, 3.6, 3.6, 1));   // palm
+          for (const [a, b, c, d] of [[13.4, 55.2, 12.8, 59], [14.9, 55.4, 14.8, 59.6], [16.2, 55.2, 16.9, 58.6]])
+            part(p => capsule(p, X(a), b, X(c), d, 1.05, 0.9));                 // three fingers
+          motor(X(23.4), 49.6, 3.6);                                            // hip
+          part(p => capsule(p, X(24.6), 52.6, X(23.4), 66, 6, 4.4));            // thigh
+          motor(X(23.2), 68.2, 3.1);                                            // knee
+          part(p => capsule(p, X(23.2), 71, X(22.8), 87.6, 3.6, 2.5));          // shin
+          motor(X(22.8), 88.8, 1.7);                                            // ankle
+          part(p => rrect(p, Math.min(X(18.4), X(27.2)), 90.4, 8.8, 3.6, 1.4)); // foot plate
+        });
+        const all = new Path2D(); parts.forEach(p => all.addPath(p));
+        g.save(); g.globalAlpha = 0.22; g.fill(all); g.restore();
+        g.save(); g.lineWidth = 1.1; g.lineJoin = 'round'; parts.forEach(p => g.stroke(p)); g.restore();
+        g.save(); g.lineWidth = 0.8;
+        motors.forEach(([x, y, r]) => { g.beginPath(); g.arc(x, y, r * 0.58, 0, Math.PI * 2); g.stroke(); dot(g, x, y, Math.max(0.6, r * 0.22)); });
+        g.restore();
+        g.save(); g.lineWidth = 0.8; g.lineCap = 'round';
+        g.save(); g.globalAlpha = 0.7; rr(g, 27, 7.2, 6, 6.4, 2.6); g.fill(); g.restore();   // face panel
+        g.save(); g.globalAlpha = 0.6; line(g, [27.8, 3.4, 32.2, 3.4]); g.restore();         // LiDAR band
+        g.globalAlpha = 0.85;
+        line(g, [30, 18.6, 30, 34.6]); line(g, [22.2, 26.6, 28.6, 28.4]); line(g, [37.8, 26.6, 31.4, 28.4]);
+        line(g, [25.6, 31.8, 34.4, 31.8]); line(g, [27, 45.6, 33, 45.6]);
+        sides(X => {
+          line(g, [X(20.6), 70.2, X(20.6), 87.4]); line(g, [X(25.8), 70.2, X(25.2), 87.4]);   // knee to ankle push-rods
+          line(g, [X(17.4), 26.6, X(16), 33.6]); line(g, [X(22.2), 56, X(21.8), 63.4]); line(g, [X(19.6), 92.2, X(26), 92.2]);
+        });
+        g.restore();
+        g.save(); g.globalAlpha = 0.5; g.lineWidth = 0.6; g.setLineDash([2.2, 1.6]);
+        line(g, [30, 0, 30, 1.4]); line(g, [30, 50.4, 30, 99.6]); line(g, [33, 1.7, 59.4, 1.7]); line(g, [39.6, 94, 59.4, 94]);
+        g.setLineDash([]); g.globalAlpha = 0.7; g.lineWidth = 0.75;
+        line(g, [57, 1.7, 57, 94]); line(g, [55.7, 4.3, 57, 1.7, 58.3, 4.3]); line(g, [55.7, 91.4, 57, 94, 58.3, 91.4]);
+        for (let y = 11; y < 92; y += 9.2) line(g, [56.1, y, 57.9, y]);
+        g.restore();
       },
     },
-    { // an eagle with raised wings; each feather notch is wider than a grid step so it survives
-      seed: [50, 46], outlineFirst: true,
+    { // the Scouting fleur-de-lis: a tall centre petal, side petals curling out and back over,
+      // a band across, and short stems below
+      seed: [50, 62], outlineFirst: true,
       draw(g) {
-        const wing = [47, 46, 38, 33, 24, 20, 9, 9, 11, 17, 5, 21, 15, 26, 8, 31, 19, 34, 12, 40,
-                      24, 41, 19, 48, 31, 47, 30, 54, 41, 52, 46, 57];
-        poly(g, wing);
-        poly(g, wing.map((v, i) => (i % 2 ? v : 100 - v)));
-        g.beginPath(); g.ellipse(50, 51, 9, 14, 0, 0, Math.PI * 2); g.fill();
-        g.lineWidth = 9; g.lineCap = 'round'; line(g, [50, 42, 51, 27]);
-        dot(g, 51, 22, 7);
-        poly(g, [56, 18, 67, 22, 57, 27]);
-        poly(g, [43, 61, 57, 61, 64, 77, 57, 73, 50, 80, 43, 73, 36, 77]);
-        cut(g, 1, () => dot(g, 53, 20, 1.8));
+        g.beginPath(); g.moveTo(42.5, 62); g.bezierCurveTo(36, 44, 41, 20, 50, 3); g.bezierCurveTo(59, 20, 64, 44, 57.5, 62); g.closePath(); g.fill();
+        taper(g, [43, 59], [22, 58], [8, 42], [14, 28], 5.6, 4.2); taper(g, [14, 28], [19, 17], [31, 20], [29, 30], 4.2, 1.4);
+        taper(g, [57, 59], [78, 58], [92, 42], [86, 28], 5.6, 4.2); taper(g, [86, 28], [81, 17], [69, 20], [71, 30], 4.2, 1.4);
+        rr(g, 31, 57, 38, 9, 3); g.fill();
+        poly(g, [45, 66, 55, 66, 52.5, 83, 50, 87, 47.5, 83]);
+        taper(g, [44, 67], [37, 71], [30, 74], [24, 83], 3.6, 1.4); taper(g, [56, 67], [63, 71], [70, 74], [76, 83], 3.6, 1.4);
+        cut(g, 0.45, () => { g.lineWidth = 1.8; line(g, [50, 15, 50, 55]); });
       },
     },
   ];
@@ -99,7 +162,7 @@
     host.prepend(canvas);
     const ctx = canvas.getContext('2d');
 
-    const BRUSH = 110;       // px radius the pointer paints
+    const BRUSH = 95;        // px radius the pointer paints
     const LEVELS = 6;        // alpha buckets, so each frame is a handful of strokes
     let gap, w = 0, h = 0, dpr = 1, cols = 0, rows = 0, ink = new Float32Array(0);
     // The self-drawn stroke paints into its own layer: it glows, where a hand scratches a picture.
@@ -115,13 +178,14 @@
     // Picture state. box is where pictures go (null when there is no room beside the text).
     let box = null, pic = -1, typed = 0, shown = 0, doneAt = -1e9;
     let S = null, O = null, R = null, W = null;   // coverage, reveal order, reveal now, blob hold-back
+    let rect = null;          // where the current picture sits; tall pictures get a taller one
 
     function size() {
       const r = host.getBoundingClientRect();
       w = Math.round(r.width); h = Math.round(r.height);
       box = kind === 'hero' ? placeBox(r) : null;
-      // Pictures need a finer grid to hold their detail; elsewhere the coarser one is calmer.
-      gap = box ? 12 : w < 600 ? 13 : 16;
+      // Small dots throughout; finest where pictures are drawn, so they hold their detail.
+      gap = box ? 7 : w < 600 ? 10 : 12;
       dpr = Math.min(window.devicePixelRatio || 1, 2);
       canvas.width = w * dpr; canvas.height = h * dpr;
       cols = Math.ceil(w / gap) + 1; rows = Math.ceil(h / gap) + 1;
@@ -151,8 +215,9 @@
       const s = Math.min(avail, h * 0.62, 560);
       if (s < 250) return null;
       const cx = left + avail / 2;
-      const cy = Math.max(140 + s / 2, Math.min((top + bottom) / 2, h - 90 - s / 2));
-      return { x: cx - s / 2, y: cy - s / 2, s };
+      const mid = (top + bottom) / 2;
+      const cy = Math.max(140 + s / 2, Math.min(mid, h - 90 - s / 2));
+      return { x: cx - s / 2, y: cy - s / 2, s, avail, mid };
     }
 
     // How far the drifting blob gives way around the picture spot, so the spinner and the
@@ -168,27 +233,42 @@
       }
     }
 
+    // A square picture fills the box; a tall one stands as tall as the hero allows.
+    function pictureRect(shape) {
+      const pw = shape.w || 100, ph = shape.h || 100;
+      if (pw === ph) return { x: box.x, y: box.y, w: box.s, h: box.s };
+      const H = Math.min(h - 200, 720, box.avail * ph / pw), Wd = H * pw / ph;
+      const cy = Math.max(120 + H / 2, Math.min(box.mid, h - 70 - H / 2));
+      return { x: box.x + box.s / 2 - Wd / 2, y: cy - H / 2, w: Wd, h: H };
+    }
+
     function buildPicture() {
-      S = O = R = null;
-      if (!box || pic < 0) return;
-      const shape = PICTURES[pic], n = cols * rows;
-      // Coverage per grid cell, sampled 4 x 4 inside it, so edges come out as smaller rings.
-      const sub = gap / 4, m = Math.ceil(box.s / sub) + 8;
-      const c = document.createElement('canvas'); c.width = c.height = m;
+      S = O = R = null; rect = null;
+      if (!box || pic < 0) { clearing(); return; }
+      const shape = PICTURES[pic], n = cols * rows, pw = shape.w || 100, ph = shape.h || 100;
+      rect = pictureRect(shape);
+      // Coverage per grid cell, sampled 4 x 4 inside it, so edges come out as smaller dots.
+      const sub = gap / 4, mw = Math.ceil(rect.w / sub) + 8, mh = Math.ceil(rect.h / sub) + 8;
+      const c = document.createElement('canvas'); c.width = mw; c.height = mh;
       const g = c.getContext('2d');
-      g.translate(4, 4); g.scale((m - 8) / 100, (m - 8) / 100);
+      g.translate(4, 4); g.scale((mh - 8) / ph, (mh - 8) / ph);
       g.fillStyle = g.strokeStyle = '#000';
       shape.draw(g);
-      const img = g.getImageData(0, 0, m, m).data;
+      const img = g.getImageData(0, 0, mw, mh).data;
       S = new Float32Array(n); O = new Float32Array(n).fill(2); R = new Float32Array(n);
-      const sx0 = box.x + shape.seed[0] / 100 * box.s, sy0 = box.y + shape.seed[1] / 100 * box.s;
+      // The blob gives way around the picture as well as around the spinner's spot.
+      clearing();
+      const rcx = rect.x + rect.w / 2, rcy = rect.y + rect.h / 2;
+      const sx0 = rect.x + shape.seed[0] / pw * rect.w, sy0 = rect.y + shape.seed[1] / ph * rect.h;
       let maxd = 1;
       for (let j = 0; j < rows; j++) for (let i = 0; i < cols; i++) {
         const k = j * cols + i, x = i * gap, y = j * gap;
-        const px = Math.round((x - box.x) / sub) + 4, py = Math.round((y - box.y) / sub) + 4;
-        if (px < 2 || py < 2 || px > m - 3 || py > m - 3) continue;
+        const e = Math.hypot((x - rcx) / (rect.w / 2 + 70), (y - rcy) / (rect.h / 2 + 70));
+        W[k] = Math.max(W[k], e < 0.85 ? 1 : e > 1.25 ? 0 : 1 - (e - 0.85) / 0.4);
+        const px = Math.round((x - rect.x) / sub) + 4, py = Math.round((y - rect.y) / sub) + 4;
+        if (px < 2 || py < 2 || px > mw - 3 || py > mh - 3) continue;
         let a = 0;
-        for (let v = -2; v < 2; v++) for (let u = -2; u < 2; u++) a += img[((py + v) * m + px + u) * 4 + 3];
+        for (let v = -2; v < 2; v++) for (let u = -2; u < 2; u++) a += img[((py + v) * mw + px + u) * 4 + 3];
         S[k] = a / (16 * 255);
         if (S[k] > 0.08) maxd = Math.max(maxd, Math.hypot(x - sx0, y - sy0));
       }
@@ -232,7 +312,8 @@
       const hold = W ? shown : 0;
       // A pulse runs out from the middle once the phrase finishes typing.
       const since = t - doneAt, pulseR = since * 0.42, pulseOn = since < 1600;
-      const ccx = box ? box.x + box.s / 2 : 0, ccy = box ? box.y + box.s / 2 : 0;
+      const ccx = rect ? rect.x + rect.w / 2 : box ? box.x + box.s / 2 : 0;
+      const ccy = rect ? rect.y + rect.h / 2 : box ? box.y + box.s / 2 : 0;
       inkLive = false;
       for (let j = 0; j < rows; j++) {
         const y = j * gap;
@@ -253,7 +334,7 @@
             v *= 1 - 0.92 * hold * W[k];
             if (S && R[k] > 0.002) {
               // Lit a touch more toward the bottom right, and a slow sheen crosses it once drawn.
-              const shade = 0.84 + 0.16 * ((x - box.x) + (y - box.y)) / (2 * box.s);
+              const shade = 0.84 + 0.16 * ((x - rect.x) + (y - rect.y)) / (rect.w + rect.h);
               const sheen = 0.9 + 0.1 * Math.sin((x + y) * 0.018 - s * 2.4);
               pv = S[k] * R[k] * shade * sheen;
               if (pulseOn) {
@@ -265,15 +346,17 @@
           const p = ink[k], q = glow[k];
           if (p > 0.004) inkLive = true; else ink[k] = 0;
           if (q > 0.004) inkLive = true; else glow[k] = 0;
-          // Over the picture the pointer scratches it away and it heals; elsewhere it paints.
+          // Over the picture the pointer only dents it a little; elsewhere it paints.
           const onPic = pv > 0.04;
-          if (onPic) { v = Math.max(pv * (1 - 0.8 * Math.min(1, p * 1.6)), q); }
+          if (onPic) { v = Math.max(pv * (1 - 0.3 * Math.min(1, p)), q); }
           else { v = Math.max(v, pv) + p * (hold ? 1 - 0.85 * hold * W[k] : 1) + q; }
           if (v < 0.03) continue;
           v = Math.min(v, 1);
-          const r = 0.6 + (maxR - 0.6) * v;
-          // The picture and the spinner are the subject, so they take the heavier ink.
-          const path = (onPic || (box && q > 0.25) ? picPaths : paths)[Math.min(LEVELS - 1, (v * LEVELS) | 0)];
+          // The picture and the spinner are the subject: solid dots whose area follows the ink,
+          // like print halftone. The field around them stays in rings.
+          const solid = onPic || (box && q > 0.25);
+          const r = solid ? gap * 0.5 * Math.sqrt(v) : 0.6 + (maxR - 0.6) * v;
+          const path = (solid ? picPaths : paths)[Math.min(LEVELS - 1, (v * LEVELS) | 0)];
           path.moveTo(x + r, y);
           path.arc(x, y, r, 0, Math.PI * 2);
         }
@@ -284,13 +367,11 @@
         ctx.globalAlpha = (0.1 + 0.55 * ((l + 1) / LEVELS)) * STRENGTH;
         ctx.stroke(path);
       });
-      // The picture is the subject, so it gets full ink and a slightly heavier line.
-      ctx.lineWidth = 1.25;
+      ctx.fillStyle = accent;
       picPaths.forEach((path, l) => {
-        ctx.globalAlpha = 0.22 + 0.78 * ((l + 1) / LEVELS);
-        ctx.stroke(path);
+        ctx.globalAlpha = 0.5 + 0.5 * ((l + 1) / LEVELS);
+        ctx.fill(path);
       });
-      ctx.lineWidth = 1;
       ctx.globalAlpha = 1;
     }
 
@@ -312,7 +393,7 @@
     }
 
     // Paint along the segment since the last event, so a fast flick leaves a full stroke.
-    function paint(x, y, from = hand, amt = 0.28, layer = ink, brush = BRUSH) {
+    function paint(x, y, from = hand, amt = 0.2, layer = ink, brush = BRUSH) {
       if (reduce.matches) return;
       const px = from.x, py = from.y;
       const steps = px === null ? 1 : Math.max(1, Math.ceil(Math.hypot(x - px, y - py) / (gap * 2)));
