@@ -219,6 +219,10 @@
 
     // Picture state. box is where pictures go (null when there is no room beside the text).
     let box = null, pic = -1, typed = 0, shown = 0, doneAt = -1e9;
+    // How much of the phrase has been typed, and when it started. A picture follows the typing but
+    // never draws faster than DRAW ms, so a short word gets the same unhurried drawing as a long one.
+    let charP = 0, phraseAt = 0;
+    const DRAW = 1900;
     let S = null, O = null, R = null, W = null;   // coverage, reveal order, reveal now, blob hold-back
     let rect = null;          // where the current picture sits; tall pictures get a taller one
 
@@ -421,6 +425,9 @@
     function stepPicture(dt) {
       if (!W) return;
       if (S) {
+        const was = typed;
+        typed = Math.min(charP, Math.max(0, (t - phraseAt) / DRAW));
+        if (typed >= 1 && was < 1) doneAt = t;
         const P = typed * 1.12, ease = 1 - Math.pow(0.78, dt / 16.7);
         for (let k = 0; k < S.length; k++) {
           if (!S[k]) continue;
@@ -518,9 +525,8 @@
     if (kind === 'hero') {
       document.addEventListener('hero:typing', ({ detail }) => {
         if (reduce.matches) return;
-        if (detail.index !== pic) { pic = detail.index; buildPicture(); }
-        if (detail.progress >= 1 && typed < 1) doneAt = t;
-        typed = detail.progress;
+        if (detail.index !== pic) { pic = detail.index; phraseAt = t; typed = 0; buildPicture(); }
+        charP = detail.progress;
       });
       // The text box is measured, so measure again once the webfonts have settled its width.
       if (document.fonts && document.fonts.ready) document.fonts.ready.then(size);

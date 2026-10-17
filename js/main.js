@@ -1,8 +1,8 @@
 // Typing animation
 const phrases = [
   'Computer Engineering @ GMU',
-  'Machine Learning Engineer',
-  'Robotics Engineer',
+  'Machine Learning',
+  'Robotics',
   'Eagle Scout',
 ];
 
@@ -23,7 +23,7 @@ function typeLoop() {
     detail: { index: phraseIndex, progress: charIndex / current.length },
   }));
 
-  let delay = isDeleting ? 45 : 80;
+  let delay = isDeleting ? 45 : 96;
 
   if (!isDeleting && charIndex === current.length) {
     delay = 2000;
