@@ -59,7 +59,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/style.css?v=106" />
+  <link rel="stylesheet" href="/css/style.css?v=107" />
 
   <!-- ═══ STRUCTURED DATA ═══ -->
   <script type="application/ld+json">
@@ -375,10 +375,16 @@
             </div>
             <div class="timeline-body has-media">
             <figure class="timeline-media">
-              <video class="timeline-video" muted loop playsinline preload="none"
-                     poster="/assets/robot/decode-practice-shot.jpg"
-                     data-src="/assets/robot/decode-practice-shot.mp4"
-                     aria-label="The DECODE season robot shooting a volley of balls into the goal during practice"></video>
+              <div class="timeline-video-wrap">
+                <video class="timeline-video" muted playsinline preload="none"
+                       poster="/assets/robot/decode-practice-shot.jpg"
+                       data-src="/assets/robot/decode-practice-shot.mp4"
+                       aria-label="The DECODE season robot shooting a volley of balls into the goal during practice"></video>
+                <button type="button" class="timeline-video-replay" hidden>
+                  <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
+                  <span>Replay</span>
+                </button>
+              </div>
               <figcaption class="mono">DECODE robot, practice volley</figcaption>
             </figure>
             <ul class="timeline-bullets">
@@ -947,7 +953,7 @@
   </div>
 
   <script src="/js/theme.js?v=6"></script>
-  <script src="/js/main.js?v=61"></script>
+  <script src="/js/main.js?v=62"></script>
   <script src="/js/halftone.js?v=2"></script>
 </body>
 </html>

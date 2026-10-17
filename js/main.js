@@ -673,16 +673,31 @@ if (scrollCue) {
   select(fromHash() || cards[0]);
 })();
 
-// Clips in the experience cards. Nothing downloads until the card is close to the screen, and
-// they only play while visible. With reduced motion they stay on the poster and get controls.
+// Clips in the experience cards. Nothing downloads until the card is close to the screen. A clip
+// plays once while visible, then rests on its last frame with a replay button. With reduced
+// motion it never starts on its own: the same button reads Play.
 (function () {
   const vids = document.querySelectorAll('video[data-src]');
   if (!vids.length) return;
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const io = new IntersectionObserver(entries => entries.forEach(({ target: v, isIntersecting }) => {
-    if (isIntersecting && !v.src) { v.src = v.dataset.src; if (still) v.controls = true; }
-    if (still) return;
-    if (isIntersecting) v.play().catch(() => {}); else v.pause();
-  }), { rootMargin: '300px 0px' });
-  vids.forEach(v => io.observe(v));
+  vids.forEach(v => {
+    const wrap = v.parentElement, btn = wrap.querySelector('.timeline-video-replay');
+    const label = btn && btn.querySelector('span');
+    let ended = false;
+    const show = text => { if (!btn) return; label.textContent = text; btn.hidden = false; wrap.classList.add('is-resting'); };
+    const hide = () => { if (!btn) return; btn.hidden = true; wrap.classList.remove('is-resting'); };
+    const load = () => { if (!v.src) v.src = v.dataset.src; };
+    v.addEventListener('ended', () => { ended = true; show('Replay'); });
+    if (btn) btn.addEventListener('click', () => {
+      load(); ended = false; hide();
+      v.currentTime = 0; v.play().catch(() => {});
+    });
+    if (still) show('Play');
+    new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) load();
+      if (still || ended) return;
+      // Start only once it is really on screen, so the one play is not spent above the fold.
+      if (e.intersectionRatio >= 0.6) v.play().catch(() => {}); else v.pause();
+    }, { rootMargin: '300px 0px', threshold: [0, 0.6] }).observe(v);
+  });
 })();
