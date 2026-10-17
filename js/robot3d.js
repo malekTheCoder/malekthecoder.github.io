@@ -427,7 +427,8 @@
   const ctx = canvas.getContext('2d');
   const root = document.documentElement;
   let color = '';
-  const readColor = () => { color = getComputedStyle(root).getPropertyValue('--accent').trim() || '#888'; };
+  let paper = '#fff';
+  const readColor = () => { const cs = getComputedStyle(root); color = cs.getPropertyValue('--accent').trim() || '#888'; paper = cs.getPropertyValue('--bg').trim() || '#fff'; };
   readColor();
 
   const PITCH = 0.3, AUTO = 0.32, REACH = 2.7, BUILD = 3.0, FLIGHT = 0.95;
@@ -497,63 +498,82 @@
   }
 
   // ── the arrow ──────────────────────────────────────────────────────────────────────────
-  // Dots along a hooked curve from just under the clip's right corner down into the top of the
-  // drawing, a chevron of dots for the head. It draws on like a pen (the leading dot a little
-  // bigger), pulses from clip to tip while the dots pour, and dissolves from the clip end.
+  // A dotted ring round the robot in the clip, then a dotted arrow from the ring down into the
+  // drawing, the dots haloed in the page colour so they read over the video. The robot drives
+  // during the clip, so the ring follows it: TRACK is where it is (fractions of the frame) every
+  // 0.2 s, measured from the clip. The arrow draws on like a pen, pulses from the robot to the tip
+  // while the dots pour, and dissolves from the robot end once the drawing is whole.
+  const TRACK = [[0,0.194,0.615],[0.2,0.165,0.617],[0.4,0.126,0.616],[0.6,0.098,0.612],[0.8,0.083,0.6],[1,0.088,0.6],[1.2,0.082,0.598],[1.4,0.084,0.594],[1.6,0.081,0.594],[1.8,0.074,0.593],[2,0.076,0.593],[2.2,0.076,0.593],[2.4,0.085,0.6],[2.6,0.107,0.616],[2.8,0.139,0.63],[3,0.158,0.635],[3.2,0.182,0.636],[3.4,0.219,0.643],[3.6,0.259,0.641],[3.8,0.296,0.631],[4,0.332,0.623],[4.2,0.364,0.607],[4.4,0.39,0.583],[4.6,0.405,0.561],[4.8,0.407,0.55]];
   const body = host.parentElement, clip = body.querySelector('.timeline-video-wrap');
+  const video = clip && clip.querySelector('video');
+  function robotAt() {
+    const t = video && video.currentTime || 0, k = Math.min(TRACK.length - 2, Math.floor(t / 0.2));
+    const [t0, x0, y0] = TRACK[k], [t1, x1, y1] = TRACK[k + 1], u = Math.max(0, Math.min(1, (t - t0) / (t1 - t0)));
+    return [x0 + (x1 - x0) * u, y0 + (y1 - y0) * u];
+  }
   function makeArrow() {
     if (!clip) return null;
     const b = body.getBoundingClientRect(), c = clip.getBoundingClientRect(), m = canvas.getBoundingClientRect();
     const across = Math.min(c.right, m.right) - Math.max(c.left, m.left);
     if (m.top - c.bottom < 0 || m.top - c.bottom > 160 || across < m.width * 0.5) return null;
-    const left = Math.min(c.left, m.left), top = c.bottom - 2;
-    const w = Math.max(c.right, m.right) - left, h = m.top - top + H * 0.13;
+    const left = Math.min(c.left, m.left) - 8, top = c.top;
+    const w = Math.max(c.right, m.right) + 8 - left, h = m.top - top + H * 0.13;
     const ov = document.createElement('canvas');
     ov.className = 'robot3d-arrow';
     ov.setAttribute('aria-hidden', 'true');
     ov.style.cssText = `left:${left - b.left}px;top:${top - b.top}px;width:${w}px;height:${h}px`;
     ov.width = Math.ceil(w * dpr); ov.height = Math.ceil(h * dpr);
     body.append(ov);
-    const P0 = [w * 0.86, 7], P3 = [m.left - left + W * 0.5, h - 4];
-    const P1 = [w * 1.0, P0[1] + (P3[1] - P0[1]) * 0.75], P2 = [P3[0] + w * 0.16, P3[1] - (P3[1] - P0[1]) * 0.7];
-    const at = (u) => { const v = 1 - u; return [0, 1].map(k => v * v * v * P0[k] + 3 * v * v * u * P1[k] + 3 * v * u * u * P2[k] + u * u * u * P3[k]); };
-    const pts = []; let prev = at(0), run = 0;
-    pts.push([...prev, 0]);
-    for (let i = 1; i <= 240; i++) {
-      const p = at(i / 240); run += Math.hypot(p[0] - prev[0], p[1] - prev[1]); prev = p;
-      if (run >= 6.5) { pts.push([...p, 0]); run = 0; }
+    const clipBox = [c.left - left, c.top - top, c.width, c.height];
+    const tip = [m.left - left + W * 0.5, h - 4];
+    return { ov, g: ov.getContext('2d'), w, h, clipBox, end: tip, gone: null,
+      tip: [tip[0] + left - m.left, tip[1] + top - m.top + 3] };
+  }
+  // The arrow's dots for where the robot is now: f runs 0 at the ring's start to 1 at the tip.
+  function arrowDots(a) {
+    const [cx0, cy0, cw, ch] = a.clipBox, [rx, ry] = robotAt();
+    const R = [cx0 + rx * cw, cy0 + ry * ch], rr = Math.max(14, cw * 0.065), pts = [];
+    const ringN = Math.round(2 * Math.PI * rr / 5.5);
+    for (let i = 0; i < ringN; i++) {
+      const th = -0.35 + i / ringN * Math.PI * 2;
+      pts.push([R[0] + Math.cos(th) * rr, R[1] + Math.sin(th) * rr * 0.8, 0.2 * i / ringN]);
     }
-    pts.forEach((p, i) => { p[2] = i / (pts.length - 1); });           // 0 at the clip, 1 at the tip
+    // out of the ring to the right, past the end of the caption, then down into the drawing
+    const P0 = [R[0] + Math.cos(-0.35) * rr, R[1] + Math.sin(-0.35) * rr * 0.8], P3 = a.end;
+    const xr = Math.max(P0[0] + 40, cx0 + cw * 0.8), cb = cy0 + ch;
+    const P1 = [xr, P0[1] + (cb - P0[1]) * 0.35], P2 = [xr, P3[1] - (P3[1] - cb) * 0.55];
+    const at = (u) => { const v = 1 - u; return [0, 1].map(k => v * v * v * P0[k] + 3 * v * v * u * P1[k] + 3 * v * u * u * P2[k] + u * u * u * P3[k]); };
+    let prev = P0, run = 0, len = 0;
+    const path = [];
+    for (let i = 1; i <= 260; i++) { const p = at(i / 260); const d = Math.hypot(p[0] - prev[0], p[1] - prev[1]); len += d; run += d; prev = p; if (run >= 6.5) { path.push([...p, len]); run = 0; } }
+    for (const [x, y, l] of path) pts.push([x, y, 0.2 + 0.8 * l / len]);
     const d = [P3[0] - P2[0], P3[1] - P2[1]], dl = Math.hypot(...d), ux = d[0] / dl, uy = d[1] / dl;
     for (const sg of [-1, 1]) {
-      const a = Math.atan2(-uy, -ux) + sg * 0.6;
-      for (const L of [4.5, 9, 13.5]) pts.push([P3[0] + Math.cos(a) * L, P3[1] + Math.sin(a) * L, 1]);
+      const an = Math.atan2(-uy, -ux) + sg * 0.6;
+      for (const L of [4.5, 9, 13.5]) pts.push([P3[0] + Math.cos(an) * L, P3[1] + Math.sin(an) * L, 1]);
     }
-    return { ov, g: ov.getContext('2d'), pts, w, h, gone: null,
-      tip: [left + P3[0] - m.left + ux * 3, top + P3[1] - m.top + uy * 3] };
+    return pts;
   }
   function drawArrow() {
-    const a = arrow, g = a.g, path = new Path2D(), lead = new Path2D();
+    const a = arrow, g = a.g, dots = new Path2D(), halo = new Path2D();
     g.setTransform(dpr, 0, 0, dpr, 0, 0);
     g.clearRect(0, 0, a.w, a.h);
     const wave = (bt - POUR) * 1.15 % 1.25 - 0.12;                     // where the pulse is, 0..1
-    let alive = false, front = 0;
-    for (const [x, y, f] of a.pts) {
-      let s = Math.max(0, Math.min(1, (bt - f * 0.5) / 0.1));          // drawn on in order
-      if (s > 0 && s < 1) front = Math.max(front, f);
+    let alive = false, front = -1, lead = null;
+    for (const [x, y, f] of arrowDots(a)) {
+      let s = Math.max(0, Math.min(1, (bt - f * 0.6) / 0.1));          // drawn on in order
+      if (s > 0 && s < 1 && f > front) { front = f; lead = [x, y]; }
       if (bt > POUR && a.gone == null) s *= 1 + 0.7 * Math.max(0, 1 - Math.abs(f - wave) * 7);
       if (a.gone != null) s *= Math.max(0, 1 - (a.gone - f * 0.45) / 0.22);
       if (s <= 0.02) continue;
       alive = true;
-      const r = (1.15 + 0.6 * f) * s;
-      path.moveTo(x + r, y); path.arc(x, y, r, 0, Math.PI * 2);
+      const r = (1.25 + 0.6 * f) * s;
+      dots.moveTo(x + r, y); dots.arc(x, y, r, 0, Math.PI * 2);
+      halo.moveTo(x + r + 1.6, y); halo.arc(x, y, r + 1.6, 0, Math.PI * 2);
     }
-    // the pen: one bigger dot riding the front while it draws
-    if (bt < 0.6) {
-      const k = a.pts.findIndex(p => p[2] >= front);
-      if (k >= 0) { const [x, y] = a.pts[k]; lead.arc(x, y, 2.6, 0, Math.PI * 2); }
-    }
-    g.fillStyle = color; g.globalAlpha = 0.9; g.fill(path); g.fill(lead); g.globalAlpha = 1;
+    if (lead && bt < 0.75) { dots.moveTo(lead[0] + 2.8, lead[1]); dots.arc(lead[0], lead[1], 2.8, 0, Math.PI * 2); }
+    g.fillStyle = paper; g.globalAlpha = 0.85; g.fill(halo);
+    g.fillStyle = color; g.globalAlpha = 0.95; g.fill(dots); g.globalAlpha = 1;
     return alive || a.gone == null;
   }
   function dropArrow() { if (arrow) { arrow.ov.remove(); arrow = null; } }
