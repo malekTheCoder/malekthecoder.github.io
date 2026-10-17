@@ -329,6 +329,42 @@
   // Turn the point cloud, keep the nearest point per dot cell, then print: a light halftone tone
   // for each surface and strong dots at silhouettes, creases and material changes.
   // The model's projected extent over a full turn, so it is framed once and never jumps.
+  // A miniature DECODE goal in front of the robot, fixed to the view rather than the robot, so
+  // the turret has something to lock onto while the robot turns. A blue wedge, its sloped face
+  // toward the robot carrying an AprilTag, a dark basket opening on top. Points: x, y, z in view
+  // space before the tilt, then the normal, then albedo.
+  const GOAL = { x: 8.5, z: 13.5 };
+  function buildGoal(step) {
+    const P = [], add = (x, y, z, nx, ny, nz, a) => P.push(x, y, z, nx, ny, nz, a);
+    const ux = -GOAL.x, uz = -GOAL.z, ul = Math.hypot(ux, uz), u = [ux / ul, uz / ul], r = [-u[1], u[0]];
+    const W = 7, D = 5, Hh = 7.5, SL = 1.6;                      // across, deep, tall, how far the face leans
+    const at = (a, b, y) => [GOAL.x + r[0] * a - u[0] * b, y, GOAL.z + r[1] * a - u[1] * b];
+    const blue = 0.24, black = 0.05, white = 1;
+    const tag = ['10110100', '01001101', '11010010', '00101101', '10110010', '01101001'];   // 6 x 6 inner bits, padded
+    // sloped front face, with the tag on its upper half
+    const fl = Math.hypot(SL, Hh), fn = [u[0] * Hh / fl, SL / fl, u[1] * Hh / fl];
+    for (let a = -W / 2; a <= W / 2 + 1e-6; a += step) for (let q = 0; q <= 1 + 1e-6; q += step / fl) {
+      let al = blue;
+      const ta = (a + 1.7) / 3.4, tq = (q - 0.42) / (3.4 / fl);
+      if (ta >= 0 && ta < 1 && tq >= 0 && tq < 1) {
+        const ci = Math.floor(ta * 8), cj = 7 - Math.floor(tq * 8);
+        al = ci === 0 || cj === 0 || ci === 7 || cj === 7 ? black : tag[cj - 1][ci - 1] === '1' ? white : black;
+      }
+      add(...at(a, q * SL, q * Hh), ...fn, al);
+    }
+    // top, with the basket opening
+    for (let a = -W / 2; a <= W / 2 + 1e-6; a += step) for (let b = SL; b <= D + 1e-6; b += step)
+      add(...at(a, b, Hh), 0, 1, 0, Math.abs(a) < W / 2 - 0.8 && b > SL + 0.6 && b < D - 0.6 ? black : blue);
+    // the two sides, and the back
+    for (const sg of [-1, 1]) for (let b = 0; b <= D + 1e-6; b += step) for (let y = 0; y <= Hh + 1e-6; y += step) {
+      if (b < y / Hh * SL) continue;
+      add(...at(sg * W / 2, b, y), r[0] * sg, 0, r[1] * sg, blue);
+    }
+    for (let a = -W / 2; a <= W / 2 + 1e-6; a += step) for (let y = 0; y <= Hh + 1e-6; y += step)
+      add(...at(a, D, y), -u[0], 0, -u[1], blue);
+    return { pts: new Float32Array(P), aim: at(0, (SL + D) / 2, Hh) };
+  }
+
   function fitRobot(model, pitch, f = 60) {
     const P = model.pts, cp = Math.cos(pitch), sp = Math.sin(pitch);
     let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
@@ -339,6 +375,10 @@
         const X = x * c - z * s, Z1 = x * s + z * c, Y = y * cp - Z1 * sp, Z = y * sp + Z1 * cp, k = f / (f - Z);
         x0 = Math.min(x0, X * k); x1 = Math.max(x1, X * k); y0 = Math.min(y0, -Y * k); y1 = Math.max(y1, -Y * k);
       }
+    }
+    if (model.goal) for (let i = 0; i < model.goal.pts.length; i += 7 * 5) {
+      const G = model.goal.pts, y = G[i + 1] - 9.6, Y = y * cp - G[i + 2] * sp, Z = y * sp + G[i + 2] * cp, k = f / (f - Z);
+      x0 = Math.min(x0, G[i] * k); x1 = Math.max(x1, G[i] * k); y0 = Math.min(y0, -Y * k); y1 = Math.max(y1, -Y * k);
     }
     return { w: x1 - x0 + 1.2, h: y1 - y0 + 1.2, mx: (x0 + x1) / 2, my: (y0 + y1) / 2 };
   }
@@ -353,6 +393,19 @@
     const ct = Math.cos(tyaw), st = Math.sin(tyaw), cs2 = Math.cos(spin), ss2 = Math.sin(spin), cs3 = Math.cos(ispin), ss3 = Math.sin(ispin);
     const TZ = model.TZ;
     const L = [-0.5, 0.72, 0.48], ll = Math.hypot(...L); L[0] /= ll; L[1] /= ll; L[2] /= ll;
+    function splat(x1, y, z1, mx, ny, mz, albedo, height) {
+      const y1 = y * cp - z1 * sp, z2 = y * sp + z1 * cp;
+      const my = ny * cp - mz * sp, mz2 = ny * sp + mz * cp;
+      if (mz2 < -0.05) return;
+      const k = f / (f - z2), sx = cx + x1 * scale * k, sy = cy - y1 * scale * k;
+      const gx = Math.round(sx / gap), gy = Math.round(sy / gap);
+      if (gx < 0 || gy < 0 || gx >= cols || gy >= rows) return;
+      const c = gy * cols + gx;
+      if (z2 <= depth[c]) return;
+      depth[c] = z2; NX[c] = mx; NY[c] = my; NZ[c] = mz2; AL[c] = albedo; MY[c] = height;
+      const b = Math.max(0, mx * L[0] + my * L[1] + mz2 * L[2]);
+      tone[c] = 0.04 + 0.3 * (1 - albedo) * (0.6 + 0.4 * (1 - b)) + 0.08 * (1 - b);
+    }
     const P = model.pts;
     for (let i = 0; i < P.length; i += 8) {
       let x = P[i], y = P[i + 1], z = P[i + 2], nx = P[i + 3], ny = P[i + 4], nz = P[i + 5];
@@ -365,20 +418,11 @@
         const yy = y - ax.y, zz = z - ax.z, y2 = yy * cs - zz * ss; z = yy * ss + zz * cs + ax.z; y = y2 + ax.y;
         const n2 = ny * cs - nz * ss; nz = ny * ss + nz * cs; ny = n2;
       }
-      y -= 9.6;
-      const x1 = x * cyw - z * syw, z1 = x * syw + z * cyw;
-      const y1 = y * cp - z1 * sp, z2 = y * sp + z1 * cp;
-      const mx = nx * cyw - nz * syw, mz = nx * syw + nz * cyw;
-      const my = ny * cp - mz * sp, mz2 = ny * sp + mz * cp;
-      if (mz2 < -0.05) continue;
-      const k = f / (f - z2), sx = cx + x1 * scale * k, sy = cy - y1 * scale * k;
-      const gx = Math.round(sx / gap), gy = Math.round(sy / gap);
-      if (gx < 0 || gy < 0 || gx >= cols || gy >= rows) continue;
-      const c = gy * cols + gx;
-      if (z2 <= depth[c]) continue;
-      depth[c] = z2; NX[c] = mx; NY[c] = my; NZ[c] = mz2; AL[c] = P[i + 6]; MY[c] = P[i + 1];
-      const b = Math.max(0, mx * L[0] + my * L[1] + mz2 * L[2]);
-      tone[c] = 0.04 + 0.3 * (1 - P[i + 6]) * (0.6 + 0.4 * (1 - b)) + 0.08 * (1 - b);
+      splat(x * cyw - z * syw, y - 9.6, x * syw + z * cyw, nx * cyw - nz * syw, ny, nx * syw + nz * cyw, P[i + 6], P[i + 1]);
+    }
+    if (model.goal) {
+      const G = model.goal.pts;
+      for (let i = 0; i < G.length; i += 7) splat(G[i], G[i + 1] - 9.6, G[i + 2], G[i + 3], G[i + 4], G[i + 5], G[i + 6], G[i + 1]);
     }
     const out = new Float32Array(tone);
     for (let gy = 1; gy < rows - 1; gy++) for (let gx = 1; gx < cols - 1; gx++) {
@@ -431,11 +475,18 @@
   const readColor = () => { const cs = getComputedStyle(root); color = cs.getPropertyValue('--accent').trim() || '#888'; paper = cs.getPropertyValue('--bg').trim() || '#fff'; };
   readColor();
 
-  const PITCH = 0.3, AUTO = 0.32, REACH = 2.7, BUILD = 3.0, FLIGHT = 0.95;
+  const PITCH = 0.3, AUTO = 0.32, BUILD = 3.0, FLIGHT = 0.95;
+  // The turret's travel: 340 degrees, a 20 degree dead zone straight behind it.
+  const LIMIT = (170 / 180) * Math.PI;
+  // What it locks onto: the miniature goal, or with no goal, a fixed bearing a little off
+  // straight at the viewer, so the shooter shows three quarters on.
+  // (the goal is still being modelled; ?r3=goal previews it)
+  const WITH_GOAL = new URLSearchParams(location.search).get('r3') === 'goal';
+  const FACE = Math.PI - 0.42;
   let model = null, fitBox = null, W = 0, H = 0, dpr = 1, gap = 2;
   let visible = false, raf = 0, last = 0, t = 0;
   let stage = 'wait', flock = null, bt = 0, arrow = null;
-  let yaw = Math.PI - 0.7, vel = 0, tyaw = 0.4, tvel = 0, spin = 0, ispin = 0;
+  let yaw = Math.PI - 0.7, vel = 0, tyaw = 0, tvel = 0, spin = 0, ispin = 0;
   let drag = null, slow = 0;
 
   const opts = (extra) => ({ yaw, pitch: PITCH, tyaw, spin, ispin, gap, color, fit: fitBox, ...extra });
@@ -565,6 +616,16 @@
   function dropArrow() { if (arrow) { arrow.ov.remove(); arrow = null; } }
 
   const wrap = a => Math.atan2(Math.sin(a), Math.cos(a));
+  // The turret angle (relative to the robot) that points the shooter at the target for this yaw.
+  // The shooter faces -z on the robot, which lands on view direction (sin a, -cos a) at a = tyaw + yaw.
+  function aimFor(yw) {
+    let a = FACE;
+    if (model && model.goal) {
+      const g = model.goal.aim, px = -model.TZ * Math.sin(yw), pz = model.TZ * Math.cos(yw);
+      a = Math.atan2(g[0] - px, -(g[2] - pz));
+    }
+    return wrap(a - yw);
+  }
   function frame(now) {
     raf = 0;
     const dt = Math.min(0.05, (now - (last || now)) / 1000);
@@ -579,13 +640,15 @@
       if (arrow) { arrow.gone += dt; if (!drawArrow()) dropArrow(); }
       t += dt;
       if (!drag) { vel += (AUTO - vel) * Math.min(1, dt * 1.2); yaw += vel * dt; }
-      // the goal drifts a little, as if the robot were moving about the field
-      const goal = Math.PI - 0.55 + 0.45 * Math.sin(t * 0.37);
-      let want = wrap(goal - yaw);
-      if (Math.abs(want) > REACH) want = Math.sign(want) * REACH;
-      // a critically damped spring toward the aim, so moves start and settle smoothly
-      const k = 26, c = 2 * Math.sqrt(k);
-      tvel += (k * (want - tyaw) - c * tvel) * dt; tyaw += tvel * dt;
+      // Hold the aim. While the target is inside the turret's travel it tracks it exactly; when the
+      // target passes into the dead zone it waits at the end stop, and once the target comes out on
+      // the far side it swings the long way round (it cannot pass through the stop) and locks on.
+      const want = aimFor(yaw);
+      const target = Math.abs(want) <= LIMIT ? want : Math.sign(tyaw || 1) * LIMIT;
+      // a motor: velocity toward the error, capped in speed and acceleration
+      const err = target - tyaw, vWant = Math.max(-5.5, Math.min(5.5, err * 9));
+      tvel += Math.max(-dt * 32, Math.min(dt * 32, vWant - tvel)); tyaw += tvel * dt;
+      tyaw = Math.max(-LIMIT, Math.min(LIMIT, tyaw));
       spin += dt * 6; ispin += dt * 3.2;
       paint();
     }
@@ -629,7 +692,9 @@
     if (!e.isIntersecting || model) return;
     const lean = W < 340 || (navigator.hardwareConcurrency || 8) <= 4;
     model = Robot3D.build(lean ? 0.12 : 0.1);
+    if (WITH_GOAL) model.goal = buildGoal(lean ? 0.12 : 0.1);
     fitBox = fitRobot(model, PITCH);
+    tyaw = aimFor(yaw);
     maybeStart();
   }, { rootMargin: '400px 0px' }).observe(host);
   // Start the assembly once a good part of it is actually on screen.
