@@ -499,18 +499,19 @@
   }
 
   // ── the arrow ──────────────────────────────────────────────────────────────────────────
-  // A dotted arrow from just right of the robot in the clip, where it sits shooting on the left,
-  // curving out past the caption and down into the drawing, the dots haloed in the page colour so
-  // they read over the video. It draws on like a pen, pulses while the dots pour, and dissolves
+  // A dotted arrow that never crosses the clip: it starts at the clip's left edge level with the
+  // robot (which sits shooting on the left), runs down the gutter beside the clip and the caption,
+  // and sweeps into the drawing. It draws on like a pen, pulses while the dots pour, and dissolves
   // from the robot end soon after, without waiting for the drawing to finish.
-  const START = [0.15, 0.6];              // just right of the robot, as fractions of the clip frame
+  const START_Y = 0.6;                    // the robot's height in the clip frame
   const body = host.parentElement, clip = body.querySelector('.timeline-video-wrap');
   function makeArrow() {
     if (!clip) return null;
     const b = body.getBoundingClientRect(), c = clip.getBoundingClientRect(), m = canvas.getBoundingClientRect();
     const across = Math.min(c.right, m.right) - Math.max(c.left, m.left);
-    if (m.top - c.bottom < 0 || m.top - c.bottom > 160 || across < m.width * 0.5) return null;
-    const left = Math.min(c.left, m.left) - 8, top = c.top;
+    // only where the drawing sits right under the clip, with a gutter to its left to run down
+    if (m.top - c.bottom < 0 || m.top - c.bottom > 160 || across < m.width * 0.5 || c.left - b.left < 30) return null;
+    const left = Math.min(c.left, m.left) - 34, top = c.top;
     const w = Math.max(c.right, m.right) + 8 - left, h = m.top - top + H * 0.13;
     const ov = document.createElement('canvas');
     ov.className = 'robot3d-arrow';
@@ -518,14 +519,19 @@
     ov.style.cssText = `left:${left - b.left}px;top:${top - b.top}px;width:${w}px;height:${h}px`;
     ov.width = Math.ceil(w * dpr); ov.height = Math.ceil(h * dpr);
     body.append(ov);
-    const cx0 = c.left - left, cy0 = c.top - top, cw = c.width, ch = c.height;
-    const P0 = [cx0 + START[0] * cw, cy0 + START[1] * ch], P3 = [m.left - left + W * 0.5, h - 4];
-    const xr = cx0 + cw * 0.8, cb = cy0 + ch;
-    const P1 = [xr, P0[1] + (cb - P0[1]) * 0.2], P2 = [xr, P3[1] - (P3[1] - cb) * 0.55];
-    const at = (u) => { const v = 1 - u; return [0, 1].map(k => v * v * v * P0[k] + 3 * v * v * u * P1[k] + 3 * v * u * u * P2[k] + u * u * u * P3[k]); };
+    const cx0 = c.left - left, cy0 = c.top - top, ch = c.height, cb = cy0 + ch;
+    const capB = (body.querySelector('.timeline-media figcaption') || clip).getBoundingClientRect().bottom - top;
+    // two joined curves: down the gutter left of the clip and its caption, then into the drawing
+    const P0 = [cx0 - 6, cy0 + START_Y * ch], Q = [cx0 - 18, Math.max(cb, capB) + 14], P3 = [m.left - left + W * 0.5, h - 4];
+    const segs = [
+      [P0, [cx0 - 20, P0[1] + 12], [cx0 - 20, cb - 10], Q],
+      [Q, [cx0 - 18, Q[1] + (P3[1] - Q[1]) * 0.7], [P3[0] - W * 0.22, P3[1] - 6], P3],
+    ];
+    const bez = ([a, b, c2, d], u) => { const v = 1 - u; return [0, 1].map(k => v * v * v * a[k] + 3 * v * v * u * b[k] + 3 * v * u * u * c2[k] + u * u * u * d[k]); };
+    const P2 = segs[1][2];
     const pts = [[...P0, 0]]; let prev = P0, run = 0, len = 0;
     const raw = [];
-    for (let i = 1; i <= 260; i++) { const p = at(i / 260); const d = Math.hypot(p[0] - prev[0], p[1] - prev[1]); len += d; run += d; prev = p; if (run >= 6.5) { raw.push([...p, len]); run = 0; } }
+    for (const sg of segs) for (let i = 1; i <= 160; i++) { const p = bez(sg, i / 160); const d = Math.hypot(p[0] - prev[0], p[1] - prev[1]); len += d; run += d; prev = p; if (run >= 6.5) { raw.push([...p, len]); run = 0; } }
     for (const [x, y, l] of raw) pts.push([x, y, l / len]);
     const d = [P3[0] - P2[0], P3[1] - P2[1]], dl = Math.hypot(...d), ux = d[0] / dl, uy = d[1] / dl;
     for (const sg of [-1, 1]) {
