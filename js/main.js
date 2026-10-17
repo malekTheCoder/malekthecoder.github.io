@@ -672,3 +672,17 @@ if (scrollCue) {
   window.addEventListener('hashchange', () => { const c = fromHash(); if (c) select(c); });
   select(fromHash() || cards[0]);
 })();
+
+// Clips in the experience cards. Nothing downloads until the card is close to the screen, and
+// they only play while visible. With reduced motion they stay on the poster and get controls.
+(function () {
+  const vids = document.querySelectorAll('video[data-src]');
+  if (!vids.length) return;
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const io = new IntersectionObserver(entries => entries.forEach(({ target: v, isIntersecting }) => {
+    if (isIntersecting && !v.src) { v.src = v.dataset.src; if (still) v.controls = true; }
+    if (still) return;
+    if (isIntersecting) v.play().catch(() => {}); else v.pause();
+  }), { rootMargin: '300px 0px' });
+  vids.forEach(v => io.observe(v));
+})();

@@ -2006,3 +2006,33 @@ a, button, .skill-pill, .tag {
 }
 [data-halftone] .contact-social-link { background: linear-gradient(var(--bg-card), var(--bg-card)), var(--bg); }
 @media print { .halftone { display: none; } }
+
+/* A clip beside the bullets. The bullets keep the reading column; the clip takes the space
+   that sat empty to their right. Below 1000px it moves above the bullets instead. */
+.timeline-body.has-media {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(260px, 32%, 320px);
+  column-gap: 2rem;
+  align-items: start;
+}
+.timeline-body.has-media .timeline-media { grid-column: 2; grid-row: 1; }
+.timeline-body.has-media .timeline-bullets { grid-column: 1; grid-row: 1; }
+.timeline-media { margin: 0.25rem 0 0; }
+.timeline-video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg-alt);
+}
+.timeline-media figcaption {
+  margin-top: 0.5rem;
+  font-size: 0.72rem;
+  color: var(--text-2);
+}
+@media (max-width: 999px) {
+  .timeline-body.has-media { display: block; }
+  .timeline-media { margin: 0 0 1.25rem; max-width: 420px; }
+}
