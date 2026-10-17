@@ -4,7 +4,7 @@
 // "band" spreads it across a wide strip.
 //
 // On a wide hero the field also draws a picture for each phrase the subtitle types out: a
-// chip, a neural network, a robot arm, an eagle. The picture is revealed in step with the
+// chip, a neural network, a humanoid, the Scouting fleur-de-lis. The picture is revealed in step with the
 // typing and dissolves as the phrase is deleted.
 (function () {
   const hosts = document.querySelectorAll('[data-halftone]');
@@ -81,61 +81,103 @@
         cut(g, 0.6, () => pos.flat().forEach(([x, y]) => dot(g, x, y, 2.4)));
       },
     },
-    { // a humanoid modelled on the Unitree G1, drawn like an engineering drawing: light fill,
-      // every part outlined, joint motors as rings with a hub, push-rods, and a height dimension
-      w: 64, h: 100, seed: [30, 38], outlineFirst: true,
+    { // a humanoid like the one in the lab, drawn like an engineering drawing: silver shells in a
+      // light fill, black actuators nearly solid, one bold contour round each limb with thin lines
+      // between its parts, a dark egg of a head with a glowing ring round the face and a bar across
+      // the eyes, joint motors as discs with a hub, a ground line and a height dimension
+      w: 64, h: 100, seed: [30, 30], outlineFirst: true,
       draw(g) {
-        const parts = [], motors = [];
-        const part = fn => { const p = new Path2D(); fn(p); parts.push(p); };
-        const motor = (x, y, r) => { motors.push([x, y, r]); part(p => ell(p, x, y, r, r)); };
-        const sides = fn => [x => x, x => 60 - x].forEach(fn);
-        part(p => ell(p, 30, 3.4, 2.5, 1.7));                                   // LiDAR dome
-        part(p => ell(p, 30, 9.8, 4.7, 5.8));                                   // head
-        part(p => rrect(p, 28.3, 15, 3.4, 3, 0.8));                             // neck
-        part(p => { p.moveTo(22.2, 17.8); p.lineTo(37.8, 17.8); p.bezierCurveTo(40.4, 19, 40.6, 24, 38.8, 29);
-          p.bezierCurveTo(37.8, 32.2, 36, 34.4, 34.6, 35.4); p.lineTo(25.4, 35.4); p.bezierCurveTo(24, 34.4, 22.2, 32.2, 21.2, 29);
-          p.bezierCurveTo(19.4, 24, 19.6, 19, 22.2, 17.8); p.closePath(); });   // torso
-        motor(30, 38.6, 3.4);                                                   // waist
-        part(p => { p.moveTo(24.6, 41.4); p.lineTo(35.4, 41.4); p.lineTo(36.6, 46.2); p.lineTo(32.4, 49.4);
-          p.lineTo(27.6, 49.4); p.lineTo(23.4, 46.2); p.closePath(); });        // pelvis
-        sides(X => {
-          motor(X(19.4), 20.8, 3.3);                                            // shoulder
-          part(p => capsule(p, X(18.6), 24, X(16.4), 35, 3.6, 3.2));            // upper arm
-          motor(X(16.2), 37, 2.5);                                              // elbow
-          part(p => capsule(p, X(16), 39.4, X(14.8), 49.2, 3.5, 2.7));          // forearm
-          motor(X(14.7), 50.6, 1.6);                                            // wrist
-          part(p => rrect(p, Math.min(X(12.9), X(16.5)), 51.8, 3.6, 3.6, 1));   // palm
-          for (const [a, b, c, d] of [[13.4, 55.2, 12.8, 59], [14.9, 55.4, 14.8, 59.6], [16.2, 55.2, 16.9, 58.6]])
-            part(p => capsule(p, X(a), b, X(c), d, 1.05, 0.9));                 // three fingers
-          motor(X(23.4), 49.6, 3.6);                                            // hip
-          part(p => capsule(p, X(24.6), 52.6, X(23.4), 66, 6, 4.4));            // thigh
-          motor(X(23.2), 68.2, 3.1);                                            // knee
-          part(p => capsule(p, X(23.2), 71, X(22.8), 87.6, 3.6, 2.5));          // shin
-          motor(X(22.8), 88.8, 1.7);                                            // ankle
-          part(p => rrect(p, Math.min(X(18.4), X(27.2)), 90.4, 8.8, 3.6, 1.4)); // foot plate
-        });
-        const all = new Path2D(); parts.forEach(p => all.addPath(p));
-        g.save(); g.globalAlpha = 0.22; g.fill(all); g.restore();
-        g.save(); g.lineWidth = 1.1; g.lineJoin = 'round'; parts.forEach(p => g.stroke(p)); g.restore();
-        g.save(); g.lineWidth = 0.8;
-        motors.forEach(([x, y, r]) => { g.beginPath(); g.arc(x, y, r * 0.58, 0, Math.PI * 2); g.stroke(); dot(g, x, y, Math.max(0.6, r * 0.22)); });
-        g.restore();
-        g.save(); g.lineWidth = 0.8; g.lineCap = 'round';
-        g.save(); g.globalAlpha = 0.7; rr(g, 27, 7.2, 6, 6.4, 2.6); g.fill(); g.restore();   // face panel
-        g.save(); g.globalAlpha = 0.6; line(g, [27.8, 3.4, 32.2, 3.4]); g.restore();         // LiDAR band
-        g.globalAlpha = 0.85;
-        line(g, [30, 18.6, 30, 34.6]); line(g, [22.2, 26.6, 28.6, 28.4]); line(g, [37.8, 26.6, 31.4, 28.4]);
-        line(g, [25.6, 31.8, 34.4, 31.8]); line(g, [27, 45.6, 33, 45.6]);
-        sides(X => {
-          line(g, [X(20.6), 70.2, X(20.6), 87.4]); line(g, [X(25.8), 70.2, X(25.2), 87.4]);   // knee to ankle push-rods
-          line(g, [X(17.4), 26.6, X(16), 33.6]); line(g, [X(22.2), 56, X(21.8), 63.4]); line(g, [X(19.6), 92.2, X(26), 92.2]);
-        });
-        g.restore();
-        g.save(); g.globalAlpha = 0.5; g.lineWidth = 0.6; g.setLineDash([2.2, 1.6]);
-        line(g, [30, 0, 30, 1.4]); line(g, [30, 50.4, 30, 99.6]); line(g, [33, 1.7, 59.4, 1.7]); line(g, [39.6, 94, 59.4, 94]);
+        const X = x => 60 - x, sides = fn => [x => x, X].forEach(fn), L = (X, x, w) => Math.min(X(x), X(x + w));
+        const SILVER = 0.16, BLACK = 0.95;
+        g.lineJoin = g.lineCap = 'round';
+        // The part less a shifted copy of itself: a crescent along one side.
+        const crescent = (p, dx, dy) => { const c = new Path2D(); c.rect(-9, -9, 90, 120); c.addPath(p, new DOMMatrix([1, 0, 0, 1, dx, dy])); return c; };
+        // An assembly, back to front: clear a halo so it stands off what is behind, draw one contour
+        // round the whole, then fill each part (silver darkens along its lower right, black catches
+        // light on its upper left) with a thin line where it meets the next.
+        const asm = (lw, ...list) => {
+          const ps = list.map(([t, fn, more]) => { const p = new Path2D(); fn(p); return [t, p, more]; });
+          const all = new Path2D(); ps.forEach(([, p]) => all.addPath(p));
+          cut(g, 1, () => { g.lineWidth = 3.2; g.stroke(all); });
+          g.save(); g.lineWidth = 2 * lw; g.stroke(all); g.restore();
+          ps.forEach(([t, p, more]) => {
+            cut(g, 1, () => g.fill(p));
+            g.save(); g.globalAlpha = t; g.fill(p); g.clip(p);
+            if (t < 0.5) { g.globalAlpha = 0.22; g.fill(crescent(p, -1.5, -1.2), 'evenodd'); }
+            else cut(g, 0.3, () => g.fill(crescent(p, 1, 1), 'evenodd'));
+            g.restore();
+            g.save(); g.lineWidth = 0.55; g.stroke(p); if (more) more(p); g.restore();
+          });
+        };
+        const S = (fn, more) => [SILVER, fn, more], B = (fn, more) => [BLACK, fn, more];
+        const ring = (x, y, r, w) => { g.lineWidth = w; g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.stroke(); };
+        const groove = (y, x0, x1) => cut(g, 0.6, () => { g.lineWidth = 0.6; line(g, [x0, y, x1, y]); });
+        // A black actuator face on: dark rim, paler face, solid hub.
+        const motor = (x, y, r) => B(p => ell(p, x, y, r, r), () => { cut(g, 0.65, () => dot(g, x, y, r * 0.66)); dot(g, x, y, r * 0.32); });
+
+        // waist actuator, pelvis with its grille, and the hip housings, behind the thighs
+        asm(0.65, B(p => rrect(p, 26.6, 40.4, 6.8, 4.4, 0.8), () => groove(42.2, 26.8, 33.2)),
+          B(p => rrect(p, 18.4, 44.4, 6.2, 5.8, 1.8)), B(p => rrect(p, 35.4, 44.4, 6.2, 5.8, 1.8)),
+          B(p => { p.moveTo(23.2, 44.2); p.lineTo(36.8, 44.2); p.lineTo(37.6, 45.4); p.lineTo(37.6, 49.4); p.lineTo(35.4, 52.6);
+            p.lineTo(24.6, 52.6); p.lineTo(22.4, 49.4); p.lineTo(22.4, 45.4); p.closePath(); },
+            () => cut(g, 0.8, () => { g.lineWidth = 0.9; for (let x = 27.4; x < 33; x += 1.8) line(g, [x, 45.8, x, 48.6]); })));
+        // legs: ankle, boot, shin, a big thigh shell with a round cap over the hip motor, and the
+        // knee actuator on the inside of the knee
+        sides(X => asm(0.65,
+          B(p => rrect(p, L(X, 22.7, 2.4), 85.6, 2.4, 6, 0.6)),
+          B(p => { p.moveTo(X(20.2), 95.4); p.lineTo(X(27.4), 95.4); p.bezierCurveTo(X(27.6), 93.2, X(26.6), 90.8, X(23.8), 90.6);
+            p.bezierCurveTo(X(21), 90.8, X(20), 93.2, X(20.2), 95.4); p.closePath(); }, () => groove(94.1, X(20.6), X(27))),
+          S(p => { p.moveTo(X(20.9), 67.4); p.lineTo(X(26.1), 67.4); p.bezierCurveTo(X(26.6), 72.4, X(25.8), 79.6, X(25.3), 86.4);
+            p.lineTo(X(22.3), 86.4); p.bezierCurveTo(X(21.7), 79.6, X(20.4), 72.4, X(20.9), 67.4); p.closePath(); }),
+          S(p => { p.moveTo(X(23.1), 48.4); p.bezierCurveTo(X(26.1), 48.4, X(27.3), 50.4, X(27.2), 53.6);
+            p.bezierCurveTo(X(27.1), 58.6, X(26.5), 63.6, X(26.2), 68.6); p.lineTo(X(20.4), 68.6); p.bezierCurveTo(X(19.9), 63.6, X(18.9), 58.6, X(18.9), 53.6);
+            p.bezierCurveTo(X(18.9), 50.4, X(20.1), 48.4, X(23.1), 48.4); p.closePath(); }, () => ring(X(23.1), 54.2, 2.6, 0.9)),
+          motor(X(25.7), 69.2, 2.6)));
+        // torso: a broad shell narrowing to the waist, side panels, a small mark, dimples, status lights
+        asm(0.65, S(p => { p.moveTo(24, 18.6); p.lineTo(36, 18.6); p.bezierCurveTo(38.3, 18.6, 39.2, 19.6, 39.2, 22);
+          p.bezierCurveTo(39.2, 27, 39.1, 30.5, 38.6, 33.5); p.bezierCurveTo(37.9, 38, 36.6, 41.6, 33.4, 41.6); p.lineTo(26.6, 41.6);
+          p.bezierCurveTo(23.4, 41.6, 22.1, 38, 21.4, 33.5); p.bezierCurveTo(20.9, 30.5, 20.8, 27, 20.8, 22);
+          p.bezierCurveTo(20.8, 19.6, 21.7, 18.6, 24, 18.6); p.closePath(); }, () => {
+          g.lineWidth = 0.5; sides(X => line(g, [X(23.4), 23.2, X(23.5), 31]));
+          poly(g, [28.9, 22.6, 31.1, 22.6, 30, 24.5]);
+          [[26, 23.4], [34, 23.4], [27.6, 38.6], [32.4, 38.6]].forEach(([x, y]) => dot(g, x, y, 0.42));
+          [28.6, 29.8, 31].forEach(y => dot(g, 37.4, y, 0.36));
+        }));
+        // neck and collar, and the head: a dark egg with a glowing ring round the glass face and a
+        // light bar across the eyes
+        asm(0.65, B(p => { p.moveTo(28.6, 13.6); p.lineTo(31.4, 13.6); p.lineTo(31.6, 16.4); p.bezierCurveTo(31.9, 17.5, 33.4, 18.1, 35, 18.4);
+          p.lineTo(35, 19.4); p.lineTo(25, 19.4); p.lineTo(25, 18.4); p.bezierCurveTo(26.6, 18.1, 28.1, 17.5, 28.4, 16.4); p.closePath(); }),
+          B(p => { p.moveTo(30, 1.8); p.bezierCurveTo(33.6, 1.8, 35.3, 4.1, 35.3, 7.5); p.bezierCurveTo(35.3, 11, 32.8, 14.8, 30, 14.8);
+            p.bezierCurveTo(27.2, 14.8, 24.7, 11, 24.7, 7.5); p.bezierCurveTo(24.7, 4.1, 26.4, 1.8, 30, 1.8); p.closePath(); }, () => {
+            const face = new Path2D(); face.moveTo(30, 3.9); face.bezierCurveTo(32.5, 3.9, 33.4, 5.2, 33.4, 7.5);
+            face.bezierCurveTo(33.4, 10.6, 32.1, 13.2, 30, 13.2); face.bezierCurveTo(27.9, 13.2, 26.6, 10.6, 26.6, 7.5);
+            face.bezierCurveTo(26.6, 5.2, 27.5, 3.9, 30, 3.9); face.closePath();
+            cut(g, 0.3, () => g.fill(face));
+            cut(g, 1, () => { g.lineWidth = 1.7; g.stroke(face); });
+            cut(g, 1, () => { rr(g, 27.6, 6.5, 4.8, 1.6, 0.8); g.fill(); });
+          }));
+        // arms, hanging a little away from the body: shoulder cap, a dark band, upper arm, elbow
+        // actuator, ribbed forearm, wrist housing, mitten hand
+        sides(X => asm(0.35,
+          S(p => capsule(p, X(16.8), 27.4, X(15.9), 33.6, 5, 4.8)),
+          B(p => rrect(p, L(X, 14.1, 5.6), 26.6, 5.6, 1.5, 0.6)),
+          S(p => ell(p, X(17), 22.6, 4.1, 4.2), () => ring(X(17), 22.6, 2.6, 0.85)),
+          B(p => rrect(p, L(X, 13.1, 4.6), 37.6, 4.6, 3.4, 0.8), () => groove(39.3, X(13.3), X(17.5))),
+          S(p => rrect(p, L(X, 12.85, 4.6), 40.8, 4.6, 6, 1.4)),
+          motor(X(15.45), 35.4, 2.8),
+          B(p => rrect(p, L(X, 13.6, 3), 46.6, 3, 1.6, 0.5)),
+          B(p => { p.moveTo(X(13.3), 48); p.lineTo(X(16.5), 48); p.bezierCurveTo(X(17.3), 49.2, X(17.6), 50.8, X(17.3), 52.2);
+            p.bezierCurveTo(X(17.1), 53.2, X(16.8), 53.6, X(16.7), 54.6); p.bezierCurveTo(X(16.6), 56.2, X(15.9), 57.6, X(15), 57.6);
+            p.bezierCurveTo(X(14), 57.6, X(13.2), 56.6, X(13.1), 54.8); p.bezierCurveTo(X(12.9), 52.6, X(12.9), 49.8, X(13.3), 48); p.closePath(); })));
+
+        // ground line, centre line and height dimension
+        g.save(); g.globalAlpha = 0.6; g.lineWidth = 0.6; line(g, [14, 95.6, 46, 95.6]);
+        g.globalAlpha = 0.45; g.lineWidth = 0.5; for (let x = 15; x < 46; x += 2.2) line(g, [x, 96, x - 1.6, 97.6]);
+        g.globalAlpha = 0.5; g.lineWidth = 0.6; g.setLineDash([2.2, 1.6]);
+        line(g, [30, 0, 30, 0.6]); line(g, [30, 53.4, 30, 99.6]); line(g, [37, 1.8, 59.4, 1.8]); line(g, [41.4, 95.4, 59.4, 95.4]);
         g.setLineDash([]); g.globalAlpha = 0.7; g.lineWidth = 0.75;
-        line(g, [57, 1.7, 57, 94]); line(g, [55.7, 4.3, 57, 1.7, 58.3, 4.3]); line(g, [55.7, 91.4, 57, 94, 58.3, 91.4]);
-        for (let y = 11; y < 92; y += 9.2) line(g, [56.1, y, 57.9, y]);
+        line(g, [57, 1.8, 57, 95.4]); line(g, [55.7, 4.4, 57, 1.8, 58.3, 4.4]); line(g, [55.7, 92.8, 57, 95.4, 58.3, 92.8]);
+        for (let y = 11.2; y < 93; y += 9.36) line(g, [56.1, y, 57.9, y]);
         g.restore();
       },
     },
