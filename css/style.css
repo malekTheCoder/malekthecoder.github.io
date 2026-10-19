@@ -2106,13 +2106,13 @@ a, button, .skill-pill, .tag {
   transform: rotate(-3deg); display: inline-block; align-self: center;
 }
 .ll-hand { display: block; height: 3.7rem; width: auto; overflow: visible; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; }
-.ll-hand path { stroke-dashoffset: 1e5; stroke-dasharray: 1e5; }
-.ll-hand.is-written path { stroke-dashoffset: 0; }
+.ll-hand path { opacity: 0; }
+.ll-hand.is-written path { opacity: 1; }
 .ll-toggle {
   margin-left: auto; align-self: center;
-  font: 500 0.8rem 'JetBrains Mono', monospace; color: var(--text-1);
+  font: 500 0.85rem 'IBM Plex Sans', system-ui, sans-serif; color: var(--text-0);
   background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm);
-  padding: 0.4rem 0.8rem; cursor: pointer;
+  padding: 0.45rem 0.9rem; cursor: pointer;
   transition: border-color var(--transition), color var(--transition);
 }
 .ll-toggle:hover { border-color: var(--accent-border); color: var(--accent); }
