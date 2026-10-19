@@ -779,8 +779,7 @@ if (scrollCue) {
   prev.innerHTML = '<span aria-hidden="true">← <span class="ll-code-lhs">curr = </span>curr.<b>prev</b>;</span>';
   const next = el('button', 'll-step', { type: 'button', 'aria-label': 'Next role' });
   next.innerHTML = '<span aria-hidden="true"><span class="ll-code-lhs">curr = </span>curr.<b>next</b>; →</span>';
-  const status = el('span', 'll-status mono', { 'aria-live': 'polite' });
-  bar.append(prev, status, next);
+  bar.append(prev, next);
   wrap.append(track, bar);
   timeline.before(wrap);
 
@@ -844,9 +843,6 @@ if (scrollCue) {
     items.forEach((it, k) => { it.classList.toggle('is-active', k === i); it.style.setProperty('--ll-dir', dir); });
     nodes.forEach((b, k) => { b.classList.toggle('is-active', k === i); b.setAttribute('aria-selected', k === i); b.tabIndex = k === i ? 0 : -1; });
     prev.disabled = i === 0; next.disabled = i === items.length - 1;
-    // a true statement about curr, as Java, with where it is in a comment
-    const total = items.length, check = i === 0 ? 'curr == head' : i === total - 1 ? 'curr.next == null' : 'curr != null';
-    status.innerHTML = `${check}<span class="ll-comment">  // ${i + 1} of ${total}</span>`;
     // the curr pointer slides over the node, and the track scrolls it into view without moving the page
     const n = nodes[i];
     curr.style.transform = `translateX(${n.offsetLeft + n.offsetWidth / 2}px)`;

@@ -2174,17 +2174,15 @@ a, button, .skill-pill, .tag {
 .ll-step:disabled { opacity: 0.4; cursor: default; }
 .ll-step b { font-weight: 600; color: var(--accent); }
 .ll-step:disabled b { color: inherit; }
-.ll-step, .ll-status { white-space: nowrap; }
-@media (max-width: 520px) { .ll-code-lhs { display: none; } .ll-controls { flex-wrap: wrap; gap: 0.5rem; } .ll-status { order: 3; flex-basis: 100%; text-align: center; font-size: 0.78rem; } }
+.ll-step { white-space: nowrap; }
+@media (max-width: 520px) { .ll-code-lhs { display: none; } .ll-controls { gap: 0.5rem; } }
 .ll-step:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.ll-comment { color: var(--text-2); white-space: pre; }
 /* real Java characters: the code font would otherwise join != into a single not-equal sign */
-.ll-status, .ll-step { font-variant-ligatures: none; font-feature-settings: "calt" 0, "liga" 0; }
+.ll-step { font-variant-ligatures: none; font-feature-settings: "calt" 0, "liga" 0; }
 @media (max-width: 520px) {
   .ll-aside { max-width: 100%; }
   .ll-hand { height: auto; width: min(100%, 17rem); }
 }
-.ll-status { font-size: 0.85rem; color: var(--text-1); background: var(--bg); padding: 0.15rem 0.5rem; border-radius: 4px; }
 
 /* with the list, the timeline shows one role at a time and loses its rail */
 .timeline.is-list { padding-left: 0; }
