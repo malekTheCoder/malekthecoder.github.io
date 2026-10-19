@@ -206,6 +206,7 @@
     const ctx = canvas.getContext('2d');
 
     const BRUSH = 95;        // px radius the pointer paints
+    let pageOn = false;      // the page field: whether it is showing (see below)
     const LEVELS = 6;        // alpha buckets, so each frame is a handful of strokes
     let gap, w = 0, h = 0, dpr = 1, cols = 0, rows = 0, ink = new Float32Array(0);
     // The self-drawn stroke paints into its own layer: it glows, where a hand scratches a picture.
@@ -544,11 +545,16 @@
     const local = (cx, cy) => { const r = host.getBoundingClientRect(); return [cx - r.left, cy - r.top]; };
     // A real hand takes over from the self-drawn stroke straight away.
     const touch = (x, y) => { ghost = null; idleAt = t; paint(...local(x, y)); };
-    host.addEventListener('pointermove', e => touch(e.clientX, e.clientY), { passive: true });
-    host.addEventListener('touchmove', e => { const p = e.touches[0]; touch(p.clientX, p.clientY); }, { passive: true });
+    // The page field sits behind everything and takes no clicks, so it listens on the window;
+    // it only paints while it is showing.
+    const src = kind === 'page' ? window : host;
+    const live = () => kind !== 'page' || pageOn;
+    src.addEventListener('pointermove', e => { if (live()) touch(e.clientX, e.clientY); }, { passive: true });
+    src.addEventListener('touchmove', e => { const p = e.touches[0]; if (live()) touch(p.clientX, p.clientY); }, { passive: true });
     const lift = () => { hand.x = hand.y = null; };
-    host.addEventListener('pointerleave', lift);
-    host.addEventListener('touchend', lift, { passive: true });
+    src.addEventListener(kind === 'page' ? 'pointerout' : 'pointerleave', e => { if (kind !== 'page' || !e.relatedTarget) lift(); });
+    src.addEventListener('touchend', lift, { passive: true });
+    if (kind === 'page') addEventListener('scroll', lift, { passive: true });
 
     // The intro stroke on first sight. With pictures on it is the loading spinner and belongs to
     // the subtitle's "Loading": it plays only while that text is showing, so a hero first seen
@@ -563,7 +569,6 @@
     }
     // The page field is fixed, so it is always "on screen"; it shows, and runs, only once the hero
     // is mostly scrolled away, fading in over the last part of it.
-    let pageOn = false;
     if (kind === 'page') {
       const hero = document.querySelector('.hero');
       const onScroll = () => {
