@@ -720,7 +720,14 @@ html.is-dark .theme-menu {
 }
 
 .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 2.5rem; }
-.hero-socials { display: flex; gap: 1.25rem; }
+.hero-socials { display: flex; gap: 1.5rem; align-items: center; }
+.sketch-defs { position: absolute; }
+/* Hand-drawn icons: a roughened outline with a fainter second pass, like ink gone over twice */
+.social-link .sketch-icon { width: 34px; height: 34px; overflow: visible; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.sketch-icon .sketch-ghost { opacity: 0.5; transform: translate(0.5px, 0.45px); }
+.social-link:hover .sketch-icon { animation: sketch-wiggle 0.35s ease-in-out; }
+@keyframes sketch-wiggle { 30% { transform: rotate(-6deg); } 70% { transform: rotate(5deg); } }
+@media (prefers-reduced-motion: reduce) { .social-link:hover .sketch-icon { animation: none; } }
 
 .social-link {
   display: inline-flex;
