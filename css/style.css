@@ -2011,9 +2011,9 @@ a, button, .skill-pill, .tag {
 }
 /* Buttons over the field stay solid, so the rings never read as part of something clickable.
    The hover tint is layered on the page colour rather than replacing it. */
-[data-halftone] .btn-outline { background: var(--bg); }
-[data-halftone] .btn-outline:hover,
-[data-halftone] .contact-social-link:hover {
+.btn-outline { background: var(--bg); }
+.btn-outline:hover,
+.contact-social-link:hover, .timeline-ext-link:hover {
   background: linear-gradient(var(--accent-dim), var(--accent-dim)), var(--bg);
 }
 /* The icon links get a small page-coloured patch, so the rings stop short of each glyph.
@@ -2024,7 +2024,7 @@ a, button, .skill-pill, .tag {
   border-radius: 10px;
   background: var(--bg);
 }
-[data-halftone] .contact-social-link { background: linear-gradient(var(--bg-card), var(--bg-card)), var(--bg); }
+.contact-social-link { background: linear-gradient(var(--bg-card), var(--bg-card)), var(--bg); }
 /* The faint field behind the whole page; its opacity follows the scroll (js/halftone.js). */
 .page-dots { position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0; isolation: auto; }
 @media print { .halftone, .page-dots { display: none; } }
@@ -2088,4 +2088,79 @@ a, button, .skill-pill, .tag {
   .timeline-body.has-media { display: block; }
   .timeline-media { margin: 0 0 1.25rem; max-width: 420px; }
   .timeline-model { margin: 0.5rem 0 1.25rem; max-width: 420px; }
+}
+
+/* Experience as a doubly linked list (main.js). Each node is drawn the way a CS class draws one,
+   a box of three cells, [ prev | data | next ], with two-way links between nodes, head at one end,
+   null at the other, and a curr pointer over the node being read. */
+.ll { margin-bottom: 1.5rem; }
+.ll-track {
+  position: relative;
+  display: flex; align-items: center; gap: 0;
+  padding: 2.1rem 0.25rem 0.5rem;
+  overflow-x: auto; scrollbar-width: none;
+}
+.ll-track::-webkit-scrollbar { display: none; }
+.ll-end { font: 0.75rem 'JetBrains Mono', monospace; color: var(--text-2); flex: none; padding: 0 0.15rem; }
+.ll-link { flex: none; width: 1.75rem; display: grid; place-items: center; color: var(--text-2); }
+.ll-link svg { width: 100%; height: 1.5rem; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+.ll-node {
+  flex: 1 1 0; min-width: 0;
+  display: grid; grid-template-columns: 1.15rem minmax(0, 1fr) 1.15rem; align-items: stretch;
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm);
+  font: inherit; color: inherit; text-align: left; cursor: pointer; padding: 0;
+  transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
+}
+.ll-node:hover { border-color: var(--border-hover); transform: translateY(-1px); }
+.ll-node.is-active { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-dim); }
+.ll-node:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.ll-ptr {
+  display: grid; place-items: center;
+  font: 0.8rem 'JetBrains Mono', monospace; color: var(--text-2);
+  background: color-mix(in srgb, var(--bg-alt) 70%, transparent);
+}
+.ll-ptr:first-child { border-right: 1px solid var(--border); border-radius: var(--radius-sm) 0 0 var(--radius-sm); }
+.ll-ptr:last-child { border-left: 1px solid var(--border); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; }
+.ll-node.is-active .ll-ptr { color: var(--accent); }
+.ll-data { display: flex; flex-direction: column; gap: 0.1rem; padding: 0.5rem 0.6rem; min-width: 0; }
+.ll-name { font-weight: 600; font-size: 0.86rem; color: var(--text-0); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ll-sub { font: 0.7rem 'JetBrains Mono', monospace; color: var(--text-2); white-space: nowrap; }
+.ll-node.is-active .ll-name { color: var(--accent); }
+
+/* the curr pointer: a label and an arrow down onto the node */
+.ll-curr {
+  position: absolute; left: 0; top: 0.2rem;
+  display: flex; flex-direction: column; align-items: center;
+  margin-left: -1.5rem; width: 3rem;
+  font: 600 0.7rem 'JetBrains Mono', monospace; color: var(--accent);
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+.ll-curr::after { content: ''; width: 1px; height: 0.55rem; background: currentColor; margin-top: 0.1rem; }
+
+.ll-controls { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 0.6rem; }
+.ll-step {
+  font: 500 0.82rem 'JetBrains Mono', monospace; color: var(--text-0);
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm);
+  padding: 0.4rem 0.85rem; cursor: pointer;
+  transition: border-color var(--transition), color var(--transition);
+}
+.ll-step:hover:not(:disabled) { border-color: var(--accent-border); color: var(--accent); }
+.ll-step:disabled { opacity: 0.4; cursor: default; }
+.ll-step:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.ll-status { font-size: 0.75rem; color: var(--text-2); }
+
+/* with the list, the timeline shows one role at a time and loses its rail */
+.timeline.is-list { padding-left: 0; }
+.timeline.is-list::before, .timeline.is-list::after, .timeline.is-list .timeline-dot { display: none; }
+.timeline.is-list > .timeline-item { display: none; margin: 0; }
+.timeline.is-list > .timeline-item.is-active { display: block; animation: ll-in 0.3s ease-out; }
+@keyframes ll-in { from { opacity: 0; transform: translateX(calc(var(--ll-dir, 0) * 18px)); } }
+@media (prefers-reduced-motion: reduce) {
+  .ll-curr { transition: none; }
+  .timeline.is-list > .timeline-item.is-active { animation: none; }
+}
+@media (max-width: 760px) {
+  /* a phone keeps the nodes readable and lets the list scroll sideways under the curr pointer */
+  .ll-node { flex: none; min-width: 7.5rem; }
 }
