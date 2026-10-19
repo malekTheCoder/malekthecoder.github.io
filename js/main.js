@@ -736,7 +736,8 @@ if (scrollCue) {
   const items = [...timeline.querySelectorAll(':scope > .timeline-item')];
   if (items.length < 2) return;
   const el = (tag, cls, attrs = {}) => { const e = document.createElement(tag); if (cls) e.className = cls; for (const k in attrs) e.setAttribute(k, attrs[k]); return e; };
-  const year = it => ((it.querySelector('.timeline-date') || {}).textContent || '').match(/\d{4}(?!.*\d{4})/)?.[0] || '';
+  // the years a role covers: one year, or first to last when it spans several (FTC is 2023–2026)
+  const year = it => { const ys = (((it.querySelector('.timeline-date') || {}).textContent || '').match(/\d{4}/g) || []); return ys.length ? (ys[0] === ys[ys.length - 1] ? ys[0] : ys[0] + '–' + ys[ys.length - 1]) : ''; };
 
   const wrap = el('div', 'll', { role: 'group', 'aria-label': 'Experience, as a doubly linked list' });
   const track = el('div', 'll-track', { role: 'tablist', 'aria-label': 'Roles' });
@@ -843,7 +844,9 @@ if (scrollCue) {
     items.forEach((it, k) => { it.classList.toggle('is-active', k === i); it.style.setProperty('--ll-dir', dir); });
     nodes.forEach((b, k) => { b.classList.toggle('is-active', k === i); b.setAttribute('aria-selected', k === i); b.tabIndex = k === i ? 0 : -1; });
     prev.disabled = i === 0; next.disabled = i === items.length - 1;
-    status.innerHTML = `<span class="ll-code-lhs">curr = </span>node[${i}]` + (i === 0 ? ' · head' : i === items.length - 1 ? ' · tail' : '');
+    // a true statement about curr, as Java, with where it is in a comment
+    const total = items.length, check = i === 0 ? 'curr == head' : i === total - 1 ? 'curr.next == null' : 'curr != null';
+    status.innerHTML = `${check}<span class="ll-comment">  // ${i + 1} of ${total}</span>`;
     // the curr pointer slides over the node, and the track scrolls it into view without moving the page
     const n = nodes[i];
     curr.style.transform = `translateX(${n.offsetLeft + n.offsetWidth / 2}px)`;
