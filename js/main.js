@@ -776,9 +776,9 @@ if (scrollCue) {
   const bar = el('div', 'll-controls');
   // the buttons read as the Java that walks the list
   const prev = el('button', 'll-step', { type: 'button', 'aria-label': 'Previous role' });
-  prev.innerHTML = '<span aria-hidden="true">← <span class="ll-code-lhs">curr = </span>curr.<b>prev</b>;</span>';
+  prev.innerHTML = '<span class="ll-arrow" aria-hidden="true">←</span><span aria-hidden="true"><span class="ll-code-lhs">curr = </span>curr.<b>prev</b>;</span>';
   const next = el('button', 'll-step', { type: 'button', 'aria-label': 'Next role' });
-  next.innerHTML = '<span aria-hidden="true"><span class="ll-code-lhs">curr = </span>curr.<b>next</b>; →</span>';
+  next.innerHTML = '<span aria-hidden="true"><span class="ll-code-lhs">curr = </span>curr.<b>next</b>;</span><span class="ll-arrow" aria-hidden="true">→</span>';
   bar.append(prev, next);
   wrap.append(track, bar);
   timeline.before(wrap);

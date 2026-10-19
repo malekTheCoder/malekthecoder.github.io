@@ -2173,6 +2173,13 @@ a, button, .skill-pill, .tag {
 .ll-step:hover:not(:disabled) { border-color: var(--accent-border); color: var(--accent); }
 .ll-step:disabled { opacity: 0.4; cursor: default; }
 .ll-step b { font-weight: 600; color: var(--accent); }
+/* the arrow carries the meaning for anyone who doesn't read the code: big, in the accent */
+.ll-step { display: inline-flex; align-items: center; gap: 0.6rem; }
+.ll-arrow { font: 600 1.35rem/1 'IBM Plex Sans', system-ui, sans-serif; color: var(--accent); transition: transform var(--transition); }
+.ll-step:hover:not(:disabled) .ll-arrow { transform: translateX(var(--nudge, 0)); }
+.ll-step:first-child { --nudge: -3px; }
+.ll-step:last-child { --nudge: 3px; }
+.ll-step:disabled .ll-arrow { color: inherit; }
 .ll-step:disabled b { color: inherit; }
 .ll-step { white-space: nowrap; }
 @media (max-width: 520px) { .ll-code-lhs { display: none; } .ll-controls { gap: 0.5rem; } }
