@@ -1984,14 +1984,18 @@ a, button, .skill-pill, .tag {
 }
 /* Quieter right behind the text so it never competes with the words */
 .halftone-hero {
-  -webkit-mask-image: radial-gradient(ellipse 42% 38% at 36% 50%, rgba(0,0,0,0.12), #000 100%);
-          mask-image: radial-gradient(ellipse 42% 38% at 36% 50%, rgba(0,0,0,0.12), #000 100%);
+  /* quiet behind the text, and fading out along the bottom so the hero hands over to the
+     faint page field instead of ending on a hard edge */
+  -webkit-mask-image: radial-gradient(ellipse 42% 38% at 36% 50%, rgba(0,0,0,0.12), #000 100%), linear-gradient(#000 62%, transparent);
+  -webkit-mask-composite: source-in;
+          mask-image: radial-gradient(ellipse 42% 38% at 36% 50%, rgba(0,0,0,0.12), #000 100%), linear-gradient(#000 62%, transparent);
+          mask-composite: intersect;
 }
 @media (min-width: 1000px) {
   /* the words sit further left here, so the quiet patch follows them and clears the picture */
   .halftone-hero {
-    -webkit-mask-image: radial-gradient(ellipse 34% 38% at 27% 50%, rgba(0,0,0,0.12), #000 100%);
-            mask-image: radial-gradient(ellipse 34% 38% at 27% 50%, rgba(0,0,0,0.12), #000 100%);
+    -webkit-mask-image: radial-gradient(ellipse 34% 38% at 27% 50%, rgba(0,0,0,0.12), #000 100%), linear-gradient(#000 62%, transparent);
+            mask-image: radial-gradient(ellipse 34% 38% at 27% 50%, rgba(0,0,0,0.12), #000 100%), linear-gradient(#000 62%, transparent);
   }
 }
 .halftone-band {
@@ -2001,8 +2005,8 @@ a, button, .skill-pill, .tag {
 /* On a phone the text runs edge to edge, so fade the whole upper part instead of an ellipse */
 @media (max-width: 759px) {
   .halftone-hero {
-    -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.1) 55%, #000 82%);
-            mask-image: linear-gradient(to bottom, rgba(0,0,0,0.1) 55%, #000 82%);
+    -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.1) 55%, #000 82%), linear-gradient(#000 70%, transparent);
+            mask-image: linear-gradient(to bottom, rgba(0,0,0,0.1) 55%, #000 82%), linear-gradient(#000 70%, transparent);
   }
 }
 /* Buttons over the field stay solid, so the rings never read as part of something clickable.
@@ -2021,7 +2025,9 @@ a, button, .skill-pill, .tag {
   background: var(--bg);
 }
 [data-halftone] .contact-social-link { background: linear-gradient(var(--bg-card), var(--bg-card)), var(--bg); }
-@media print { .halftone { display: none; } }
+/* The faint field behind the whole page; its opacity follows the scroll (js/halftone.js). */
+.page-dots { position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0; isolation: auto; }
+@media print { .halftone, .page-dots { display: none; } }
 
 /* A clip beside the bullets. The bullets keep the reading column; the clip takes the space
    that sat empty to their right. Below 1000px it moves above the bullets instead. */

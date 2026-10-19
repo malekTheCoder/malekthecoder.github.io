@@ -1,7 +1,8 @@
 // Halftone field. A grid of rings whose size follows a slow, drifting shape; moving the
 // pointer (or dragging a finger) paints into it and the paint fades back out. Any element
 // with data-halftone gets one. "hero" keeps the shape off to the right of the text,
-// "band" spreads it across a wide strip.
+// "band" spreads it across a wide strip, and "page" is a faint field fixed behind the rest of
+// the site that fades in as the hero scrolls away.
 //
 // On a wide hero the field also draws a picture for each phrase the subtitle types out: a
 // chip, a neural network, a humanoid, the Scouting fleur-de-lis. The picture is revealed in step with the
@@ -210,7 +211,7 @@
     // The self-drawn stroke paints into its own layer: it glows, where a hand scratches a picture.
     let glow = new Float32Array(0);
     // The contact strip is a closing echo of the hero, so it runs well under it.
-    const STRENGTH = kind === 'band' ? 0.42 : 0.8;
+    const STRENGTH = kind === 'page' ? 0.5 : kind === 'band' ? 0.42 : 0.8;
     let visible = false, raf = 0, last = 0, t = 0, inkLive = false;
     let grow = 0;             // 0 to 1 as the shape swells in on first sight
     let ghost = null;         // a self-drawn stroke: the intro, then again when the page sits idle
@@ -332,6 +333,12 @@
     // The shape: a few soft blobs on slow looping paths, rippled by a travelling wave.
     function blobs() {
       const m = Math.min(w, h), s = t * 0.001;
+      // Behind the whole page: big, slow shapes that wander the viewport, never covering much at once.
+      if (kind === 'page') return [
+        [w * (0.15 + 0.12 * Math.sin(s * 0.05)), h * (0.3 + 0.25 * Math.sin(s * 0.07)), m * 0.55],
+        [w * (0.85 + 0.1 * Math.cos(s * 0.06)), h * (0.7 + 0.2 * Math.cos(s * 0.045)), m * 0.6],
+        [w * (0.5 + 0.35 * Math.sin(s * 0.03 + 2)), h * (1.05 + 0.1 * Math.sin(s * 0.05)), m * 0.45],
+      ];
       if (kind === 'band') return [
         [w * (0.22 + 0.10 * Math.sin(s * 0.21)), h * (0.55 + 0.20 * Math.sin(s * 0.31)), m * 0.75],
         [w * (0.78 + 0.08 * Math.cos(s * 0.17)), h * (0.45 + 0.25 * Math.cos(s * 0.27)), m * 0.85],
@@ -492,8 +499,10 @@
     function startGhost(amt) { ghost = { at: t, dur: box ? 2850 : 2600, amt, x: null, y: null }; idleAt = t; }
 
     function frame(now) {
+      // The page field only drifts, so 20 frames a second is plenty, and a third of the work.
+      if (kind === 'page' && last && now - last < 48) { raf = requestAnimationFrame(frame); return; }
       raf = -1;               // mid-frame: a paint from inside it must not schedule a second loop
-      const dt = Math.min(64, now - (last || now));
+      const dt = Math.min(kind === 'page' ? 120 : 64, now - (last || now));
       last = now;
       t += dt;
       if (grow < 1) grow = Math.min(1, grow + dt / 1400);
@@ -552,9 +561,24 @@
       if (!total || performance.now() - start > total - 250) return;
       startGhost(0.3); ghost.sync = [start, total];
     }
+    // The page field is fixed, so it is always "on screen"; it shows, and runs, only once the hero
+    // is mostly scrolled away, fading in over the last part of it.
+    let pageOn = false;
+    if (kind === 'page') {
+      const hero = document.querySelector('.hero');
+      const onScroll = () => {
+        const hh = hero ? hero.offsetHeight : innerHeight;
+        const o = Math.max(0, Math.min(1, (scrollY - hh * 0.5) / (hh * 0.45)));
+        host.style.opacity = o.toFixed(3);
+        pageOn = o > 0; visible = pageOn;
+        if (visible) kick();
+      };
+      addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+    }
     let seen = false;
     new IntersectionObserver(([e]) => {
-      visible = e.isIntersecting;
+      visible = kind === 'page' ? pageOn : e.isIntersecting;
       if (visible && !seen) { seen = true; if (kind === 'hero') intro(); }
       if (visible) kick();
     }).observe(host);
